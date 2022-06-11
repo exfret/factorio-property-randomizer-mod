@@ -1,0 +1,148 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.1.1
+Date: ?
+  Bugfixes:
+    - Corrected changelog from claiming the existence of a version 0.0.19
+---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 2022.06.11
+  Features:
+    - Settings now have localised names/descriptions
+  Changes:
+    - Random seeding is now done in the data.lua rather than data-final-fixes.lua
+  Balancing:
+    - Made "end products" have swingier crafting time randomization than "intermediate products"
+---------------------------------------------------------------------------------------------------
+Version: 0.0.18
+Date: 2022.06.11
+  Bugfixes:
+    - Various hotfixes
+---------------------------------------------------------------------------------------------------
+Version: 0.0.17
+Date: 2022.06.08
+  Features:
+    - Added new settings for all the rest of the randomization options
+  Changes:
+    - Completely removed the old randomization algorithm
+    - Removed randomize_energy() and randomize_power()
+  Organization:
+    - Completely re-organized all the randomizer files
+    - Organized file system with new folders
+---------------------------------------------------------------------------------------------------
+Version: 0.0.16
+Date: 2022.06.07
+  Features:
+    - Randomized roboports with new randomization function
+    - Properly formatted changelog.txt
+  Changes:
+    - Changed the way parameters are passed to randomize_numerical_property
+  Balancing:
+    - Rebalanced electric pole randomization to be less swingy
+---------------------------------------------------------------------------------------------------
+Version: 0.0.15
+Date: 2022.06.05
+  Major Features:
+    - Different mod configurations won't change prototype randomizations for the most part
+---------------------------------------------------------------------------------------------------
+Version: 0.0.14
+Date: 2022.06.03
+  Features:
+    - Better randomization of various properties, now with customization settings as well
+    - Modules were randomized in a better way
+    - Randomized inventories more carefully
+  Minor Features:
+    - Randomized map preset is a little better and more complete now (still needs work to be playable)
+  Changes:
+    - Switched to a different random number generator than the built-in math.random one
+---------------------------------------------------------------------------------------------------
+Version: 0.0.13
+Date: 2022.06.01
+  Features:
+    - Started adding customization settings
+  Minor Features:
+    - Messed around with randomizing sounds
+  Organization:
+    - Regrouped some randomizations according to new customization settings
+---------------------------------------------------------------------------------------------------
+Version: 0.0.12
+Date: 2022.05.31
+  Changes:
+    - Started changing some entity properties to the new algorithm
+  Organization:
+    - Renamed util.lua to randomization-algorithms.lua (the name conflicted with factorio's core library)
+    - Reorganized functions (in particular, all of energy-randomizer.lua got a huge overhaul)
+---------------------------------------------------------------------------------------------------
+Version: 0.0.11
+Date: 2022.05.23
+  Major Features:
+    - Added new randomization function
+  Features:
+    - Randomized Types/Trigger and related things more
+  Organization:
+    - Refactoring
+---------------------------------------------------------------------------------------------------
+Version: 0.0.10
+Date: 2022.05.23
+  Features:
+    - Continued randomizing equipment
+    - Randomized equipment grids
+    - Started randomizing some inner property tables, like Type/Trigger
+---------------------------------------------------------------------------------------------------
+Version: 0.0.9
+Date: 2022.05.23
+  Features:
+    - Randomized items
+    - Randomized fluids
+---------------------------------------------------------------------------------------------------
+Version: 0.0.8
+Date: 2022.05.23
+  Features:
+    - Randomized even more entity properites (stopped at EnemySpawner)
+    - Randomized character properties (extreme mode only)
+    - Randomized what spawners spawn and when
+    - Randomized equipment
+---------------------------------------------------------------------------------------------------
+Version: 0.0.7
+Date: 2022.05.17
+  Features:
+    - Randomized a lot more entity properties
+---------------------------------------------------------------------------------------------------
+Version: 0.0.6
+Date: 2022.05.13
+  Features:
+    - Made map values randomized
+  Changes:
+    - Changed randomization algorithm to be less swingy
+  Bugfixes:
+    - Fixed energy modification bug
+---------------------------------------------------------------------------------------------------
+Version: 0.0.5
+Date: 2022.05.13
+  Features:
+    - Randomized energy values
+  Minor Features:
+    - Added a startup setting (currently does nothing)
+  Bugfixes:
+    - Misc. fixes
+---------------------------------------------------------------------------------------------------
+Version: 0.0.4
+Date: 2022.05.11
+  Features:
+    - Added randomization for many entity properties
+---------------------------------------------------------------------------------------------------
+Version: 0.0.3
+Date: 2022.05.11
+  Organization:
+    - Some refactoring
+---------------------------------------------------------------------------------------------------
+Version: 0.0.2
+Date: 2022.05.11
+  Minor Features:
+    - Added randomization for normal/expensive recipe variants
+  Organization:
+    - Refactored recipe randomization to its own file
+---------------------------------------------------------------------------------------------------
+Version: 0.0.1
+Date: 2022.05.10
+  Features:
+    - Added crafting time randomization

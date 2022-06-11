@@ -1,0 +1,57 @@
+Next releases:
+  1. Add balancing per-prototype
+  2. Add tier/related prototype smart randomization (prototypes in the same "class" get randomized to be "different enough")
+
+  - Investigate which entities take pollution and how
+  - Add balancing (for properties that can be balanced)
+    * Maybe a "karma system"? But how to order how the karmas are dished out?
+    * Idea: add all table + properties to be randomized to a list, then randomly pick things from said list to randomize until it's empty, and also include the other parameters for randomization, like the function to use (heck, maybe even just store the individual functions and parameters!)
+    * Add individual prototype karma too so individual prototypes don't get too unbalanced
+  - Find a more general/better way to deal with vast lists of entities
+  - Test mod compatibility
+  - Do special evaluation of the "importance" of items to randomize their crafting times more effectively
+  - In-game tutorial/tooltips for more obscure randomizations
+  - Refactor so that each function called in data-final-fixes uses each prototype exactly once
+  - Randomly randomized mode where which settings are randomized is randomized
+
+  - AttackParameters and such
+  - Randomize where productivity modules can go (figure out how to do this in a smart way)
+  - Randomize biter spawner in a smarter fashion
+  - Learn about fluid boxes and randomize those
+  - Randomize collision boxes (do more carefully than before, like also changing graphics)
+  - Weird things can take modules, like electric poles? Enemy spawners? Inserters?
+  - Game properties randomly change mid-game
+  - Electric Miner base productivity
+  - Entities are randomly not minable
+  - Shuffle damage types (advanced randomization)
+  - Recipes randomly require water
+  - Crafting times less variance for items need for science
+  - Sample from gamma distribution for simpler properties
+
+Organization
+  - Get proper version control/github
+  - Do randomizations by inserting randomization functions into a list and calling all the functions in the list?
+
+Random maps
+  - Randomize enemy evolution parameters
+  - Randomize pollution parameters
+
+Options
+  - Sync belt tiers option
+  - Add option for variance
+
+Properties:
+  - emissions_per_second
+  - healing_per_tick
+  - fuel_acceleration/top-speed multiplier (randomize with vehicles)
+  - braking_power/braking_force
+  - electric pole wire connection points (so it's possible electric poles connect to fewer electrical poles than before)
+
+Silly additions
+  - Figure out a way to randomize sounds or graphics?
+  - Randomize what rocks drop
+  - Mining ores gives you random items sometimes (a random other ore?)
+    - Maybe to make it not just dangoreus lite, it gives something like the smelted version? Or something else that adds more complications than something you just throw into some chests?
+  - Mining a building can, with a small chance, give you another building of the same "type"
+  - Biters randomly spawn across the map (possibly even in your base)
+  - Randomize collision masks
