@@ -43,6 +43,21 @@ function randomize_numerical_property (params)
     params = {}
   end
 
+  --[[local prototype, tbl, property, prg_key
+  if params.prototype ~= nil then
+    prototype = params.prototype
+    tbl = params.prototype
+    prg_key = prg.get_key(prototype)
+  end
+  if params.tbl then
+    tbl = params.tbl
+  end
+  if params.dummy then
+    if params.prototype == nil then
+      prg_key
+    end
+  end]]
+
   local tbl, property, prg_key
   property = params.property
   if params.prototype == nil and params.table == nil then
@@ -89,20 +104,23 @@ function randomize_numerical_property (params)
   end
 
   -- Account for karma
-  bias = bias + karma.values[prg_key]
+  --[[bias = bias + karma.prototype_values[prg_key]
+  if params.prototype then
+    bias = bias + karma.class_values[params.prototype.type]
+  end
   local sign = 1
   if params.randomization_params.lower_is_better then
     sign = -1
-  end
+  end]]
 
   local luckiness_of_this_randomization = 0
   for i = 1,num_steps do
     if prg.value(prg_key) < bias then -- "better" option
-      tbl[property] = tbl[property] + sign * (1 / num_steps) * find_inertia_function_value(params.inertia_function, tbl[property])
-      luckiness_of_this_randomization = luckiness_of_this_randomization + 1 / num_steps
+      tbl[property] = tbl[property] + --[[sign *]] (1 / num_steps) * find_inertia_function_value(params.inertia_function, tbl[property])
+      --luckiness_of_this_randomization = luckiness_of_this_randomization + 1 / num_steps
     else
-      tbl[property] = tbl[property] - sign * (1 / num_steps) * find_inertia_function_value(params.inertia_function, tbl[property])
-      luckiness_of_this_randomization = luckiness_of_this_randomization - 1 / num_steps
+      tbl[property] = tbl[property] - --[[sign *]] (1 / num_steps) * find_inertia_function_value(params.inertia_function, tbl[property])
+      --luckiness_of_this_randomization = luckiness_of_this_randomization - 1 / num_steps
     end
   end
 

@@ -27,6 +27,7 @@ Next releases:
   - Recipes randomly require water
   - Crafting times less variance for items need for science
   - Sample from gamma distribution for simpler properties
+  - Use local functions instead of globals
 
 Organization
   - Get proper version control/github

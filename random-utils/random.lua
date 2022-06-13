@@ -80,6 +80,7 @@ function prg.shuffle(key, tbl)
   end
 end
 
+-- TODO: Move this to a general utils file
 function prg.get_key (prototype)
   return prototype.type .. "aaa" .. prototype.name
 end
