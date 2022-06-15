@@ -28,6 +28,7 @@ Next releases:
   - Crafting times less variance for items need for science
   - Sample from gamma distribution for simpler properties
   - Use local functions instead of globals
+  - Fast replaceable group and next_upgrade - use to determine things of the same type and the tiers
 
 Organization
   - Get proper version control/github
@@ -56,3 +57,12 @@ Silly additions
   - Mining a building can, with a small chance, give you another building of the same "type"
   - Biters randomly spawn across the map (possibly even in your base)
   - Randomize collision masks
+  - Randomize map colors for entities
+  - Properties are randomized based on where the entity is located
+  - Properties get re-randomized after each rocket launch
+
+Ways to link randomizations:
+  - Randomize group and individual prototypes
+  - Randomize, then order correctly
+  - During randomization, implement a "push" from lower/upper prototypes
+  - After randomization, have a step where we force things apart

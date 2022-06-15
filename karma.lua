@@ -24,3 +24,10 @@ function karma.init()
   end
   karma.prototype_values["aaadummyprg"] = 0
 end
+
+function karma.update_prototype_value(key, luckiness)
+  
+end
+
+function karma.update_class_value(key, luckiness)
+end

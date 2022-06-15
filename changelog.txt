@@ -1,6 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.1
 Date: ?
+  Features:
+    - Started work on Karma system code
+    - randomize_numerical_property now supports simultaneous randomization
   Organization:
     - Added version control
   Bugfixes:
