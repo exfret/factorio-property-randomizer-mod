@@ -12,7 +12,7 @@ D40 = 1099511627776
 
 -- Seed the generator
 function prg.seed(seed)
-  for _, class in pairs(data.raw) do
+  for class_name, class in pairs(data.raw) do
     for _, prototype in pairs(class) do
       -- aaa should separate the class from the name since this doesn't occur in any class names
       local key = prototype.type .. "aaa" .. prototype.name
@@ -30,6 +30,21 @@ function prg.seed(seed)
       prg.value(key)
       prg.value(key)
     end
+
+    local key = class_name .. "bbb"
+
+    local using = {}
+
+    local new_seed = seed + D20 + (CRC32.Hash(key) % D20)
+
+    using["X1"] = (new_seed * 2 + 11111) % D20
+    using["X2"] = (new_seed * 4 + 1) % D20
+
+    prg_table[key] = using
+
+    prg.value(key)
+    prg.value(key)
+    prg.value(key)
   end
 
   local using = {}
@@ -81,6 +96,11 @@ function prg.shuffle(key, tbl)
 end
 
 -- TODO: Move this to a general utils file
-function prg.get_key (prototype)
-  return prototype.type .. "aaa" .. prototype.name
+-- If object is class, assume we're passing the key, not the actual class
+function prg.get_key (object, type_of_key)
+  if type_of_key == "class" then
+    return object .. "bbb"
+  end
+
+  return object.type .. "aaa" .. object.name
 end

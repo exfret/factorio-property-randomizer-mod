@@ -134,41 +134,8 @@ end
 -- randomize_belt_speed
 ---------------------------------------------------------------------------------------------------
 
-
-
 -- TODO: Option to sync belt tiers
 function randomize_belt_speed ()
-  randomize_numerical_property{
-    prototype = data.raw["transport-belt"]["transport-belt"],
-    property = "speed",
-    inertia_function = {
-      ["type"] = "proportional",
-      slope = 4
-    }
-  }
-
-  data.raw["transport-belt"]["fast-transport-belt"].speed = 2 * data.raw["transport-belt"]["transport-belt"].speed
-  randomize_numerical_property{
-    prototype = data.raw["transport-belt"]["fast-transport-belt"],
-    property = "speed",
-    inertia_function = {
-      ["type"] = "linear",
-      ["x-intercept"] = data.raw["transport-belt"]["transport-belt"].speed,
-      slope = 8
-    }
-  }
-
-  data.raw["transport-belt"]["express-transport-belt"].speed = 3/2 * data.raw["transport-belt"]["fast-transport-belt"].speed
-  randomize_numerical_property{
-    prototype = data.raw["transport-belt"]["express-transport-belt"],
-    property = "speed",
-    inertia_function = {
-      ["type"] = "linear",
-      ["x-intercept"] = data.raw["transport-belt"]["fast-transport-belt"].speed,
-      slope = 12
-    }
-  }
-
   --[[for _, belt_class in pairs(transport_belt_classes) do
     for _, prototype in pairs(data.raw[belt_class]) do
       -- TODO: round to nearest multiple of 0.4 / 480?
@@ -187,7 +154,21 @@ function randomize_belt_speed ()
         }
       }
     end
-  end]]--
+  end]]
+end
+
+function randomize_group_belt_speed ()
+  for _, belt_class in pairs(transport_belt_classes) do
+    local group_params = {}
+    for _, prototype in pairs(data.raw[belt_class]) do
+      table.insert(group_params, {prototype = prototype, property = "speed"})
+    end
+
+    randomize_numerical_property{
+      prg_key = prg.get_key(belt_class, "class"),
+      group_params = group_params
+    }
+  end
 end
 
 ---------------------------------------------------------------------------------------------------

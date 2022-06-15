@@ -32,13 +32,14 @@ Next releases:
 
 Organization
   - Get proper version control/github
-  - Do randomizations by inserting randomization functions into a list and calling all the functions in the list?
+  - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call
+  - Make a proper readme
 
 Random maps
   - Randomize enemy evolution parameters
   - Randomize pollution parameters
 
-Options
+Configuration options
   - Sync belt tiers option
   - Add option for variance
 

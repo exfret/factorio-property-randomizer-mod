@@ -76,6 +76,7 @@ end
 -- TODO: Randomize pump (normal pump, not offshore pump) speed
 if rand_logistic_speed then
   table.insert(randomizing_functions_to_call, randomize_belt_speed)
+  table.insert(randomizing_functions_to_call, randomize_group_belt_speed)
   table.insert(randomizing_functions_to_call, randomize_inserter_speed)
   table.insert(randomizing_functions_to_call, randomize_pump_speed) -- TODO once I learn about fluidboxes
 end

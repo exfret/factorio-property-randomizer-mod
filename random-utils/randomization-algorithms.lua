@@ -165,6 +165,16 @@ function randomize_numerical_property (params)
     params.group_params = {}
   end
 
+  -- TODO: move this to set_randomization_params
+  if params.dummy == nil and params.prototype == nil and params.tbl == nil and #params.group_params ~= 0 then
+    local master_params = params.group_params[#params.group_params]
+    for param_name, param_value in pairs(master_params) do
+      params[param_name] = param_value
+    end
+
+    params.group_params[#params.group_params] = nil
+  end
+
   set_randomization_param_values(params)
   for _, param_table in pairs(params.group_params) do
     -- Any randomization_params set here are ignored

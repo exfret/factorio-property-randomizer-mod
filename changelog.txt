@@ -1,9 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.1
-Date: ?
+Date: 2022.06.15
   Features:
     - Started work on Karma system code
     - randomize_numerical_property now supports simultaneous randomization
+    - Added randomization for belts in groups
   Organization:
     - Added version control
   Bugfixes:
