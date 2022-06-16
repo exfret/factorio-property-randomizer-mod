@@ -283,17 +283,18 @@ function randomize_electric_poles ()
       prototype = prototype,
       property = "supply_area_distance",
       inertia_function = {
-        {1.5, 0},
-        {2, 4},
-        {4, 40},
-        {10, 60},
+        {-2, 4},
+        {1.5, 4},
+        {2, 8},
+        {4, 60},
+        {10, 80},
         {50, 200},
         {64, 0}
       },
       randomization_params = {
-        min = 0,
+        min = 1.5,
         max = 64,
-        bias = 0.01
+        bias = 0.555
       }
     }
 

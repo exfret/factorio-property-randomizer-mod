@@ -4,6 +4,8 @@ Date: ?
   Features:
     - Added simultaneous randomization for assembly machines
     - Added ability to find which prototypes are of the same "type" using next_upgrade
+  Balancing:
+    - Made electric pole randomization more generous to the player
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.1
 Date: 2022.06.15

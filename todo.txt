@@ -31,6 +31,9 @@ Next releases:
   - Player chooses between different prototypes
   - Find similar type entities in a better way
   - Fix where min/max is passed
+  - Randomize research
+  - Link inserters (specifically, filter inserters should be hard linked)
+  - Better rounding
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call
