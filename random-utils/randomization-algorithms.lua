@@ -153,6 +153,7 @@ local function complete_final_randomization_fixes (params)
   end
 end
 
+-- TODO: Finish moving min/max out of randomization_params
 -- params = {dummy = ?, prototype = ?, tbl = ?, property = ?, lower_is_better = ?, min = ?, max = ?, round = ?, inertia function = {?}, prg_key = ?, group_params = {?}, randomization_params = {?}}
 -- simultaneous_params = list of {dummy = ?, prototype = ?, tbl = ?, property = ?, lower_is_better = ?, min = ?, max = ?, round = ?, inertia_function = {?}}
 -- inertia_function = [See find_inertia_function_value()]

@@ -83,6 +83,9 @@ end
 
 if rand_machine_speed then
   table.insert(randomizing_functions_to_call, randomize_machine_speed)
+  -- TODO: This may end up randomizing other classes... find a way to fix this
+  -- TODO: Other crafting groups group randomizations
+  table.insert(randomizing_functions_to_call, randomize_assembly_machine_groups)
 end
 
 -- TODO: Figure out what extra things support pollution

@@ -1,6 +1,5 @@
 Next releases:
-  1. Add balancing per-prototype
-  2. Add tier/related prototype smart randomization (prototypes in the same "class" get randomized to be "different enough")
+  1. Add tier/related prototype smart randomization (prototypes in the same "class" get randomized to be "different enough")
 
   - Investigate which entities take pollution and how
   - Add balancing (for properties that can be balanced)
@@ -29,9 +28,11 @@ Next releases:
   - Sample from gamma distribution for simpler properties
   - Use local functions instead of globals
   - Fast replaceable group and next_upgrade - use to determine things of the same type and the tiers
+  - Player chooses between different prototypes
+  - Find similar type entities in a better way
+  - Fix where min/max is passed
 
 Organization
-  - Get proper version control/github
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call
   - Make a proper readme
 
@@ -44,6 +45,7 @@ Configuration options
   - Add option for variance
 
 Properties:
+  - Biter pollution absorbed
   - emissions_per_second
   - healing_per_tick
   - fuel_acceleration/top-speed multiplier (randomize with vehicles)

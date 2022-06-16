@@ -1,4 +1,5 @@
 require("energy-randomizer")
+require("linking-utils")
 require("util-randomizer")
 
 require("random-utils/random")
@@ -97,6 +98,36 @@ local transport_belt_classes = {
 }
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_assembly_machine_groups
+---------------------------------------------------------------------------------------------------
+
+function randomize_assembly_machine_groups ()
+  local upgrade_groups = find_upgrade_groups("assembling-machine")
+
+  for _, upgrade_group in pairs(upgrade_groups) do
+    local group_params = {}
+    for _, prototype_in_upgrade_group in pairs(upgrade_group) do
+      table.insert(group_params, {
+        prototype = prototype_in_upgrade_group,
+        property = "crafting_speed",
+        inertia_function = {
+          ["type"] = "proportional",
+          slope = 2
+        },
+        randomization_params = {
+          min = 0
+        }
+      })
+    end
+
+    randomize_numerical_property{
+      -- TODO: Add custom prg keys for groups depending on the most upgraded version
+      group_params = group_params
+    }
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_beacon_properties
 ---------------------------------------------------------------------------------------------------
 
@@ -136,7 +167,7 @@ end
 
 -- TODO: Option to sync belt tiers
 function randomize_belt_speed ()
-  --[[for _, belt_class in pairs(transport_belt_classes) do
+  for _, belt_class in pairs(transport_belt_classes) do
     for _, prototype in pairs(data.raw[belt_class]) do
       -- TODO: round to nearest multiple of 0.4 / 480?
       randomize_numerical_property{
@@ -144,9 +175,9 @@ function randomize_belt_speed ()
         property = "speed",
         inertia_function = {
           {0, 0},
-          {5 / 480, 5 / 480},
-          {10 / 480, 35 / 480},
-          {255, 2000}
+          {5 / 480, 3 / 480},
+          {10 / 480, 21 / 480},
+          {255, 1200}
         },
         randomization_params = {
           min = 0.4 / 480,
@@ -154,20 +185,6 @@ function randomize_belt_speed ()
         }
       }
     end
-  end]]
-end
-
-function randomize_group_belt_speed ()
-  for _, belt_class in pairs(transport_belt_classes) do
-    local group_params = {}
-    for _, prototype in pairs(data.raw[belt_class]) do
-      table.insert(group_params, {prototype = prototype, property = "speed"})
-    end
-
-    randomize_numerical_property{
-      prg_key = prg.get_key(belt_class, "class"),
-      group_params = group_params
-    }
   end
 end
 
@@ -266,9 +283,8 @@ function randomize_electric_poles ()
       prototype = prototype,
       property = "supply_area_distance",
       inertia_function = {
-        {1, 0},
-        {1.5, 4},
-        {2, 7},
+        {1.5, 0},
+        {2, 4},
         {4, 40},
         {10, 60},
         {50, 200},
@@ -276,7 +292,8 @@ function randomize_electric_poles ()
       },
       randomization_params = {
         min = 0,
-        max = 64
+        max = 64,
+        bias = 0.01
       }
     }
 
@@ -298,6 +315,10 @@ function randomize_electric_poles ()
     }
   end
 end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_enemy_spawning
+---------------------------------------------------------------------------------------------------
 
 -- TODO: Balance this better and fix it up
 function randomize_enemy_spawning ()
@@ -511,6 +532,33 @@ function randomize_gate_opening_speed ()
         ["type"] = "proportional",
         slope = 15
       }
+    }
+  end
+end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_group_belt_speed
+---------------------------------------------------------------------------------------------------
+
+function randomize_group_belt_speed ()
+  for _, belt_class in pairs(transport_belt_classes) do
+    local group_params = {}
+    for _, prototype in pairs(data.raw[belt_class]) do
+      table.insert(group_params, {
+        prototype = prototype,
+        property = "speed",
+        inertia_function = {
+          {0, 0},
+          {5 / 480, 2 / 480},
+          {10 / 480, 24 / 480},
+          {255, 800}
+        }
+      })
+    end
+
+    randomize_numerical_property{
+      prg_key = prg.get_key(belt_class, "class"),
+      group_params = group_params
     }
   end
 end
@@ -754,7 +802,7 @@ function randomize_machine_speed ()
         property = "crafting_speed",
         inertia_function = {
           ["type"] = "proportional",
-          slope = 3.5
+          slope = 2
         },
         randomization_params = {
           min = 0
