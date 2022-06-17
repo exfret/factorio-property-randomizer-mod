@@ -109,6 +109,14 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
+    name = "propertyrandomizer-mining-drill-productivity",
+    localised_name = "Randomize mining drill productivity",
+    localised_description = "This also turns down the chance of a resource being successfully mined to counteract the increased machine productivity.",
+    default_value = false
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
     name = "propertyrandomizer-module-effects",
     localised_name = "Randomize module effects",
     default_value = true

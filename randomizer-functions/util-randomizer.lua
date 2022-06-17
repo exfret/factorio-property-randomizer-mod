@@ -228,9 +228,9 @@ function randomize_resistances (prototype, resistances)
     resistances_already_defined[resistance.type] = true
   end
 
-  for _, prototype in pairs(data.raw["damage-type"]) do
-    if not resistances_already_defined[prototype.name] then
-      table.insert(resistances, {type = prototype.name, decrease = 0, percent = 0})
+  for _, damage_type in pairs(data.raw["damage-type"]) do
+    if not resistances_already_defined[damage_type.name] then
+      table.insert(resistances, {type = damage_type.name, decrease = 0, percent = 0})
     end
   end
 
@@ -245,7 +245,10 @@ function randomize_resistances (prototype, resistances)
     randomize_numerical_property{
       prototype = prototype,
       tbl = resistance,
-      property = "decrease"
+      property = "decrease",
+      randomization_params = {
+        round = true
+      }
     }
 
     randomize_numerical_property{

@@ -139,23 +139,24 @@ local function complete_final_randomization_fixes (params)
     end
   
     -- Min/max it
-    if params.randomization_params.min then
-      tbl[property] = math.max(tbl[property], params.randomization_params.min)
+    if min then
+      tbl[property] = math.max(tbl[property], min)
     end
-    if params.randomization_params.max then
-      tbl[property] = math.min(tbl[property], params.randomization_params.max)
+    if max then
+      tbl[property] = math.min(tbl[property], max)
     end
   end
 
-  fix_individual_property(params.tbl, params.property, params.min, params.max, params.round)
+  fix_individual_property(params.randomization_params.tbl, params.randomization_params.property, params.randomization_params.min, params.randomization_params.max, params.randomization_params.round)
   for _, param_table in pairs(params.group_params) do
     fix_individual_property(param_table.tbl, param_table.property, param_table.min, param_table.max, param_table.round)
   end
 end
 
 -- TODO: Finish moving min/max out of randomization_params
--- params = {dummy = ?, prototype = ?, tbl = ?, property = ?, lower_is_better = ?, min = ?, max = ?, round = ?, inertia function = {?}, prg_key = ?, group_params = {?}, randomization_params = {?}}
--- simultaneous_params = list of {dummy = ?, prototype = ?, tbl = ?, property = ?, lower_is_better = ?, min = ?, max = ?, round = ?, inertia_function = {?}}
+-- params = {dummy = ?, prototype = ?, tbl = ?, property = ?, inertia function = {?}, property_restrictions = {?} prg_key = ?, group_params = {?}, randomization_params = {?}}
+-- property_restrictions = {lower_is_better = ?, min = ?, max = ?, round = ?}
+-- simultaneous_params = list of {dummy = ?, prototype = ?, tbl = ?, property = ?, inertia_function = {?}, property_restrictions = {?}}
 -- inertia_function = [See find_inertia_function_value()]
 -- randomization_params = {bias = ?, steps = ?}
 function randomize_numerical_property (params)

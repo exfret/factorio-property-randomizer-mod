@@ -13,12 +13,10 @@ Next releases:
   - Refactor so that each function called in data-final-fixes uses each prototype exactly once
   - Randomly randomized mode where which settings are randomized is randomized
 
-  - AttackParameters and such
   - Randomize where productivity modules can go (figure out how to do this in a smart way)
   - Randomize biter spawner in a smarter fashion
   - Learn about fluid boxes and randomize those
   - Randomize collision boxes (do more carefully than before, like also changing graphics)
-  - Weird things can take modules, like electric poles? Enemy spawners? Inserters?
   - Game properties randomly change mid-game
   - Electric Miner base productivity
   - Entities are randomly not minable
@@ -48,6 +46,7 @@ Configuration options
   - Add option for variance
 
 Properties:
+  - vector_to_place_result for mining drill
   - Biter pollution absorbed
   - emissions_per_second
   - healing_per_tick
@@ -66,6 +65,7 @@ Silly additions
   - Randomize map colors for entities
   - Properties are randomized based on where the entity is located
   - Properties get re-randomized after each rocket launch
+  - Weird things can take modules, like electric poles? Enemy spawners? Inserters?
 
 Ways to link randomizations:
   - Randomize group and individual prototypes

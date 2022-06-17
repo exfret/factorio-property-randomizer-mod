@@ -851,6 +851,65 @@ function randomize_machine_speed ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_mining_productivity
+---------------------------------------------------------------------------------------------------
+
+local resource_success_chance = 0.8
+
+local function reduce_product_chance (minable_properties)
+  if minable_properties.result then
+    local result_count = 1
+    if minable_properties.count ~= nil then
+      result_count = minable_properties.count
+    end
+
+    minable_properties.results = {{name = minable_properties.result, amount = result_count, probability = resource_success_chance}}
+    minable_properties.result = nil
+  else
+    for _, result in pairs(minable_properties.results) do
+      if result[1] then
+        result.name = result[1]
+        result.amount = 1
+        if result[2] then
+          result.amount = result[2]
+        end
+
+        result[1] = nil
+        result[2] = nil
+      end
+
+      success_probability = resource_success_chance
+      if result.probability then
+        success_probability = success_probability * result.probability
+      end
+
+      result.probability = success_probability
+    end
+  end
+end
+
+function randomize_mining_productivity ()
+  -- First randomize chances of getting resources down
+  for _, resource_prototype in pairs(data.raw.resource) do
+    reduce_product_chance(resource_prototype.minable)
+  end
+
+  -- Now randomize base productivity
+  for _, mining_drill_prototype in pairs(data.raw["mining-drill"]) do
+    if mining_drill_prototype.base_productivity ~= nil then
+      mining_drill_prototype.base_productivity = mining_drill_prototype.base_productivity + 0.25
+    else
+      mining_drill_prototype.base_productivity = 0.25
+    end
+
+    randomize_numerical_property{
+      prototype = mining_drill_prototype,
+      property = "base_productivity"
+    }
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_module_slots
 ---------------------------------------------------------------------------------------------------
 
