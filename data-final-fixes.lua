@@ -83,7 +83,7 @@ end
 
 if rand_machine_speed then
   -- TODO: This may end up randomizing other classes... find a way to fix this
-  -- TODO: Other crafting groups group randomizations
+  -- TODO: Other crafting_machine classes group randomizations
   table.insert(randomizing_functions_to_call, randomize_assembly_machine_groups)
   table.insert(randomizing_functions_to_call, randomize_machine_speed)
 end

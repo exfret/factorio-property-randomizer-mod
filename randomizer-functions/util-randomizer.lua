@@ -247,7 +247,11 @@ function randomize_resistances (prototype, resistances)
       tbl = resistance,
       property = "decrease",
       randomization_params = {
-        round = true
+        round = {
+          [1] = {
+            modulus = 1
+          }
+        }
       }
     }
 
@@ -260,8 +264,12 @@ function randomize_resistances (prototype, resistances)
         {50, 300},
         {110, 0}
       },
-      randomization_params = {
-        round = true
+      property_info = {
+        round = {
+          [1] = {
+            modulus = 1
+          }
+        }
       }
     }
   end

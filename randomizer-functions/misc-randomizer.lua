@@ -72,15 +72,23 @@ function randomize_equipment_grids ()
     randomize_numerical_property{
       prototype = prototype,
       property = "width",
-      randomization_params = {
-        round = true
+      property_info = {
+        round = {
+          [1] = {
+            modulus = 1
+          }
+        }
       }
     }
     randomize_numerical_property{
       prototype = prototype,
       property = "height",
-      randomization_params = {
-        round = true
+      property_info = {
+        round = {
+          [1] = {
+            modulus = 1
+          }
+        }
       }
     }
   end

@@ -14,20 +14,55 @@ function randomize_heat_buffer_power_production_properties (prototype, heat_buff
     heat_buffer.min_working_temperature = 15
   end
 
-  local temperature_multiplier = randomize_numerical_property{
-    dummy = 1,
-    prg_key = prg.get_key(prototype)
+  randomize_numerical_property{
+    group_params = {
+      {
+        prototype = prototype,
+        tbl = heat_buffer,
+        property = "max_temperature",
+        property_info = {
+          round = {
+            [2] = {
+              modulus = 1
+            }
+          }
+        }
+      },
+      {
+        prototype = prototype,
+        tbl = heat_buffer,
+        property = "default_temperature",
+        property_info = {
+          round = {
+            [2] = {
+              modulus = 1
+            }
+          }
+        }
+      },
+      {
+        prototype = prototype,
+        tbl = heat_buffer,
+        property = "min_working_temperature",
+        property_info = {
+          round = {
+            [2] = {
+              modulus = 1
+            }
+          }
+        }
+      }
+    }
   }
-
-  heat_buffer.max_temperature = heat_buffer.max_temperature * temperature_multiplier
-  heat_buffer.default_temperature = heat_buffer.default_temperature * temperature_multiplier
-  heat_buffer.min_working_temperature = heat_buffer.min_working_temperature * temperature_multiplier
 
   -- Max transfer
   local max_transfer_as_number = 60 * util.parse_energy(heat_buffer.max_transfer)
   max_transfer_as_number = randomize_numerical_property{
     dummy = max_transfer_as_number,
-    prg_key = prg.get_key(prototype)
+    prg_key = prg.get_key(prototype),
+    property_info = {
+      
+    }
   }
   heat_buffer.max_transfer = max_transfer_as_number .. "W"
 
@@ -88,7 +123,10 @@ function randomize_energy_source_power_production_properties (prototype, energy_
     randomize_numerical_property{
       prototype = prototype,
       tbl = energy_source,
-      property = "effectivity"
+      property = "effectivity",
+      property_info = {
+        min = 0.0001 -- Must be greater than zero, so we just make it at least this much
+      }
     }
 
     -- Note: there are complicated rules on how to "fill in" this type when it is not nil... get around to using those rules later
@@ -209,7 +247,10 @@ function randomize_power_production_properties ()
   for _, prototype in pairs(data.raw.generator) do
     randomize_numerical_property{
       prototype = prototype,
-      property = "effectivity"
+      property = "effectivity",
+      property_info = {
+        min = 0.001
+      }
     }
 
     randomize_numerical_property{

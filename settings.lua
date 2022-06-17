@@ -7,7 +7,22 @@ data:extend({
     name = "propertyrandomizer-seed",
     localised_name = "Random seed",
     localised_description = "Changing this will change how everything is randomized",
-    default_value = 1
+    default_value = 1,
+    order = "aa"
+  },
+  {
+    setting_type = "startup",
+    type = "string-setting",
+    name = "propertyrandomizer-rounding-mode",
+    localised_name = "Rounding mode",
+    localised_description = "How round would you like your numbers?",
+    default_value = "round-ish",
+    allowed_values = {
+      "murder the rightmost digits mercilessly",
+      "round-ish",
+      "leave 'em raw and unrounded"
+    },
+    order = "ab"
   },
   {
     setting_type = "startup",
@@ -109,14 +124,6 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
-    name = "propertyrandomizer-mining-drill-productivity",
-    localised_name = "Randomize mining drill productivity",
-    localised_description = "This also turns down the chance of a resource being successfully mined to counteract the increased machine productivity.",
-    default_value = false
-  },
-  {
-    setting_type = "startup",
-    type = "bool-setting",
     name = "propertyrandomizer-module-effects",
     localised_name = "Randomize module effects",
     default_value = true
@@ -167,16 +174,24 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
+    name = "propertyrandomizer-mining-drill-productivity",
+    localised_name = "Randomize mining drill productivity",
+    localised_description = "This also turns down the chance of a resource being successfully mined to balance the increased machine productivity.",
+    default_value = false
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
     name = "propertyrandomizer-misc-properties",
     localised_name = "(Almost) everything else",
     localised_description = "Yo dawg, I see you got some extra properties to randomize there. Wanna fix that?",
     default_value = false
-  },
+  }--[[, TODO
   {
     setting_type = "startup",
     type = "bool-setting",
     name = "propertyrandomizer-switch-projectiles",
     localised_name = "Switch projectiles",
     default_value = false
-  }
+  }]]
 })

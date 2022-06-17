@@ -72,6 +72,26 @@ local function set_randomization_param_values(params, defaults)
     end
   end
 
+  if params.property_info == nil then
+    params.property_info = {}
+  end
+
+  if params.property_info.round == nil then
+    params.property_info.round = {}
+  end
+  for i = 1,3 do
+    if params.property_info.round[i] == nil then
+      params.property_info.round[i] = {}
+    end
+  end
+
+  if params.property_info.round[2].modulus == nil then
+    params.property_info.round[2].modulus = 0.1
+  end
+  if params.property_info.round[3].left_digits_to_keep == nil then
+    params.property_info.round[3].left_digits_to_keep = 2
+  end
+
   if params.randomization_params == nil then
     params.randomization_params = {}
   end
@@ -96,7 +116,12 @@ local function set_randomization_param_values(params, defaults)
   params.randomization_params.num_steps = num_steps
 end
 
-function find_sign (roll, lower_is_better)
+function find_sign (roll, property_params)
+  local lower_is_better = false
+  if property_params.property_info ~= nil and property_params.property_info.lower_is_better then
+    lower_is_better = true
+  end
+
   local sign
 
   if roll == "make_property_better" then
@@ -121,42 +146,48 @@ local function nudge_properties (params, roll)
     tbl[property] = tbl[property] + sign * (1 / num_steps) * find_inertia_function_value(inertia_function, tbl[property])
   end
 
-  nudge_individual_property(params.tbl, params.property, find_sign(roll, params.lower_is_better), params.randomization_params.num_steps, params.inertia_function)
+  nudge_individual_property(params.tbl, params.property, find_sign(roll, params), params.randomization_params.num_steps, params.inertia_function)
   for _, param_table in pairs(params.group_params) do
-    nudge_individual_property(param_table.tbl, param_table.property, find_sign(roll, param_table.lower_is_better), param_table.randomization_params.num_steps, param_table.inertia_function)
+    nudge_individual_property(param_table.tbl, param_table.property, find_sign(roll, param_table), param_table.randomization_params.num_steps, param_table.inertia_function)
   end
 end
 
 local function complete_final_randomization_fixes (params)
-  local function fix_individual_property(tbl, property, min, max, round)
-    if tbl[property] == nil then
+  local function fix_individual_property(tbl, property, property_info)
+    if tbl[property] == nil or property_info == nil then
       return
     end
 
-    -- TODO: More complicated rounding logic based on rounding setting
-    if round then
-      tbl[property] = math.floor(tbl[property] + 0.5)
+    local left_digits_to_keep = property_info.round[rounding_mode].left_digits_to_keep
+    local modulus = property_info.round[rounding_mode].modulus
+    if left_digits_to_keep ~= nil then
+      modulus = math.pow(10, math.floor(math.log(tbl[property])) - left_digits_to_keep)
+      tbl[property] = math.floor((tbl[property] + modulus / 2) / modulus) * modulus
+    elseif modulus ~= nil then
+      tbl[property] = math.floor((tbl[property] + modulus / 2) / modulus) * modulus
     end
   
     -- Min/max it
-    if min then
-      tbl[property] = math.max(tbl[property], min)
+    if property_info.min ~= nil then
+      tbl[property] = math.max(tbl[property], property_info.min)
     end
-    if max then
-      tbl[property] = math.min(tbl[property], max)
+    if property_info.max ~= nil then
+      tbl[property] = math.min(tbl[property], property_info.max)
     end
   end
 
-  fix_individual_property(params.randomization_params.tbl, params.randomization_params.property, params.randomization_params.min, params.randomization_params.max, params.randomization_params.round)
+  fix_individual_property(params.tbl, params.property, params.property_info)
   for _, param_table in pairs(params.group_params) do
-    fix_individual_property(param_table.tbl, param_table.property, param_table.min, param_table.max, param_table.round)
+    fix_individual_property(param_table.tbl, param_table.property, params.property_info)
   end
 end
 
 -- TODO: Finish moving min/max out of randomization_params
--- params = {dummy = ?, prototype = ?, tbl = ?, property = ?, inertia function = {?}, property_restrictions = {?} prg_key = ?, group_params = {?}, randomization_params = {?}}
--- property_restrictions = {lower_is_better = ?, min = ?, max = ?, round = ?}
--- simultaneous_params = list of {dummy = ?, prototype = ?, tbl = ?, property = ?, inertia_function = {?}, property_restrictions = {?}}
+-- params = {dummy = ?, prototype = ?, tbl = ?, property = ?, inertia function = {?}, property_info = {?} prg_key = ?, group_params = {?}, randomization_params = {?}}
+-- property_info = {lower_is_better = ?, min = ?, max = ?, round = {?}}
+-- round = {rounding_params1, rounding_params2, rounding_params3}
+-- rounding_params = {modulus = ?}
+-- simultaneous_params = list of {dummy = ?, prototype = ?, tbl = ?, property = ?, inertia_function = {?}, property_info = {?}}
 -- inertia_function = [See find_inertia_function_value()]
 -- randomization_params = {bias = ?, steps = ?}
 function randomize_numerical_property (params)

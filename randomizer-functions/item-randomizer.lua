@@ -33,8 +33,10 @@ function randomize_ammo ()
     randomize_numerical_property{
       prototype = prototype,
       property = "magazine_size",
-      randomization_params = {
+      property_info = {
         min = 1,
+      },
+      randomization_params = {
         bias = 0.475 -- Make the bias towards smaller magazines to make up for the boost from having the minimum at 1
       }
     }
@@ -50,7 +52,7 @@ function randomize_ammo ()
         slope = 4,
         ["x-intercept"] = -60
       },
-      randomization_params = {
+      property_info = {
         min = 0
       }
     }
@@ -123,8 +125,10 @@ function randomize_item_stack_sizes ()
             ["type"] = "proportional",
             slope = 7
           },
+          property_info = {
+            min = 1
+          },
           randomization_params = {
-            min = 1,
             bias = 0.525 -- It's better to give the player enormously large stack sizes than to have enormously small ones, so skew to larger ones
           }
         }
@@ -164,7 +168,7 @@ function randomize_module_effects ()
         {0.8, 5},
         {100, 5}
       },
-      randomization_params = {
+      property_info = {
         min = -0.8
       }
     }
@@ -187,7 +191,7 @@ function randomize_module_effects ()
         {1, 1.2},
         {100, 2}
       },
-      randomization_params = {
+      property_info = {
         min = -1
       }
     }
@@ -209,7 +213,7 @@ function randomize_module_effects ()
         {0.3, 0.1},
         {100, 0.1}
       },
-      randomization_params = {
+      property_info = {
         min = 0
       }
     }
@@ -231,7 +235,7 @@ function randomize_module_effects ()
         {0.2, 1.4},
         {100, 1.4}
       },
-      randomization_params = {
+      property_info = {
         min = -1
       }
     }

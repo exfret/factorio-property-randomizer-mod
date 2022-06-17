@@ -114,7 +114,7 @@ function randomize_assembly_machine_groups ()
           ["type"] = "proportional",
           slope = 2
         },
-        randomization_params = {
+        property_info = {
           min = 0
         }
       })
@@ -141,7 +141,7 @@ function randomize_beacon_properties ()
         slope = 3.5,
         ["x-intercept"] = 1.5
       },
-      randomization_params = {
+      property_info = {
         min = 2,
         max = 64
       }
@@ -154,7 +154,7 @@ function randomize_beacon_properties ()
         ["type"] = "proportional",
         slope = 4
       },
-      randomization_params = {
+      property_info = {
         min = 0
       }
     }
@@ -179,7 +179,7 @@ function randomize_belt_speed ()
           {10 / 480, 21 / 480},
           {255, 1200}
         },
-        randomization_params = {
+        property_info = {
           min = 0.4 / 480,
           max = 255
         }
@@ -291,9 +291,11 @@ function randomize_electric_poles ()
         {50, 200},
         {64, 0}
       },
-      randomization_params = {
+      property_info = {
         min = 1.5,
         max = 64,
+      },
+      randomization_params = {
         bias = 0.555
       }
     }
@@ -309,7 +311,7 @@ function randomize_electric_poles ()
         {50, 300},
         {64, 0}
       },
-      randomization_params = {
+      property_info = {
         min = 0,
         max = 64
       }
@@ -553,6 +555,10 @@ function randomize_group_belt_speed ()
           {5 / 480, 2 / 480},
           {10 / 480, 24 / 480},
           {255, 800}
+        },
+        property_info = {
+          min = 0.4 / 480,
+          max = 255
         }
       })
     end
@@ -706,10 +712,14 @@ function randomize_inventory_sizes ()
               {10, 80},
               {65535, 524280}
             },
-            randomization_params = {
+            property_info = {
               min = 1,
               max = 65535,
-              round = true
+              round = {
+                [1] = {
+                  modulus = 1
+                }
+              }
             }
           }
         end
@@ -729,7 +739,7 @@ function randomize_inventory_sizes ()
               ["type"] = "constant",
               value = 40
             },
-            randomization_params = {
+            property_info = {
               min = 1
             }
           }
@@ -742,7 +752,7 @@ function randomize_inventory_sizes ()
               ["type"] = "constant",
               value = 40
             },
-            randomization_params = {
+            property_info = {
               min = 1
             }
           }
@@ -805,7 +815,7 @@ function randomize_machine_speed ()
           ["type"] = "proportional",
           slope = 2
         },
-        randomization_params = {
+        property_info = {
           min = 0
         }
       }
@@ -818,7 +828,7 @@ function randomize_machine_speed ()
           ["type"] = "proportional",
           slope = 2
         },
-        randomization_params = {
+        property_info = {
           min = 0
         }
       }
@@ -830,7 +840,7 @@ function randomize_machine_speed ()
           ["type"] = "proportional",
           slope = 8
         },
-        randomization_params = {
+        property_info = {
           min = 0
         }
       }
@@ -842,7 +852,7 @@ function randomize_machine_speed ()
           ["type"] = "proportional",
           slope = 10
         },
-        randomization_params = {
+        property_info = {
           min = 0
         }
       }
@@ -938,10 +948,14 @@ function randomize_module_slots ()
             ["type"] = "constant",
             value = 10
           },
-          randomization_params = {
+          property_info = {
             min = 0,
             max = 65535,
-            round = true
+            round = {
+              [1] = {
+                modulus = 1
+              }
+            }
           }
         }
       end
@@ -988,10 +1002,14 @@ function randomize_roboports ()
         ["type"] = "constant",
         value = 40
       },
-      randomization_params = {
+      property_info = {
         min = 0,
         max = 10,
-        round = true
+        round = {
+          [1] = {
+            modulus = 1
+          }
+        }
       }
     }
     
@@ -1002,10 +1020,14 @@ function randomize_roboports ()
         ["type"] = "constant",
         value = 40
       },
-      randomization_params = {
+      property_info = {
         min = 0,
         max = 10,
-        round = true
+        round = {
+          [1] = {
+            modulus = 1
+          }
+        }
       }
     }
 
@@ -1028,9 +1050,13 @@ function randomize_roboports ()
         ["type"] = "constant",
         value = 40
       },
-      randomization_params = {
+      property_info = {
         min = 1,
-        round = true
+        round = {
+          [1] = {
+            modulus = 1
+          }
+        }
       }
     }
 
@@ -1040,14 +1066,14 @@ function randomize_roboports ()
     end
     local logistics_distance_multiplier = randomize_numerical_property{
       dummy = (prototype.logistics_radius + prototype.logistics_connection_distance) / 2,
-      randomization_params = {
+      property_info = {
         min = 0
       }
     }
     randomize_numerical_property{
       prototype = prototype,
       property = "logistics_radius",
-      randomization_params = {
+      property_info = {
         min = 0,
         max = logistics_distance_multiplier
       }
@@ -1055,7 +1081,7 @@ function randomize_roboports ()
     randomize_numerical_property{
       prototype = prototype,
       property = "logistics_connection_distance",
-      randomization_params = {
+      property_info = {
         min = logistics_distance_multiplier
       }
     }
@@ -1063,7 +1089,7 @@ function randomize_roboports ()
     randomize_numerical_property{
       prototype = prototype,
       property = "construction_radius",
-      randomization_params = {
+      property_info = {
         min = 0
       }
     }
@@ -1086,11 +1112,17 @@ function randomize_underground_belt_distance ()
         {8, 60},
         {255, 3000}
       },
-      randomization_params = {
-        bias = 0.525, -- Make bias towards a little higher to fight against the offshoot to the left I was having
+      property_info = {
         min = 2, -- TODO: Allow underground distance of 1 on extreme mode
         max = 255,
-        round = true
+        round = {
+          [3] = {
+            modulus = 1
+          }
+        }
+      },
+      randomization_params = {
+        bias = 0.525, -- Make bias towards a little higher to fight against the offshoot to the left I was having
       }
     }
   end

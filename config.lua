@@ -1,5 +1,14 @@
 seed_setting = settings.startup["propertyrandomizer-seed"].value
 
+rounding_mode = -1
+if settings.startup["propertyrandomizer-rounding-mode"].value == "murder the rightmost digits mercilessly" then
+  rounding_mode = 3
+elseif settings.startup["propertyrandomizer-rounding-mode"].value == "round-ish" then
+  rounding_mode = 2
+elseif settings.startup["propertyrandomizer-rounding-mode"].value == "leave 'em raw and unrounded" then
+  rounding_mode = 1
+end
+
 -- Basic randomizations
 
 rand_ammo = settings.startup["propertyrandomizer-ammo"].value
@@ -32,7 +41,7 @@ rand_entity_interaction_speed = settings.startup["propertyrandomizer-entity-inte
 rand_gate_opening_speed = settings.startup["propertyrandomizer-misc-properties"].value
 rand_inserter_position = settings.startup["propertyrandomizer-inserter-position"].value
 rand_mining_drill_productivity = settings.startup["propertyrandomizer-mining-drill-productivity"].value
-rand_switch_projectiles = settings.startup["propertyrandomizer-switch-projectiles"].value
+--rand_switch_projectiles = settings.startup["propertyrandomizer-switch-projectiles"].value
 rand_tools = settings.startup["propertyrandomizer-misc-properties"].value
 
 -- Silly randomizations

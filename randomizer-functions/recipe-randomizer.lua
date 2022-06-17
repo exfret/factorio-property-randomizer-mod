@@ -68,6 +68,9 @@ function randomize_crafting_times ()
       inertia_function = {
         ["type"] = "proportional",
         slope = slope
+      },
+      property_info = {
+        min = 0.01
       }
     }
   end
