@@ -115,7 +115,12 @@ function randomize_assembly_machine_groups ()
           slope = 2
         },
         property_info = {
-          min = 0
+          min = 0,
+          round = {
+            [2] = {
+              modulus = 0.01
+            }
+          }
         }
       })
     end
@@ -143,7 +148,18 @@ function randomize_beacon_properties ()
       },
       property_info = {
         min = 2,
-        max = 64
+        max = 64,
+        round = {
+          [1] = {
+            modulus = 0.5
+          },
+          [2] = {
+            modulus = 0.5
+          },
+          [3] = {
+            modulus = 0.5
+          }
+        }
       }
     }
 
@@ -155,7 +171,15 @@ function randomize_beacon_properties ()
         slope = 4
       },
       property_info = {
-        min = 0
+        min = 0,
+        round = {
+          [2] = {
+            modulus = 0.01
+          },
+          [3] = {
+            modulus = 0.1
+          }
+        }
       }
     }
   end
@@ -180,8 +204,16 @@ function randomize_belt_speed ()
           {255, 1200}
         },
         property_info = {
-          min = 0.4 / 480,
-          max = 255
+          min = 0.00390625,
+          max = 255,
+          round = {
+            [2] = {
+              modulus = 0.00390625 * 2.0
+            },
+            [3] = {
+              modulus = 0.00390625 * 4.0
+            }
+          }
         }
       }
     end
@@ -557,8 +589,16 @@ function randomize_group_belt_speed ()
           {255, 800}
         },
         property_info = {
-          min = 0.4 / 480,
-          max = 255
+          min = 0.00390625,
+          max = 255,
+          round = {
+            [2] = {
+              modulus = 0.00390625 * 2.0
+            },
+            [3] = {
+              modulus = 0.00390625 * 4.0
+            }
+          }
         }
       })
     end
@@ -718,6 +758,12 @@ function randomize_inventory_sizes ()
               round = {
                 [1] = {
                   modulus = 1
+                },
+                [2] = {
+                  modulus = 1
+                },
+                [3] = {
+                  modulus = 1
                 }
               }
             }
@@ -816,7 +862,12 @@ function randomize_machine_speed ()
           slope = 2
         },
         property_info = {
-          min = 0
+          min = 0,
+          round = {
+            [2] = {
+              modulus = 0.01
+            }
+          }
         }
       }
 
@@ -829,7 +880,12 @@ function randomize_machine_speed ()
           slope = 2
         },
         property_info = {
-          min = 0
+          min = 0.01,
+          round = {
+            [2] = {
+              modulus = 0.01
+            }
+          }
         }
       }
 
@@ -841,7 +897,12 @@ function randomize_machine_speed ()
           slope = 8
         },
         property_info = {
-          min = 0
+          min = 10,
+          round = {
+            [2] = {
+              modulus = 10
+            }
+          }
         }
       }
 
@@ -853,7 +914,15 @@ function randomize_machine_speed ()
           slope = 10
         },
         property_info = {
-          min = 0
+          min = 0.01,
+          round = {
+            [2] = {
+              modulus = 0.01
+            },
+            [3] = {
+              modulus = 0.1
+            }
+          }
         }
       }
     end
@@ -954,6 +1023,12 @@ function randomize_module_slots ()
             round = {
               [1] = {
                 modulus = 1
+              },
+              [2] = {
+                modulus = 1
+              },
+              [3] = {
+                modulus = 1
               }
             }
           }
@@ -1008,6 +1083,12 @@ function randomize_roboports ()
         round = {
           [1] = {
             modulus = 1
+          },
+          [2] = {
+            modulus = 1
+          },
+          [3] = {
+            modulus = 1
           }
         }
       }
@@ -1025,6 +1106,12 @@ function randomize_roboports ()
         max = 10,
         round = {
           [1] = {
+            modulus = 1
+          },
+          [2] = {
+            modulus = 1
+          },
+          [3] = {
             modulus = 1
           }
         }
@@ -1054,6 +1141,12 @@ function randomize_roboports ()
         min = 1,
         round = {
           [1] = {
+            modulus = 1
+          },
+          [2] = {
+            modulus = 1
+          },
+          [3] = {
             modulus = 1
           }
         }
@@ -1116,6 +1209,12 @@ function randomize_underground_belt_distance ()
         min = 2, -- TODO: Allow underground distance of 1 on extreme mode
         max = 255,
         round = {
+          [1] = {
+            modulus = 1
+          },
+          [2] = {
+            modulus = 1
+          },
           [3] = {
             modulus = 1
           }

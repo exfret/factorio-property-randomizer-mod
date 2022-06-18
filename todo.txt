@@ -32,6 +32,11 @@ Next releases:
   - Randomize research
   - Link inserters (specifically, filter inserters should be hard linked)
   - Better rounding
+  - Account for efficiency when rounding energy_used for furnaces (and other such objects)
+  - Finish adding rounding paramaters in randomizers!
+  - Round min consumption
+  - Combine modulus and leftdigitstokeep
+  - Figure out why pumping_speed was zero
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call
