@@ -18,9 +18,6 @@ Next releases:
   - Randomize biter spawner in a smarter fashion
   - Learn about fluid boxes and randomize those
   - Randomize collision boxes (do more carefully than before, like also changing graphics)
-  - Game properties randomly change mid-game
-  - Electric Miner base productivity
-  - Entities are randomly not minable
   - Shuffle damage types (advanced randomization)
   - Recipes randomly require water
   - Crafting times less variance for items need for science
@@ -29,19 +26,18 @@ Next releases:
   - Fast replaceable group and next_upgrade - use to determine things of the same type and the tiers
   - Player chooses between different prototypes
   - Find similar type entities in a better way
-  - Fix where min/max is passed
   - Randomize research
   - Link inserters (specifically, filter inserters should be hard linked)
-  - Better rounding
   - Account for efficiency when rounding energy_used for furnaces (and other such objects)
   - Finish adding rounding paramaters in randomizers!
   - Round min consumption
-  - Combine modulus and leftdigitstokeep
-  - Figure out why pumping_speed was zero
-  - Rounding presets
   - Check for extra properties in params for randomize_numerical_property to catch errors
   - Make control.lua work for existing saves
   - Check about problem with hive mind
+  - More random game changing midgame
+  - Link inserter positions so that no two inserters have two positions
+  - Optional mod dependencies with "extra thing" mods in mind
+  - Add recommended mods (increased inventory)
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call

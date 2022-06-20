@@ -7,6 +7,8 @@ Date: ?
     - Added compatibility with abnormal inserter collision boxes (currently I just ignore these inserters)
   Changes:
     - Rounding no longer applies automatically to new randomizations
+  Balancing:
+    - Rebalanced electric poles to have lower variance and be slightly more generous toward the player (again)
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.2
 Date: 2022.06.18

@@ -415,17 +415,17 @@ function randomize_electric_poles ()
       prototype = prototype,
       property = "supply_area_distance",
       inertia_function = {
-        {-2, 4},
-        {1.5, 4},
-        {2, 8},
-        {4, 60},
-        {10, 80},
-        {50, 200},
+        {-2, 3},
+        {1.5, 3},
+        {2, 6},
+        {4, 45},
+        {10, 60},
+        {50, 150},
         {64, 0}
       },
       property_info = supply_area_property_info,
       randomization_params = {
-        bias = 0.555
+        bias = 0.565
       }
     }
 
@@ -988,10 +988,10 @@ function randomize_machine_speed ()
           slope = 8
         },
         property_info = {
-          min = 10,
+          min = 10 / 60,
           round = {
             [2] = {
-              modulus = 10
+              modulus = 10 / 60
             }
           }
         }
