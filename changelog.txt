@@ -4,6 +4,9 @@ Date: ?
   Features:
     - Implemented more rounding rules
     - Added ability to randomize character crafting and running speeds midgame
+    - Added compatibility with abnormal inserter collision boxes (currently I just ignore these inserters)
+  Changes:
+    - Rounding no longer applies automatically to new randomizations
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.2
 Date: 2022.06.18

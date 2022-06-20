@@ -154,7 +154,7 @@ data:extend({
     setting_type = "startup",
     type = "bool-setting",
     name = "propertyrandomizer-character-values-midgame",
-    localise_name = "Randomize character values midgame",
+    localised_name = "Randomize character values midgame",
     localised_description = "Randomize character crafting speed and walking speed every 10 minutes",
     default_value = false
   },

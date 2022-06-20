@@ -32,6 +32,19 @@ local machine_speed_property_info = {
   }
 }
 
+local inventory_slots_property_info = {
+  min = 1,
+  max = 10,
+  round = {
+    [1] = {
+      modulus = 1
+    },
+    [2] = {
+      modulus = 1
+    }
+  }
+}
+
 local small_inventory_property_info = {
   min = 0,
   max = 65535,
@@ -100,6 +113,18 @@ local wire_distance_property_info = {
   round = {
     [3] = {
       modulus = 1
+    }
+  }
+}
+
+local effectivity_property_info = {
+  min = 0.001,
+  round = {
+    [2] = {
+      modulus = 0.01
+    },
+    [3] = {
+      modulus = 0.1
     }
   }
 }
@@ -238,21 +263,7 @@ function randomize_beacon_properties ()
         slope = 3.5,
         ["x-intercept"] = 1.5
       },
-      property_info = {
-        min = 2,
-        max = 64,
-        round = {
-          [1] = {
-            modulus = 0.5
-          },
-          [2] = {
-            modulus = 0.5
-          },
-          [3] = {
-            modulus = 0.5
-          }
-        }
-      }
+      property_info = supply_area_property_info
     }
 
     randomize_numerical_property{
@@ -262,17 +273,7 @@ function randomize_beacon_properties ()
         ["type"] = "proportional",
         slope = 4
       },
-      property_info = {
-        min = 0,
-        round = {
-          [2] = {
-            modulus = 0.01
-          },
-          [3] = {
-            modulus = 0.1
-          }
-        }
-      }
+      property_info = effectivity_property_info
     }
   end
 end
@@ -324,11 +325,19 @@ function randomize_bot_speed ()
         inertia_function = {
           ["type"] = "proportional",
           slope = 5 -- Can be higher since bots aren't as necessary
+        },
+        property_info = {
+          min = 0.1 / 216,
+          round = {
+            [2] = {
+              modulus = 1 / 216
+            }
+          }
         }
       }
 
       -- Make sure max_speed is at least speed
-      if prototype.max_speed then
+      if prototype.max_speed ~= nil then
         prototype.max_speed = prototype.max_speed * prototype.speed / old_speed
       end
     end
@@ -364,6 +373,11 @@ function randomize_character_corpse_time_to_live ()
       inertia_function = {
         ["type"] = "proportional",
         slope = 10
+      },
+      round = {
+        [2] = {
+          modulus = 3600
+        }
       }
     }
   end
@@ -381,7 +395,12 @@ function randomize_character_respawn_time ()
 
     randomize_numerical_property{
       prototype = prototype,
-      property = "respawn_time"
+      property = "respawn_time",
+      round = {
+        [2] = {
+          round = 60
+        }
+      }
     }
   end
 end
@@ -404,10 +423,7 @@ function randomize_electric_poles ()
         {50, 200},
         {64, 0}
       },
-      property_info = {
-        min = 1.5,
-        max = 64,
-      },
+      property_info = supply_area_property_info,
       randomization_params = {
         bias = 0.555
       }
@@ -424,10 +440,7 @@ function randomize_electric_poles ()
         {50, 300},
         {64, 0}
       },
-      property_info = {
-        min = 0,
-        max = 64
-      }
+      property_info = wire_distance_property_info
     }
   end
 end
@@ -695,7 +708,14 @@ function randomize_health_properties ()
       end
       randomize_numerical_property{
         prototype = prototype,
-        property = "max_health"
+        property = "max_health",
+        property_info = {
+          round = {
+            [2] = {
+              modulus = 5
+            }
+          }
+        }
       }
 
       randomize_resistances(prototype, prototype.resistances)
@@ -728,18 +748,21 @@ local inserter_pickup_positions = {
 -- TODO: Add Bob's mods compatibility
 function randomize_inserter_insert_dropoff_positions()
   for _, prototype in pairs(data.raw.inserter) do
-    local key = prototype.type .. "aaa" .. prototype.name
+    -- Test that this inserter is a "good" size
+    if prototype.collision_box ~= nil and prototype.collision_box[1][1] == -0.15 and prototype.collision_box[1][2] == -0.15 and prototype.collision_box[2][1] == 0.15 and prototype.collisions_box[2][2] == 0.15 then
+      local key = prototype.type .. "aaa" .. prototype.name
 
-    local inserter_position_variable = prg.range(key, 1,8)
+      local inserter_position_variable = prg.range(key, 1,8)
 
-    -- 1/4 chance to change to a different type of insert position
-    if 1 <= inserter_position_variable and inserter_position_variable <= 3 then
-      prototype.insert_position = inserter_insert_positions[prg.range(key, 1, #inserter_insert_positions)]
-    end
+      -- 1/4 chance to change to a different type of insert position
+      if 1 <= inserter_position_variable and inserter_position_variable <= 3 then
+        prototype.insert_position = inserter_insert_positions[prg.range(key, 1, #inserter_insert_positions)]
+      end
 
-    -- 1/4 chance to change to a different type of pickup position
-    if 2 <= inserter_position_variable and inserter_position_variable <= 4 then
-      prototype.pickup_position = inserter_pickup_positions[prg.range(key, 1, #inserter_pickup_positions)]
+      -- 1/4 chance to change to a different type of pickup position
+      if 2 <= inserter_position_variable and inserter_position_variable <= 4 then
+        prototype.pickup_position = inserter_pickup_positions[prg.range(key, 1, #inserter_pickup_positions)]
+      end
     end
   end
 end
@@ -756,6 +779,16 @@ function randomize_inserter_speed ()
       inertia_function = {
         ["type"] = "proportional",
         slope = 3
+      },
+      property_info = {
+        round = {
+          [2] = {
+            modulus = 10 / (360 * 60)
+          },
+          [3] = {
+            modulus = 100 / (360 * 60)
+          }
+        }
       }
     }
 
@@ -813,6 +846,14 @@ function randomize_inventory_sizes ()
     for _, prototype in pairs(data.raw[class_name]) do
       for _, property_name in pairs(inventory_property_list) do
         if prototype[property_name] then
+          local property_info_to_use
+          if prototype[property_name] == 0 then
+            property_info_to_use = small_inventory_property_info
+          elseif prototype[property_name] < 10 then
+            property_info_to_use = small_nonempty_inventory_property_info
+          else
+            property_info_to_use = large_inventory_property_info
+          end
           randomize_numerical_property{
             prototype = prototype,
             property = property_name,
@@ -822,21 +863,7 @@ function randomize_inventory_sizes ()
               {10, 80},
               {65535, 524280}
             },
-            property_info = {
-              min = 1,
-              max = 65535,
-              round = {
-                [1] = {
-                  modulus = 1
-                },
-                [2] = {
-                  modulus = 1
-                },
-                [3] = {
-                  modulus = 1
-                }
-              }
-            }
+            property_info = property_info_to_use
           }
         end
       end
@@ -855,9 +882,7 @@ function randomize_inventory_sizes ()
               ["type"] = "constant",
               value = 40
             },
-            property_info = {
-              min = 1
-            }
+            property_info = small_nonempty_inventory_property_info
           }
 
           randomize_numerical_property{
@@ -868,9 +893,7 @@ function randomize_inventory_sizes ()
               ["type"] = "constant",
               value = 40
             },
-            property_info = {
-              min = 1
-            }
+            property_info = small_inventory_property_info
           }
         end
       end
@@ -901,7 +924,12 @@ function randomize_machine_pollution ()
         randomize_numerical_property{
           prototype = prototype,
           tbl = prototype[energy_source_name],
-          property = "emissions_per_minute"
+          property = "emissions_per_minute",
+          round = {
+            [3] = {
+              modulus = 1
+            }
+          }
         }
       end
     end
@@ -949,14 +977,7 @@ function randomize_machine_speed ()
           ["type"] = "proportional",
           slope = 2
         },
-        property_info = {
-          min = 0.01,
-          round = {
-            [2] = {
-              modulus = 0.01
-            }
-          }
-        }
+        property_info = machine_speed_property_info
       }
 
       randomize_numerical_property{
@@ -983,17 +1004,7 @@ function randomize_machine_speed ()
           ["type"] = "proportional",
           slope = 10
         },
-        property_info = {
-          min = 0.01,
-          round = {
-            [2] = {
-              modulus = 0.01
-            },
-            [3] = {
-              modulus = 0.1
-            }
-          }
-        }
+        property_info = machine_speed_property_info
       }
     end
   end
@@ -1087,21 +1098,7 @@ function randomize_module_slots ()
             ["type"] = "constant",
             value = 10
           },
-          property_info = {
-            min = 0,
-            max = 65535,
-            round = {
-              [1] = {
-                modulus = 1
-              },
-              [2] = {
-                modulus = 1
-              },
-              [3] = {
-                modulus = 1
-              }
-            }
-          }
+          property_info = small_inventory_property_info
         }
       end
     end
@@ -1129,7 +1126,13 @@ function randomize_reactor_neighbour_bonus ()
     end
     randomize_numerical_property{
       prototype = prototype,
-      property = "neighbour_bonus"
+      property = "neighbour_bonus",
+      round = {
+        min = 0,
+        [2] = {
+          modulus = 0.1
+        }
+      }
     }
   end
 end
@@ -1147,21 +1150,7 @@ function randomize_roboports ()
         ["type"] = "constant",
         value = 40
       },
-      property_info = {
-        min = 0,
-        max = 10,
-        round = {
-          [1] = {
-            modulus = 1
-          },
-          [2] = {
-            modulus = 1
-          },
-          [3] = {
-            modulus = 1
-          }
-        }
-      }
+      property_info = inventory_slots_property_info
     }
     
     randomize_numerical_property{
@@ -1171,21 +1160,7 @@ function randomize_roboports ()
         ["type"] = "constant",
         value = 40
       },
-      property_info = {
-        min = 0,
-        max = 10,
-        round = {
-          [1] = {
-            modulus = 1
-          },
-          [2] = {
-            modulus = 1
-          },
-          [3] = {
-            modulus = 1
-          }
-        }
-      }
+      property_info = inventory_slots_property_info
     }
 
     -- Randomize how quickly robots charge
@@ -1215,9 +1190,6 @@ function randomize_roboports ()
           },
           [2] = {
             modulus = 1
-          },
-          [3] = {
-            modulus = 1
           }
         }
       }
@@ -1230,22 +1202,46 @@ function randomize_roboports ()
     local logistics_distance_multiplier = randomize_numerical_property{
       dummy = (prototype.logistics_radius + prototype.logistics_connection_distance) / 2,
       property_info = {
-        min = 0
+        min = 1,
+        round = {
+          [2] = {
+            modulus = 1
+          },
+          [3] = {
+            modulus = 5
+          }
+        }
       }
     }
     randomize_numerical_property{
       prototype = prototype,
       property = "logistics_radius",
       property_info = {
-        min = 0,
-        max = logistics_distance_multiplier
+        min = 1,
+        max = logistics_distance_multiplier,
+        round = {
+          [2] = {
+            modulus = 1
+          },
+          [3] = {
+            modulus = 5
+          }
+        }
       }
     }
     randomize_numerical_property{
       prototype = prototype,
       property = "logistics_connection_distance",
       property_info = {
-        min = logistics_distance_multiplier
+        min = logistics_distance_multiplier,
+        round = {
+          [2] = {
+            modulus = 1
+          },
+          [3] = {
+            modulus = 5
+          }
+        }
       }
     }
 
@@ -1253,7 +1249,15 @@ function randomize_roboports ()
       prototype = prototype,
       property = "construction_radius",
       property_info = {
-        min = 0
+        min = 1,
+        round = {
+          [2] = {
+            modulus = 1
+          },
+          [3] = {
+            modulus = 5
+          }
+        }
       }
     }
   end

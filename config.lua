@@ -35,7 +35,7 @@ rand_vehicles = settings.startup["propertyrandomizer-vehicles"].value
 -- Advanced randomizations
 
 rand_character_corpse_time_to_live = settings.startup["propertyrandomizer-misc-properties"].value
-rand_character_properties_midgame = settings.startup["propertyrandomizer-rand_character_properties_midgame"].value
+rand_character_properties_midgame = settings.startup["propertyrandomizer-character-values-midgame"].value
 rand_character_respawn_time = settings.startup["propertyrandomizer-misc-properties"].value
 rand_enemy_spawning = settings.startup["propertyrandomizer-enemy-spawning"].value
 rand_entity_interaction_speed = settings.startup["propertyrandomizer-entity-interaction-speed"].value

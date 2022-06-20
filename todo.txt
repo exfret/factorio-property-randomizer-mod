@@ -41,6 +41,7 @@ Next releases:
   - Rounding presets
   - Check for extra properties in params for randomize_numerical_property to catch errors
   - Make control.lua work for existing saves
+  - Check about problem with hive mind
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call

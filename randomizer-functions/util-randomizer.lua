@@ -246,9 +246,9 @@ function randomize_resistances (prototype, resistances)
       prototype = prototype,
       tbl = resistance,
       property = "decrease",
-      randomization_params = {
+      property_info = {
         round = {
-          [3] = {
+          [2] = {
             modulus = 1
           }
         }
