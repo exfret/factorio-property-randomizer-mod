@@ -11,6 +11,9 @@ local belt_speed_property_info = {
   min = 0.00390625,
   max = 255,
   round = {
+    [1] = {
+      modulus = 0.00390625
+    },
     [2] = {
       modulus = 0.00390625 * 2.0
     },
@@ -718,7 +721,9 @@ function randomize_health_properties ()
         }
       }
 
-      randomize_resistances(prototype, prototype.resistances)
+      randomize_resistances{
+        prototypes = {prototype}
+      }
       -- TODO: Get rid of showing all resistances
       prototype.hide_resistances = false -- Make it so that players can see that resistances were changed
     end

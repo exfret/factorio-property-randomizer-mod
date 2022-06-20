@@ -74,7 +74,10 @@ end
 function randomize_armor_resistances ()
   for _, prototype in pairs(data.raw.armor) do
     if prototype.resistances then
-      randomize_resistances(prototype, prototype.resistances)
+      randomize_resistances{
+        prototypes = {prototype},
+        variance = 0
+      }
     end
   end
 end
@@ -88,6 +91,23 @@ function randomize_capsules ()
     -- capsule_action is a mandatory property, so no need to check it
     randomize_capsule_action(prototype, prototype.capsule_action)
   end
+end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_group_armor_resistances
+---------------------------------------------------------------------------------------------------
+
+function randomize_group_armor_resistances ()
+  local prototype_list = {}
+
+  for _, prototype in pairs(data.raw.armor) do
+    table.insert(prototype_list, prototype)
+  end
+
+  randomize_resistances{
+    prototypes = prototype_list,
+    variance = 1
+  }
 end
 
 ---------------------------------------------------------------------------------------------------

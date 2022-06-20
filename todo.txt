@@ -38,10 +38,15 @@ Next releases:
   - Link inserter positions so that no two inserters have two positions
   - Optional mod dependencies with "extra thing" mods in mind
   - Add recommended mods (increased inventory)
+  - Add special "compaitibilities" for vanilla
+  - Add thumbnail
+  - prg_key for group randomizations
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call
   - Make a proper readme
+  - Get feedback on file system
+  - Compare config file to other mods to see how it is
 
 Random maps
   - Randomize enemy evolution parameters

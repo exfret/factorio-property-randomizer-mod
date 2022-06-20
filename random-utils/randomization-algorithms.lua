@@ -1,4 +1,7 @@
 require("random")
+
+require("globals")
+
 -- TODO: function for simultaneous randomization?
 
 -- inertia_function assumed to drop to zero between inputs and outputs
@@ -68,7 +71,10 @@ local function set_randomization_param_values(params, defaults)
     if defaults.inertia_function ~= nil then
       params.inertia_function = defaults.inertia_function
     else
-      params.inertia_function = {["type"] = "proportional", slope = 3}
+      params.inertia_function = {
+        ["type"] = "proportional",
+        slope = DEFAULT_INERTIA_FUNCTION_SLOPE
+      }
     end
   end
 

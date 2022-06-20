@@ -1,3 +1,5 @@
+require("globals")
+
 require("random-utils/randomization-algorithms")
 
 projectile_list = {}
@@ -217,63 +219,91 @@ function randomize_attack_parameters (prototype, attack_parameters)
 end
 
 -- TODO: Do this in a cooler way?
-function randomize_resistances (prototype, resistances)
-  if resistances == nil then
-    resistances = {}
+function randomize_resistances (params)
+  local group_params = {}
+  for damage_type, _ in pairs(data.raw["damage-type"]) do
+    group_params[damage_type] = {decrease = {}, percent = {}}
   end
 
-  local resistances_already_defined = {}
-
-  for _, resistance in pairs(resistances) do
-    resistances_already_defined[resistance.type] = true
+  local variance = 1
+  if params.variance ~= nil then
+    variance = params.variance
   end
 
-  for _, damage_type in pairs(data.raw["damage-type"]) do
-    if not resistances_already_defined[damage_type.name] then
-      table.insert(resistances, {type = damage_type.name, decrease = 0, percent = 0})
-    end
-  end
+  for _, prototype in pairs(params.prototypes) do
+    local resistances = prototype.resistances
 
-  for _, resistance in pairs(resistances) do
-    if resistance.decrease == nil then
-      resistance.decrease = 0
-    end
-    if resistance.percent == nil then
-      resistance.percent = 0
+    if resistances == nil then
+      resistances = {}
     end
 
-    randomize_numerical_property{
-      prototype = prototype,
-      tbl = resistance,
-      property = "decrease",
-      property_info = {
-        round = {
-          [2] = {
-            modulus = 1
+    local resistances_already_defined = {}
+
+    for _, resistance in pairs(resistances) do
+      resistances_already_defined[resistance.type] = true
+    end
+
+    for _, damage_type in pairs(data.raw["damage-type"]) do
+      if not resistances_already_defined[damage_type.name] then
+        table.insert(resistances, {type = damage_type.name, decrease = 0, percent = 0})
+      end
+    end
+
+    for _, resistance in pairs(resistances) do
+      if resistance.decrease == nil then
+        resistance.decrease = 0
+      end
+      if resistance.percent == nil then
+        resistance.percent = 0
+      end
+
+      -- TODO prg_key
+      table.insert(group_params[resistance.type]["decrease"], {
+        prototype = prototype,
+        tbl = resistance,
+        property = "decrease",
+        inertia_function = {
+          ["type"] = "proportional",
+          slope = DEFAULT_INERTIA_FUNCTION_SLOPE * variance
+        },
+        property_info = {
+          round = {
+            [2] = {
+              modulus = 1
+            }
           }
         }
-      }
+      })
+
+      table.insert(group_params[resistance.type]["percent"], {
+        prototype = prototype,
+        tbl = resistance,
+        property = "percent",
+        inertia_function = {
+          {-100, 300 * variance},
+          {50, 300 * variance},
+          {110, 0}
+        },
+        property_info = {
+          round = {
+            [2] = {
+              modulus = 1
+            },
+            [3] = {
+              modulus = 10
+            }
+          }
+        }
+      })
+    end
+  end
+
+  for _, group_param_resistance_table in pairs(group_params) do
+    randomize_numerical_property{
+      group_params = group_param_resistance_table["decrease"]
     }
-
     randomize_numerical_property{
-      prototype = prototype,
-      tbl = resistance,
-      property = "percent",
-      inertia_function = {
-        {-100, 300},
-        {50, 300},
-        {110, 0}
-      },
-      property_info = {
-        round = {
-          [2] = {
-            modulus = 1
-          },
-          [3] = {
-            modulus = 10
-          }
-        }
-      }
+      group_params = group_param_resistance_table["percent"]
     }
   end
 end

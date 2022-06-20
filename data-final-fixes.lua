@@ -19,6 +19,7 @@ end
 
 if rand_armor_resistances then
   table.insert(randomizing_functions_to_call, randomize_armor_resistances)
+  table.insert(randomizing_functions_to_call, randomize_group_armor_resistances)
 end
 
 -- Does not randomize module slots (randomized elsewhere)
