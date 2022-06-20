@@ -5,6 +5,105 @@ require("util-randomizer")
 require("random-utils/random")
 require("random-utils/randomization-algorithms")
 
+-- TODO: organize this section
+
+local belt_speed_property_info = {
+  min = 0.00390625,
+  max = 255,
+  round = {
+    [2] = {
+      modulus = 0.00390625 * 2.0
+    },
+    [3] = {
+      modulus = 0.00390625 * 4.0
+    }
+  }
+}
+
+local machine_speed_property_info = {
+  min = 0.001,
+  round = {
+    [2] = {
+      modulus = 0.01
+    },
+    [3] = {
+      modulus = 0.1
+    }
+  }
+}
+
+local small_inventory_property_info = {
+  min = 0,
+  max = 65535,
+  round = {
+    [1] = {
+      modulus = 1
+    },
+    [2] = {
+      modulus = 1
+    },
+    [3] = {
+      modulus = 1
+    }
+  }
+}
+
+local small_nonempty_inventory_property_info = {
+  min = 1,
+  max = 65535,
+  round = {
+    [1] = {
+      modulus = 1
+    },
+    [2] = {
+      modulus = 1
+    },
+    [3] = {
+      modulus = 1
+    }
+  }
+}
+
+local large_inventory_property_info = {
+  min = 1,
+  max = 65535,
+  round = {
+    [1] = {
+      modulus = 1
+    },
+    [2] = {
+      left_digits_to_keep = 2,
+      modulus = 5
+    }
+  }
+}
+
+local supply_area_property_info = {
+  min = 2,
+  max = 64,
+  round = {
+    [1] = {
+      modulus = 0.5
+    },
+    [2] = {
+      modulus = 0.5
+    },
+    [3] = {
+      modulus = 0.5
+    }
+  }
+}
+
+local wire_distance_property_info = {
+  min = 1.5,
+  max = 64,
+  round = {
+    [3] = {
+      modulus = 1
+    }
+  }
+}
+
 -- TODO: Find a more general way to make tools for dealing with entity classes
 local entities_with_health = {
   "accumulator",
@@ -114,14 +213,7 @@ function randomize_assembly_machine_groups ()
           ["type"] = "proportional",
           slope = 2
         },
-        property_info = {
-          min = 0,
-          round = {
-            [2] = {
-              modulus = 0.01
-            }
-          }
-        }
+        property_info = machine_speed_property_info
       })
     end
 
@@ -203,18 +295,7 @@ function randomize_belt_speed ()
           {10 / 480, 21 / 480},
           {255, 1200}
         },
-        property_info = {
-          min = 0.00390625,
-          max = 255,
-          round = {
-            [2] = {
-              modulus = 0.00390625 * 2.0
-            },
-            [3] = {
-              modulus = 0.00390625 * 4.0
-            }
-          }
-        }
+        property_info = belt_speed_property_info
       }
     end
   end
@@ -588,18 +669,7 @@ function randomize_group_belt_speed ()
           {10 / 480, 24 / 480},
           {255, 800}
         },
-        property_info = {
-          min = 0.00390625,
-          max = 255,
-          round = {
-            [2] = {
-              modulus = 0.00390625 * 2.0
-            },
-            [3] = {
-              modulus = 0.00390625 * 4.0
-            }
-          }
-        }
+        property_info = belt_speed_property_info
       })
     end
 

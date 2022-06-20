@@ -1,5 +1,58 @@
 require("random-utils/randomization-algorithms")
 
+local temperature_property_info = {
+  round = {
+    [2] = {
+      modulus = 1
+    }
+  }
+}
+
+-- TODO: Only apply min if the property wasn't originally zero
+local energy_property_info = {
+  min = 0.01,
+  round = {
+    [2] = {
+      left_digits_to_keep = 3,
+      modulus = 1
+    }
+  }
+}
+
+local power_property_info = {
+  min = 0.01,
+  round = {
+    [2] = {
+      left_digits_to_keep = 3,
+      modulus = 0.01
+    }
+  }
+}
+
+local effectivity_property_info = {
+  min = 0.001,
+  round = {
+    [2] = {
+      modulus = 0.01
+    },
+    [3] = {
+      modulus = 0.1
+    }
+  }
+}
+
+local fluid_usage_property_info = {
+  min = 0.1,
+  round = {
+    [2] = {
+      left_digits_to_keep = 3
+    },
+    [3] = {
+      modulus = 1
+    }
+  }
+}
+
 ---------------------------------------------------------------------------------------------------
 -- randomize_power_production_properties
 ---------------------------------------------------------------------------------------------------
@@ -20,37 +73,19 @@ function randomize_heat_buffer_power_production_properties (prototype, heat_buff
         prototype = prototype,
         tbl = heat_buffer,
         property = "max_temperature",
-        property_info = {
-          round = {
-            [2] = {
-              modulus = 1
-            }
-          }
-        }
+        property_info = temperature_property_info
       },
       {
         prototype = prototype,
         tbl = heat_buffer,
         property = "default_temperature",
-        property_info = {
-          round = {
-            [2] = {
-              modulus = 1
-            }
-          }
-        }
+        property_info = temperature_property_info
       },
       {
         prototype = prototype,
         tbl = heat_buffer,
         property = "min_working_temperature",
-        property_info = {
-          round = {
-            [2] = {
-              modulus = 1
-            }
-          }
-        }
+        property_info = temperature_property_info
       }
     }
   }
@@ -60,13 +95,7 @@ function randomize_heat_buffer_power_production_properties (prototype, heat_buff
   max_transfer_as_number = randomize_numerical_property{
     dummy = max_transfer_as_number,
     prg_key = prg.get_key(prototype),
-    property_info = {
-      round = {
-        [2] = {
-          left_digits_to_keep = 3
-        }
-      }
-    }
+    property_info = power_property_info
   }
   heat_buffer.max_transfer = max_transfer_as_number .. "W"
 
@@ -75,13 +104,7 @@ function randomize_heat_buffer_power_production_properties (prototype, heat_buff
   specific_heat_as_number = randomize_numerical_property{
     dummy = specific_heat_as_number,
     prg_key = prg.get_key(prototype),
-    property_info = {
-      round = {
-        [2] = {
-          left_digits_to_keep = 3
-        }
-      }
-    }
+    property_info = energy_property_info
   }
   heat_buffer.specific_heat = specific_heat_as_number .. "J"
 end
@@ -94,13 +117,7 @@ function randomize_energy_source_power_production_properties (prototype, energy_
       buffer_capacity = randomize_numerical_property{
         dummy = buffer_capacity,
         prg_key = prg.get_key(prototype),
-        property_info = {
-          round = {
-            [2] = {
-              left_digits_to_keep = 3
-            }
-          }
-        }
+        property_info = energy_property_info
       }
       energy_source.buffer_capacity = buffer_capacity .. "J"
     end
@@ -110,13 +127,7 @@ function randomize_energy_source_power_production_properties (prototype, energy_
       input_flow_limit = randomize_numerical_property{
         dummy = input_flow_limit,
         prg_key = prg.get_key(prototype),
-        property_info = {
-          round = {
-            [2] = {
-              left_digits_to_keep = 3
-            }
-          }
-        }
+        property_info = power_property_info
       }
       energy_source.input_flow_limit = input_flow_limit .. "W"
     end
@@ -126,13 +137,7 @@ function randomize_energy_source_power_production_properties (prototype, energy_
       output_flow_limit = randomize_numerical_property{
         dummy = output_flow_limit,
         prg_key = prg.get_key(prototype),
-        property_info = {
-          round = {
-            [2] = {
-              lefty_digits_to_keep = 3
-            }
-          }
-        }
+        property_info = power_property_info
       }
       energy_source.output_flow_limit = output_flow_limit .. "W"
     end
@@ -144,16 +149,7 @@ function randomize_energy_source_power_production_properties (prototype, energy_
       prototype = prototype,
       tbl = energy_source,
       property = "effectivity",
-      property_info = {
-        round = {
-          [2] = {
-            modulus = 0.001
-          },
-          [3] = {
-            modulus = 0.01
-          }
-        }
-      }
+      property_info = effectivity_property_info
     }
   elseif energy_source.type == "heat" then
     -- This has the same properties as a heat buffer and is randomized the same way if type == heat
@@ -165,17 +161,7 @@ function randomize_energy_source_power_production_properties (prototype, energy_
       prototype = prototype,
       tbl = energy_source,
       property = "effectivity",
-      property_info = {
-        min = 0.0001, -- Must be greater than zero, so we just make it at least this much
-        round = {
-          [2] = {
-            modulus = 0.001
-          },
-          [3] = {
-            modulus = 0.01
-          }
-        }
-      }
+      property_info = effectivity_property_info
     }
 
     -- Note: there are complicated rules on how to "fill in" this type when it is not nil... get around to using those rules later
@@ -184,13 +170,7 @@ function randomize_energy_source_power_production_properties (prototype, energy_
         prototype = prototype,
         tbl = energy_source,
         property = "fluid_usage_per_tick",
-        property_info = {
-          round = {
-            [2] = {
-              left_digits_to_keep = 3
-            }
-          }
-        }
+        property_info = fluid_usage_property_info
       }
     end
 
@@ -199,13 +179,7 @@ function randomize_energy_source_power_production_properties (prototype, energy_
         prototype = prototype,
         tbl = energy_source,
         property = "maximum_temperature",
-        property_info = {
-          round = {
-            [2] = {
-              modulus = 1
-            }
-          }
-        }
+        property_info = temperature_property_info
       }
     end
   end
@@ -268,13 +242,7 @@ function randomize_power_production_properties ()
     energy_consumption_as_number = randomize_numerical_property{
       dummy = energy_consumption_as_number,
       prg_key = prg.get_key(prototype),
-      property_info = {
-        round = {
-          [2] = {
-            left_digits_to_keep = 3
-          }
-        }
-      }
+      property_info = power_property_info
     }
     prototype.energy_consumption = energy_consumption_as_number .. "W"
 
@@ -282,13 +250,7 @@ function randomize_power_production_properties ()
     randomize_numerical_property{
       prototype = prototype,
       property = "target_temperature",
-      property_info = {
-        round = {
-          [2] = {
-            modulus = 1
-          }
-        }
-      }
+      property_info = temperature_property_info
     }
   end
 
@@ -297,13 +259,7 @@ function randomize_power_production_properties ()
     max_power_output_as_number = randomize_numerical_property{
       dummy = max_power_output_as_number,
       prg_key = prg.get_key(prototype),
-      property_info = {
-        round = {
-          [2] = {
-            left_digits_to_keep = 3
-          }
-        }
-      }
+      property_info = power_property_info
     }
     prototype.max_power_output = max_power_output_as_number .. "W"
   end
@@ -314,13 +270,7 @@ function randomize_power_production_properties ()
       energy_production_as_number = randomize_numerical_property{
         dummy = energy_production_as_number,
         prg_key = prg.get_key(prototype),
-        property_info = {
-          round = {
-            [2] = {
-              left_digits_to_keep = 3
-            }
-          }
-        }
+        property_info = power_property_info
       }
       prototype.energy_production = energy_production_as_number .. "W"
     end
@@ -330,13 +280,7 @@ function randomize_power_production_properties ()
       energy_usage_as_number = randomize_numerical_property{
         dummy = energy_usage_as_number,
         prg_key = prg.get_key(prototype),
-        property_info = {
-          round = {
-            [2] = {
-              left_digits_to_keep = 3
-            }
-          }
-        }
+        property_info = power_property_info
       }
       prototype.energy_usage = energy_usage_as_number .. "W"
     end
@@ -346,41 +290,19 @@ function randomize_power_production_properties ()
     randomize_numerical_property{
       prototype = prototype,
       property = "effectivity",
-      property_info = {
-        min = 0.001,
-        round = {
-          [2] = {
-            modulus = 0.001
-          },
-          [3] = {
-            modulus = 0.01
-          }
-        }
-      }
+      property_info = effectivity_property_info
     }
 
     randomize_numerical_property{
       prototype = prototype,
       property = "fluid_usage_per_tick",
-      property_info = {
-        round = {
-          [2] = {
-            left_digits_to_keep = 3
-          }
-        }
-      }
+      property_info = fluid_usage_property_info
     }
 
     randomize_numerical_property{
       prototype = prototype,
       property = "maximum_temperature",
-      property_info = {
-        round = {
-          [2] = {
-            modulus = 1
-          }
-        }
-      }
+      property_info = temperature_property_info
     }
 
     if prototype.max_power_output then
@@ -388,13 +310,7 @@ function randomize_power_production_properties ()
       max_power_output_as_number = randomize_numerical_property{
         dummy = max_power_output_as_number,
         prg_key = prg.get_key(prototype),
-        property_info = {
-          round = {
-            [2] = {
-              left_digits_to_keep = 3
-            }
-          }
-        }
+        property_info = power_property_info
       }
       prototype.max_power_output = max_power_output_as_number .. "W"
     end
@@ -406,13 +322,7 @@ function randomize_power_production_properties ()
     consumption_as_number = randomize_numerical_property{
       dummy = consumption_as_number,
       prg_key = prg.get_key(prototype),
-      property_info = {
-        round = {
-          [2] = {
-            left_digits_to_keep = 3
-          }
-        }
-      }
+      property_info = power_property_info
     }
     prototype.consumption = consumption_as_number .. "W"
 
@@ -424,13 +334,7 @@ function randomize_power_production_properties ()
     production_as_number = randomize_numerical_property{
       dummy = production_as_number,
       prg_key = prg.get_key(prototype),
-      property_info = {
-        round = {
-          [2] = {
-            left_digits_to_keep = 3
-          }
-        }
-      }
+      property_info = power_property_info
     }
     prototype.production = production_as_number .. "W"
   end
@@ -479,19 +383,13 @@ function randomize_energy_properties ()
     for _, prototype in pairs(data.raw[class_key]) do
       for _, property in pairs(property_list) do
         if prototype[property] ~= nil then
-          local energy_as_number = 60 * util.parse_energy(prototype[property])
-          energy_as_number = randomize_numerical_property{
-            dummy = energy_as_number,
+          local power_as_number = 60 * util.parse_energy(prototype[property])
+          power_as_number = randomize_numerical_property{
+            dummy = power_as_number,
             prg_key = prg.get_key(prototype),
-            property_info = {
-              round = {
-                [2] = {
-                  left_digits_to_keep = 3
-                }
-              }
-            }
+            property_info = power_property_info
           }
-          prototype[property] = energy_as_number .. "W"
+          prototype[property] = power_as_number .. "W"
         end
       end
     end
@@ -505,13 +403,7 @@ function randomize_energy_properties ()
           energy_as_number = randomize_numerical_property{
             dummy = energy_as_number,
             prg_key = prg.get_key(prototype),
-            property_info = {
-              round = {
-                [2] = {
-                  left_digits_to_keep = 3
-                }
-              }
-            }
+            property_info = energy_property_info
           }
           prototype[property] = energy_as_number .. "J"
         end

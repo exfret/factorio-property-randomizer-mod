@@ -88,7 +88,10 @@ local function set_randomization_param_values(params, defaults)
   if next(params.property_info.round[2]) == nil then
     params.property_info.round[2].modulus = 0.1
   end
-  if next(params.property_info.round[3]) == nil then
+  if params.property_info.round[3].modulus == nil then
+    params.property_info.round[3].modulus = params.property_info.round[2].modulus
+  end
+  if params.property_info.round[3].left_digits_to_keep == nil then
     params.property_info.round[3].left_digits_to_keep = 2
   end
 
@@ -154,16 +157,18 @@ end
 
 local function complete_final_randomization_fixes (params)
   local function fix_individual_property(tbl, property, property_info)
-    if tbl[property] == nil or property_info == nil then
+    if tbl[property] == nil then
       return
     end
 
+    -- Rounding
     local left_digits_to_keep = property_info.round[rounding_mode].left_digits_to_keep
-    local modulus = property_info.round[rounding_mode].modulus
     if left_digits_to_keep ~= nil and tbl[property] ~= 0 then
-      modulus = math.pow(10, math.floor(math.log(math.abs(tbl[property]), 10) - left_digits_to_keep + 1))
-      tbl[property] = math.floor((tbl[property] + modulus / 2) / modulus) * modulus
-    elseif modulus ~= nil then
+      digits_modulus = math.pow(10, math.floor(math.log(math.abs(tbl[property]), 10) - left_digits_to_keep + 1))
+      tbl[property] = math.floor((tbl[property] + digits_modulus / 2) / digits_modulus) * digits_modulus
+    end
+    local modulus = property_info.round[rounding_mode].modulus
+    if modulus ~= nil then
       tbl[property] = math.floor((tbl[property] + modulus / 2) / modulus) * modulus
     end
   

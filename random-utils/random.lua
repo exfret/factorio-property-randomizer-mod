@@ -49,7 +49,7 @@ function prg.seed(seed)
 
   local using = {}
 
-  local new_seed = 0
+  local new_seed = seed - 1
   
   using["X1"] = (new_seed * 2 + 11111) % D20
   using["X2"] = (new_seed * 4 + 1) % D20
@@ -61,8 +61,18 @@ function prg.seed(seed)
   prg.value("aaadummyprg")
 end
 
+-- TODO: Make this cleaner while still having this file for both data and control stage
 -- Get a decimal value between [0, 1]
-function prg.value(key)
+function prg.value(key, XTable)
+  if XTable ~= nil then
+    local U = XTable.X2 * A2
+    local V = (XTable.X1 * A2 + XTable.X2 * A1) % D20
+    V = (V * D20 + U) % D40
+    XTable.X1 = math.floor(V / D20)
+    XTable.X2 = V - XTable.X1 * D20
+    return V / D40
+  end
+
   local using = prg_table[key]
 
   local U = using["X2"] * A2

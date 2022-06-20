@@ -153,6 +153,14 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
+    name = "propertyrandomizer-character-values-midgame",
+    localise_name = "Randomize character values midgame",
+    localised_description = "Randomize character crafting speed and walking speed every 10 minutes",
+    default_value = false
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
     name = "propertyrandomizer-enemy-spawning",
     localised_name = "Randomize enemy spawning",
     default_value = false

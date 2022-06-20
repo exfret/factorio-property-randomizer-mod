@@ -1,5 +1,6 @@
 Next releases:
   1. Add tier/related prototype smart randomization (prototypes in the same "class" get randomized to be "different enough")
+  2. Rounding parameters
 
   - Investigate which entities take pollution and how
   - Add balancing (for properties that can be balanced)
@@ -37,6 +38,9 @@ Next releases:
   - Round min consumption
   - Combine modulus and leftdigitstokeep
   - Figure out why pumping_speed was zero
+  - Rounding presets
+  - Check for extra properties in params for randomize_numerical_property to catch errors
+  - Make control.lua work for existing saves
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call
@@ -71,6 +75,7 @@ Silly additions
   - Properties are randomized based on where the entity is located
   - Properties get re-randomized after each rocket launch
   - Weird things can take modules, like electric poles? Enemy spawners? Inserters?
+  - Randomly change what's being researched without notice
 
 Ways to link randomizations:
   - Randomize group and individual prototypes
