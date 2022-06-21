@@ -367,7 +367,7 @@ function randomize_electric_poles ()
         {64, 0}
       },
       property_info = supply_area_property_info,
-      randomization_params = {
+      walk_params = {
         bias = 0.565
       }
     }
@@ -1099,7 +1099,7 @@ function randomize_underground_belt_distance ()
           }
         }
       },
-      randomization_params = {
+      walk_params = {
         bias = 0.525, -- Make bias towards a little higher to fight against the offshoot to the left I was having
       }
     }

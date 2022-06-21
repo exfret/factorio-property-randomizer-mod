@@ -100,18 +100,18 @@ local function set_randomization_param_values(params, defaults)
     end
   end
 
-  if params.randomization_params == nil then
-    params.randomization_params = {}
+  if params.walk_params == nil then
+    params.walk_params = {}
   end
   
   local bias, num_steps
-  if params.randomization_params.bias ~= nil then
-    bias = params.randomization_params.bias
+  if params.walk_params.bias ~= nil then
+    bias = params.walk_params.bias
   else
     bias = 1/2
   end
-  if params.randomization_params.num_steps ~= nil then
-    num_steps = params.randomization_params.num_steps
+  if params.walk_params.num_steps ~= nil then
+    num_steps = params.walk_params.num_steps
   else
     num_steps = 75
   end
@@ -120,8 +120,8 @@ local function set_randomization_param_values(params, defaults)
   params.tbl = tbl
   params.property = property
   params.prg_key = prg_key
-  params.randomization_params.bias = bias
-  params.randomization_params.num_steps = num_steps
+  params.walk_params.bias = bias
+  params.walk_params.num_steps = num_steps
 end
 
 function find_sign (roll, property_params)
@@ -154,9 +154,9 @@ local function nudge_properties (params, roll)
     tbl[property] = tbl[property] + sign * (1 / num_steps) * find_inertia_function_value(inertia_function, tbl[property])
   end
 
-  nudge_individual_property(params.tbl, params.property, find_sign(roll, params), params.randomization_params.num_steps, params.inertia_function)
+  nudge_individual_property(params.tbl, params.property, find_sign(roll, params), params.walk_params.num_steps, params.inertia_function)
   for _, param_table in pairs(params.group_params) do
-    nudge_individual_property(param_table.tbl, param_table.property, find_sign(roll, param_table), param_table.randomization_params.num_steps, param_table.inertia_function)
+    nudge_individual_property(param_table.tbl, param_table.property, find_sign(roll, param_table), param_table.walk_params.num_steps, param_table.inertia_function)
   end
 end
 
@@ -194,14 +194,14 @@ local function complete_final_randomization_fixes (params)
   end
 end
 
--- TODO: Finish moving min/max out of randomization_params
+-- TODO: Finish moving min/max out of walk_params
 -- params = {dummy = ?, prototype = ?, tbl = ?, property = ?, inertia function = {?}, property_info = {?} prg_key = ?, group_params = {?}, randomization_params = {?}}
 -- property_info = {lower_is_better = ?, min = ?, max = ?, round = {?}}
 -- round = {rounding_params1, rounding_params2, rounding_params3}
 -- rounding_params = {modulus = ?}
 -- simultaneous_params = list of {dummy = ?, prototype = ?, tbl = ?, property = ?, inertia_function = {?}, property_info = {?}}
 -- inertia_function = [See find_inertia_function_value()]
--- randomization_params = {bias = ?, steps = ?}
+-- walk_params = {bias = ?, steps = ?}
 function randomize_numerical_property (params)
   if params == nil then
     params = {}
@@ -222,7 +222,7 @@ function randomize_numerical_property (params)
 
   set_randomization_param_values(params)
   for _, param_table in pairs(params.group_params) do
-    -- Any randomization_params set here are ignored
+    -- Any walk_params set here are ignored
     set_randomization_param_values(param_table, {inertia_function = params.inertia_function})
   end
 
@@ -232,13 +232,13 @@ function randomize_numerical_property (params)
     bias = bias + karma.class_values[params.prototype.type]
   end
   local sign = 1
-  if params.randomization_params.lower_is_better then
+  if params.property_info.lower_is_better then
     sign = -1
   end]]
 
   local luckiness_of_this_randomization = 0
-  for i = 1,params.randomization_params.num_steps do
-    if prg.value(params.prg_key) < params.randomization_params.bias then -- "better" option
+  for i = 1,params.walk_params.num_steps do
+    if prg.value(params.prg_key) < params.walk_params.bias then -- "better" option
       nudge_properties(params, "make_property_better")
       
       --luckiness_of_this_randomization = luckiness_of_this_randomization + 1 / num_steps

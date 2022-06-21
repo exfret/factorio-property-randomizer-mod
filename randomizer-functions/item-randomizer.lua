@@ -38,7 +38,7 @@ function randomize_ammo ()
       property_info = {
         min = 1,
       },
-      randomization_params = {
+      walk_params = {
         bias = 0.475 -- Make the bias towards smaller magazines to make up for the boost from having the minimum at 1
       }
     }
@@ -139,7 +139,7 @@ function randomize_item_stack_sizes ()
           property_info = {
             min = 1
           },
-          randomization_params = {
+          walk_params = {
             bias = 0.525 -- It's better to give the player enormously large stack sizes than to have enormously small ones, so skew to larger ones
           }
         }

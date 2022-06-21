@@ -10,7 +10,7 @@ local temperature_property_info = {
   }
 }
 
--- TODO: Only apply min if the property wasn't originally zero
+-- TODO: Only apply min if the property was originally zero
 local energy_property_info = {
   min = 0.01,
   round = {
