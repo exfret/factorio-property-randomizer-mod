@@ -1,5 +1,7 @@
 require("random-utils/randomization-algorithms")
 
+local prototype_tables = require("randomizer-parameter-data/prototype-tables")
+
 local temperature_property_info = {
   round = {
     [2] = {
@@ -185,48 +187,11 @@ function randomize_energy_source_power_production_properties (prototype, energy_
   end
 end
 
-local prototype_energy_source_keys = {
-  accumulator = {"energy_source"},
-  beacon = {"energy_source"},
-  boiler = {"energy_source"},
-  ["burner-generator"] = {"burner", "energy_source"},
-  car = {"burner", "energy_source"},
-  ["arithmetic-combinator"] = {"energy_source"},
-  ["decider-combinator"] = {"energy_source"},
-  ["assembling-machine"] = {"energy_source"},
-  ["rocket-silo"] = {"energy_source"},
-  furnace = {"energy_source"},
-  ["electric-energy-interface"] = {"energy_source"},
-  ["electric-turret"] = {"energy_source"},
-  generator = {"energy_source"},
-  inserter = {"energy_source"},
-  lab = {"energy_source"},
-  lamp = {"energy_source"},
-  locomotive = {"burner", "energy_source"},
-  ["mining-drill"] = {"energy_source"},
-  ["programmable-speaker"] = {"energy_source"},
-  pump = {"energy_source"},
-  radar = {"energy_source"},
-  reactor = {"energy_source"},
-  roboport = {"energy_source"},
-  ["solar-panel"] = {"energy_source"},
-  ["spider-vehicle"] = {"burner", "energy_source"},
-  ["active-defense-equipment"] = {"energy_source"},
-  ["battery-equipment"] = {"energy_source"},
-  ["belt-immunity-equipment"] = {"energy_source"},
-  ["energy-shield-equipment"] = {"energy_source"},
-  ["generator-equipment"] = {"burner", "energy_source"},
-  ["movement-bonus-equipment"] = {"energy_source"},
-  ["night-vision-equipment"] = {"energy_source"},
-  ["roboport-equipment"] = {"burner", "energy_source"},
-  ["solar-panel-equipment"] = {"energy_source"}
-}
-
 -- TODO: Randomize boiler consumption, burner_generator max_power_output, generator effectivity, etc.
 -- TODO: heat_interface
 -- TODO: heat_buffers
 function randomize_power_production_properties ()
-  for class, properties_to_randomize in pairs(prototype_energy_source_keys) do
+  for class, properties_to_randomize in pairs(prototype_tables.energy_source_names) do
     for _, prototype in pairs(data.raw[class]) do
       for _, property in pairs(properties_to_randomize) do
         if prototype[property] then
@@ -344,42 +309,9 @@ end
 -- randomize_energy_properties
 ---------------------------------------------------------------------------------------------------
 
-local prototype_power_keys = {
-  beacon = {"energy_usage"},
-  ["arithmetic-combinator"] = {"active_energy_usage"},
-  ["decider-combinator"] = {"active_energy_usage"},
-  ["assembling-machine"] = {"energy_usage"},
-  ["rocket-silo"] = {"energy_usage"},
-  furnace = {"energy_usage"},
-  lab = {"energy_usage"},
-  ["mining-drill"] = {"energy_usage"},
-  pump = {"energy_usage"},
-  roboport = {"energy_usage"},
-  --car = {"consumption"}, I think this just increases the car power
-  ["belt-immunity-equipment"] = {"energy_consumption"},
-  ["movement-bonus-equipment"] = {"energy_consumption"},
-  ["night-vision-equipment"] = {"energy_input"},
-  radar = {"energy_usage"}
-}
-
-local prototype_energy_keys = {
-  fluid = {"heat_capacity", "fuel_value"},
-  ["combat-robot"] = {"energy_per_move", "energy_per_tick"},
-  ["construction-robot"] = {"energy_per_move", "energy_per_tick"},
-  ["logistic-robot"] = {"energy_per_move", "energy_per_tick"},
-  inserter = {"energy_per_movement", "energy_per_rotation"},
-  lamp = {"energy_usage_per_tick"},
-  ["programmable-speaker"] = {"energy_usage_per_tick"},
-  ["energy-shield-equipment"] = {"energy_per_shield"}
-}
--- Also anything extending Prototype/Item (fluid fuel values already randomized above)
-for item, _ in pairs(defines.prototypes["item"]) do
-  prototype_energy_keys[item] = {"fuel_value"}
-end
-
 -- TODO: Randomize vehicle effectivity
 function randomize_energy_properties ()
-  for class_key, property_list in pairs(prototype_power_keys) do
+  for class_key, property_list in pairs(prototype_tables.power_property_names) do
     for _, prototype in pairs(data.raw[class_key]) do
       for _, property in pairs(property_list) do
         if prototype[property] ~= nil then
@@ -395,7 +327,7 @@ function randomize_energy_properties ()
     end
   end
 
-  for class_key, property_list in pairs(prototype_energy_keys) do
+  for class_key, property_list in pairs(prototype_tables.energy_property_names) do
     for _, prototype in pairs(data.raw[class_key]) do
       for _, property in pairs(property_list) do
         if prototype[property] ~= nil then

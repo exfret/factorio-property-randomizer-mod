@@ -1,3 +1,5 @@
+local prototype_tables = require("randomizer-parameter-data/prototype-tables")
+
 require("random-utils/randomization-algorithms")
 
 ---------------------------------------------------------------------------------------------------
@@ -6,14 +8,8 @@ require("random-utils/randomization-algorithms")
 
 -- Currently, I don't really use this since it's a little too silly
 
-local sound_file_extensions = {
-  [".ogg"] = true,
-  [".wav"] = true,
-  [".voc"] = true
-}
-
 function is_sound_file (file)
-  return file and string.len(file) >= 4 and sound_file_extensions[string.sub(file, -4)]
+  return file and string.len(file) >= 4 and prototype_tables.sound_file_extensions[string.sub(file, -4)]
 end
 
 function is_sound_property (property)

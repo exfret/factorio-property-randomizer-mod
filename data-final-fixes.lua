@@ -19,12 +19,13 @@ end
 
 if rand_armor_resistances then
   table.insert(randomizing_functions_to_call, randomize_armor_resistances)
-  table.insert(randomizing_functions_to_call, randomize_group_armor_resistances)
+  table.insert(randomizing_functions_to_call, randomize_armor_group_resistances)
 end
 
 -- Does not randomize module slots (randomized elsewhere)
 if rand_beacons then
   table.insert(randomizing_functions_to_call, randomize_beacon_properties)
+  table.insert(randomizing_functions_to_call, randomize_beacon_group_properties)
 end
 
 if rand_bots then

@@ -1,6 +1,7 @@
 Next releases:
   1. Add tier/related prototype smart randomization (prototypes in the same "class" get randomized to be "different enough")
   2. Rounding parameters
+  3. Implement auto-testing
 
   - Investigate which entities take pollution and how
   - Add balancing (for properties that can be balanced)
@@ -41,6 +42,8 @@ Next releases:
   - Add special "compaitibilities" for vanilla
   - Add thumbnail
   - prg_key for group randomizations
+  - Make separate variables for inertia functions
+  - Add description to mod portal
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call

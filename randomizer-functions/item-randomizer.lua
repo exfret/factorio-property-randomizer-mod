@@ -1,5 +1,7 @@
 require("util-randomizer")
 
+local prototype_tables = require("randomizer-parameter-data/prototype-tables")
+
 require("random-utils/random")
 require("random-utils/randomization-algorithms")
 
@@ -76,10 +78,27 @@ function randomize_armor_resistances ()
     if prototype.resistances then
       randomize_resistances{
         prototypes = {prototype},
-        variance = 0
+        variance = 0.6
       }
     end
   end
+end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_armor_group_resistances
+---------------------------------------------------------------------------------------------------
+
+function randomize_armor_group_resistances ()
+  local prototype_list = {}
+
+  for _, prototype in pairs(data.raw.armor) do
+    table.insert(prototype_list, prototype)
+  end
+
+  randomize_resistances{
+    prototypes = prototype_list,
+    variance = 0.4
+  }
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -94,39 +113,11 @@ function randomize_capsules ()
 end
 
 ---------------------------------------------------------------------------------------------------
--- randomize_group_armor_resistances
----------------------------------------------------------------------------------------------------
-
-function randomize_group_armor_resistances ()
-  local prototype_list = {}
-
-  for _, prototype in pairs(data.raw.armor) do
-    table.insert(prototype_list, prototype)
-  end
-
-  randomize_resistances{
-    prototypes = prototype_list,
-    variance = 1
-  }
-end
-
----------------------------------------------------------------------------------------------------
 -- randomize_item_stack_sizes
 ---------------------------------------------------------------------------------------------------
 
-local item_classes_to_randomize_stack_size = {
-  "item",
-  "ammo",
-  "capsule",
-  "gun",
-  "module",
-  "tool",
-  --"armor", Note: this can technically have a >1 stack size, but only if there is no equipment grid
-  "repair-tool"
-}
-
 function randomize_item_stack_sizes ()
-  for _, class_key in pairs(item_classes_to_randomize_stack_size) do
+  for _, class_key in pairs(prototype_tables.item_classes_to_randomize_stack_size) do
     for _, prototype in pairs(data.raw[class_key]) do
       local not_stackable = false
       if prototype.flags then
@@ -266,13 +257,8 @@ end
 -- randomize_tools
 ---------------------------------------------------------------------------------------------------
 
-local tool_class_names = {
-  "tool",
-  "repair-tool"
-}
-
 function randomize_tools ()
-  for _, class_name in pairs(tool_class_names) do
+  for _, class_name in pairs(prototype_tables.tool_classes) do
     for _, prototype in pairs(data.raw[class_name]) do
       randomize_numerical_property{
         prototype = prototype,

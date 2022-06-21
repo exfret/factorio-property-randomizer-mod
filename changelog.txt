@@ -4,8 +4,10 @@ Date: ?
   Features:
     - Implemented more rounding rules
     - Added ability to randomize character crafting and running speeds midgame
-    - Added compatibility with abnormal inserter collision boxes (currently I just ignore these inserters)
     - Added group armor resistance randomization (and group resistance randomization capabilities in general)
+    - Added group randomization for beacons
+  Minor Features:
+    - Added compatibility with abnormal inserter collision boxes (currently I just ignore these inserters)
   Changes:
     - Rounding no longer applies automatically to new randomizations
   Balancing:

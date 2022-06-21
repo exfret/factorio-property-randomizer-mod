@@ -1,6 +1,9 @@
 require("energy-randomizer")
-require("linking-utils")
 require("util-randomizer")
+
+require("linking-utils")
+
+local prototype_tables = require("randomizer-parameter-data/prototype-tables")
 
 require("random-utils/random")
 require("random-utils/randomization-algorithms")
@@ -132,98 +135,6 @@ local effectivity_property_info = {
   }
 }
 
--- TODO: Find a more general way to make tools for dealing with entity classes
-local entities_with_health = {
-  "accumulator",
-  "artillery-turret",
-  "beacon",
-  "boiler",
-  "burner-generator",
-  "character",
-  "arithmetic-combinator",
-  "decider-combinator",
-  "constant-combinator",
-  "container",
-  "logistic-container",
-  "infinity-container",
-  "assembling-machine",
-  "rocket-silo",
-  "furnace",
-  "electric-energy-interface",
-  "electric-pole",
-  "unit-spawner",
-  "combat-robot",
-  "construction-robot",
-  "logistic-robot",
-  "gate",
-  "generator",
-  "heat-interface",
-  "heat-pipe",
-  "inserter",
-  "lab",
-  "lamp",
-  "land-mine",
-  "linked-container",
-  "market",
-  "mining-drill",
-  "offshore-pump",
-  "pipe",
-  "infinity-pipe",
-  "pipe-to-ground",
-  "player-port",
-  "power-switch",
-  "programmable-speaker",
-  "pump",
-  "radar",
-  "curved-rail",
-  "straight-rail",
-  "rail-chain-signal",
-  "rail-signal",
-  "reactor",
-  "roboport",
-  "simple-entity-with-owner",
-  "simple-entity-with-force",
-  "solar-panel",
-  "storage-tank",
-  "train-stop",
-  "linked-belt",
-  "loader-1x1",
-  "loader",
-  "splitter",
-  "transport-belt",
-  "underground-belt",
-  "turret",
-  "ammo-turret",
-  "electric-turret",
-  "fluid-turret",
-  "unit",
-  "car",
-  "artillery-wagon",
-  "cargo-wagon",
-  "fluid-wagon",
-  "locomotive",
-  "spider-vehicle",
-  "wall",
-  "fish",
-  "simple-entity",
-  "spider-leg",
-  "tree"
-}
-
--- TODO
-local entity_trigger_effect_keys_to_modify = {
-  
-}
-
-local transport_belt_classes = {
-  "transport-belt",
-  "underground-belt",
-  "splitter",
-  "linked-belt",
-  "loader-1x1",
-  "loader"
-}
-
 ---------------------------------------------------------------------------------------------------
 -- randomize_assembly_machine_groups
 ---------------------------------------------------------------------------------------------------
@@ -263,7 +174,7 @@ function randomize_beacon_properties ()
       property = "supply_area_distance",
       inertia_function = {
         ["type"] = "linear",
-        slope = 3.5,
+        slope = 3.5 * (3 / 5),
         ["x-intercept"] = 1.5
       },
       property_info = supply_area_property_info
@@ -274,11 +185,46 @@ function randomize_beacon_properties ()
       property = "distribution_effectivity",
       inertia_function = {
         ["type"] = "proportional",
-        slope = 4
+        slope = 4 * (3 / 5)
       },
       property_info = effectivity_property_info
     }
   end
+end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_beacon_group_properties
+---------------------------------------------------------------------------------------------------
+
+function randomize_beacon_group_properties ()
+  local group_params = {}
+
+  for _, prototype in pairs(data.raw.beacon) do
+    table.insert(group_params, {
+      prototype = prototype,
+      property = "supply_area_distance",
+      inertia_function = {
+        ["type"] = "linear",
+        slope = 3.5 * (2 / 5),
+        ["x-intercept"] = 1.5
+      },
+      property_info = supply_area_property_info
+    })
+
+    table.insert(group_params, {
+      prototype = prototype,
+      property = "distribution_effectivity",
+      inertia_function = {
+        ["type"] = "proportional",
+        slope = 4 * (2 / 5)
+      },
+      property_info = effectivity_property_info
+    })
+  end
+
+  randomize_numerical_property{
+    group_params = group_params
+  }
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -287,7 +233,7 @@ end
 
 -- TODO: Option to sync belt tiers
 function randomize_belt_speed ()
-  for _, belt_class in pairs(transport_belt_classes) do
+  for _, belt_class in pairs(prototype_tables.transport_belt_classes) do
     for _, prototype in pairs(data.raw[belt_class]) do
       -- TODO: round to nearest multiple of 0.4 / 480?
       randomize_numerical_property{
@@ -309,15 +255,9 @@ end
 -- randomize_bot_speed
 ---------------------------------------------------------------------------------------------------
 
-local bot_classes = {
-  "combat-robot",
-  "construction-robot",
-  "logistic-robot"
-}
-
 -- TODO: Make sure to also randomize max_speed if it is non-nil
 function randomize_bot_speed ()
-  for _, class_name in pairs(bot_classes) do
+  for _, class_name in pairs(prototype_tables.bot_classes) do
     for _, prototype in pairs(data.raw[class_name]) do
       -- Speed is mandatory
       local old_speed = prototype.speed
@@ -489,89 +429,10 @@ end
 -- randomize_entity_interaction_speed
 ---------------------------------------------------------------------------------------------------
 
-local entities_to_modify_mining_speed = {
-  "character-corpse",
-  "accumulator",
-  "artillery-turret",
-  "beacon",
-  "boiler",
-  "burner-generator",
-  -- Not character
-  "arithmetic-combinator",
-  "decider-combinator",
-  "constant-combinator",
-  "container",
-  "logistic-container",
-  "infinity-container",
-  "assembling-machine",
-  "rocket-silo",
-  "furnace",
-  -- Not electric-energy-interface
-  "electric-pole",
-  "unit-spawner",
-  "combat-robot",
-  "construction-robot",
-  "logistic-robot",
-  "gate",
-  "generator",
-  -- Not heat-interface
-  "heat-pipe",
-  "inserter",
-  "lab",
-  "lamp",
-  "land-mine",
-  "linked-container",
-  "market",
-  "mining-drill",
-  "offshore-pump",
-  "pipe",
-  "infinity-pipe",
-  "pipe-to-ground",
-  "player-port",
-  "power-switch",
-  "programmable-speaker",
-  "pump",
-  "radar",
-  "curved-rail",
-  "straight-rail",
-  "rail-chain-signal",
-  "rail-signal",
-  "reactor",
-  "roboport",
-  -- Not simple-entity-with-owner or simple-entity-with-force (I don't know what they are really used for)
-  "solar-panel",
-  "storage-tank",
-  "train-stop",
-  "linked-belt",
-  "loader-1x1",
-  "loader",
-  "splitter",
-  "transport-belt",
-  "underground-belt",
-  "turret",
-  "ammo-turret",
-  "electric-turret",
-  "fluid-turret",
-  "unit",
-  "car",
-  "artillery-wagon",
-  "cargo-wagon",
-  "fluid-wagon",
-  "locomotive",
-  "spider-vehicle",
-  "wall",
-  "fish",
-  -- Not simple-entity
-  "tree",
-  "item-entity",
-  -- Not resource (that's too sensitive, must be randomized separately)
-  "tile-ghost"
-}
-
 -- Right now randomizes repair speed and mining speed
 -- TODO: randomize EntityGhost and tile-ghost mining speed to be above zero sometimes randomly
 function randomize_entity_interaction_speed ()
-  for _, class_name in pairs(entities_to_modify_mining_speed) do
+  for _, class_name in pairs(prototype_tables.entities_to_modify_mining_speed) do
     for _, prototype in pairs(data.raw[class_name]) do
       if prototype.minable then
         randomize_numerical_property{
@@ -587,7 +448,7 @@ function randomize_entity_interaction_speed ()
     end
   end
 
-  for _, class_name in pairs(entities_with_health) do
+  for _, class_name in pairs(prototype_tables.entities_with_health) do
     for _, prototype in pairs(data.raw[class_name]) do
       if prototype.repair_speed_modifier == nil then
         prototype.repair_speed_modifier = 1
@@ -673,7 +534,7 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function randomize_group_belt_speed ()
-  for _, belt_class in pairs(transport_belt_classes) do
+  for _, belt_class in pairs(prototype_tables.transport_belt_classes) do
     local group_params = {}
     for _, prototype in pairs(data.raw[belt_class]) do
       table.insert(group_params, {
@@ -704,7 +565,7 @@ end
 -- TODO: randomize resistances in a smarter way
 -- TODO: Round health/resistances to a whole number (or close) for niceness (at least resistances are an eyesore to look at)
 function randomize_health_properties ()
-  for _, class_name in pairs(entities_with_health) do
+  for _, class_name in pairs(prototype_tables.entities_with_health) do
     for _, prototype in pairs(data.raw[class_name]) do
       if prototype.max_health == nil then
         prototype.max_health = 10
@@ -812,42 +673,11 @@ end
 -- randomize_inventory_sizes
 ---------------------------------------------------------------------------------------------------
 
-local entity_inventory_names_to_modify = {
-  ["artillery-turret"] = {"inventory_size"},
-  container = {"inventory_size"},
-  ["logistic-container"] = {"inventory_size"},
-  ["infinity-container"] = {"inventory_size"},
-  ["rocket-silo"] = {"rocket_result_inventory_size"},
-  furnace = {"result_inventory_size"}, -- source_inventory_size can't be anything other than 1 anyways
-  ["linked-container"] = {"inventory_size"},
-  ["ammo-turret"] = {"inventory_size"},
-  car = {"inventory_size"},
-  ["artillery-wagon"] = {"inventory_size"},
-  ["cargo-wagon"] = {"inventory_size"},
-  ["spider-vehicle"] = {"inventory_size", "trash_inventory_size"}
-}
-local entity_energy_source_inventories_to_modify = {
-  boiler = {"energy_source"},
-  ["burner-generator"] = {"burner"},
-  ["assembling-machine"] = {"energy_source"},
-  ["rocket-silo"] = {"energy_source"},
-  furnace = {"energy_source"},
-  inserter = {"energy_source"},
-  lab = {"energy_source"},
-  ["mining-drill"] = {"energy_source"},
-  pump = {"energy_source"},
-  radar = {"energy_source"},
-  reactor = {"energy_source"},
-  car = {"burner", "energy_source"},
-  locomotive = {"burner", "energy_source"},
-  ["spider-vehicle"] = {"burner", "energy_source"}
-}
-
 -- DON'T: Randomize material_slots_count and robot_slots_count of roboport (already randomized elsewhere)
 -- Don't modify the character's inventory speed for now
 -- Note: item_with_inventory inventory size is not randomized out of fear of packing tape incompatibility
 function randomize_inventory_sizes ()
-  for class_name, inventory_property_list in pairs(entity_inventory_names_to_modify) do
+  for class_name, inventory_property_list in pairs(prototype_tables.inventory_names) do
     for _, prototype in pairs(data.raw[class_name]) do
       for _, property_name in pairs(inventory_property_list) do
         if prototype[property_name] then
@@ -875,7 +705,7 @@ function randomize_inventory_sizes ()
     end
   end
 
-  for class_name, energy_source_property_list in pairs(entity_energy_source_inventories_to_modify) do
+  for class_name, energy_source_property_list in pairs(prototype_tables.energy_source_names) do
     for _, prototype in pairs(data.raw[class_name]) do
       for _, property_name in pairs(energy_source_property_list) do
         if prototype[property_name] then
@@ -910,20 +740,8 @@ end
 -- randomize_machine_pollution
 ---------------------------------------------------------------------------------------------------
 
--- Note: not everything that has an EnergySource property actually supports pollution
-local polluting_machine_classes = {
-  boiler = {"energy_source"},
-  ["burner-generator"] = {"burner"}, -- Emissions on energy_source are ignored, they must be put on burner
-  ["assembling-machine"] = {"energy_source"},
-  ["rocket-silo"] = {"energy_source"},
-  furnace = {"energy_source"},
-  generator = {"energy_source"},
-  ["mining-drill"] = {"energy_source"},
-  reactor = {"energy_source"}
-}
-
 function randomize_machine_pollution ()
-  for class_name, energy_source_list in pairs(polluting_machine_classes) do
+  for class_name, energy_source_list in pairs(prototype_tables.polluting_machine_classes) do
     for _, prototype in pairs(data.raw[class_name]) do
       for _, energy_source_name in pairs(energy_source_list) do
         randomize_numerical_property{
@@ -945,17 +763,8 @@ end
 -- randomize_machine_speed
 ---------------------------------------------------------------------------------------------------
 
-local machine_classes = {
-  "assembling-machine",
-  "rocket-silo",
-  "furnace",
-  "lab",
-  "mining-drill",
-  "offshore-pump"
-}
-
 function randomize_machine_speed ()
-  for _, class in pairs(machine_classes) do
+  for _, class in pairs(prototype_tables.machine_classes) do
     for _, prototype in pairs(data.raw[class]) do
       randomize_numerical_property{
         prototype = prototype,
@@ -1064,7 +873,7 @@ function randomize_mining_productivity ()
     if mining_drill_prototype.base_productivity ~= nil then
       mining_drill_prototype.base_productivity = mining_drill_prototype.base_productivity + 0.25
     else
-      mining_drill_prototype.base_productivity = 0.25
+      mining_drill_prototype.base_productivity = 1 / resource_success_chance - 1
     end
 
     randomize_numerical_property{
@@ -1078,26 +887,17 @@ end
 -- randomize_module_slots
 ---------------------------------------------------------------------------------------------------
 
-local machines_with_module_slots = {
-  beacon = "module_specification",
-  ["assembling-machine"] = "module_specification",
-  ["rocket-silo"] = "module_specification",
-  furnace = "module_specification",
-  lab = "module_specification",
-  ["mining-drill"] = "module_specification"
-}
-
 function randomize_module_slots ()
-  for prototype_name, module_specification_property in pairs(machines_with_module_slots) do
-    for _, prototype in pairs(data.raw[prototype_name]) do
-      if prototype[module_specification_property] then
-        if prototype[module_specification_property].module_slots == nil then
-          prototype[module_specification_property].module_slots = 0
+  for _, class_name in pairs(prototype_tables.machines_with_module_slots) do
+    for _, prototype in pairs(data.raw[class_name]) do
+      if prototype["module_specification"] then
+        if prototype["module_specification"].module_slots == nil then
+          prototype["module_specification"].module_slots = 0
         end
 
         randomize_numerical_property{
           prototype = prototype,
-          tbl = prototype[module_specification_property],
+          tbl = prototype["module_specification"],
           property = "module_slots",
           inertia_function = {
             ["type"] = "constant",
@@ -1310,17 +1110,8 @@ end
 -- randomize_vehicle_crash_damage
 ---------------------------------------------------------------------------------------------------
 
-local vehicle_clases = {
-  "car",
-  "artillery-wagon",
-  "cargo-wagon",
-  "fluid-wagon",
-  "locomotive",
-  "spider-vehicle"
-}
-
 function randomize_vehicle_crash_damage ()
-  for _, class_key in pairs(vehicle_clases) do
+  for _, class_key in pairs(prototype_tables.vehicle_clases) do
     for _, prototype in pairs(data.raw[class_key]) do
       local old_energy_per_hit_point = prototype.energy_per_hit_point
       randomize_numerical_property{
@@ -1344,14 +1135,8 @@ end
 -- randomize_vehicle_speed
 ---------------------------------------------------------------------------------------------------
 
-local vehicles_to_modify_speed = {
-  car = "consumption",
-  ["spider-vehicle"] = "movement_energy_consumption",
-  locomotive = "max_power"
-}
-
 function randomize_vehicle_speed ()
-  for class_key, speed_key in pairs(vehicles_to_modify_speed) do
+  for class_key, speed_key in pairs(prototype_tables.vehicle_speed_keys) do
     for _, prototype in pairs(data.raw[class_key]) do
       energy_as_number = 60 * util.parse_energy(prototype[speed_key])
       local new_energy_as_number = randomize_numerical_property{
