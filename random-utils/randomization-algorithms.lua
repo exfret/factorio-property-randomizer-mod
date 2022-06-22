@@ -38,6 +38,18 @@ function find_inertia_function_value (inertia_function, input)
   end
 end
 
+function add_inertia_function_multiplier (multiplier, inertia_function)
+  if inertia_function.slope ~= nil then
+    inertia_function.slope = multiplier * inertia_function.slope
+  elseif inertia_function.value then
+    inertia_function.value = multiplier * inertia_function.value
+  else
+    for i = 1,#inertia_function do
+      inertia_function[i][2] = multiplier * inertia_function[i][2]
+    end
+  end
+end
+
 -- defaults = {inertia_function = {?}}
 local function set_randomization_param_values(params, defaults)
   if defaults == nil then

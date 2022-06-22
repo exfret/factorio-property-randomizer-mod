@@ -3,137 +3,13 @@ require("util-randomizer")
 
 require("linking-utils")
 
+local inertia_function = require("randomizer-parameter-data/inertia-function-tables")
+local property_info = require("randomizer-parameter-data/property-info-tables")
 local prototype_tables = require("randomizer-parameter-data/prototype-tables")
+local walk_params = require("randomizer-parameter-data/walk-params-tables")
 
 require("random-utils/random")
 require("random-utils/randomization-algorithms")
-
--- TODO: organize this section
-
-local belt_speed_property_info = {
-  min = 0.00390625,
-  max = 255,
-  round = {
-    [1] = {
-      modulus = 0.00390625
-    },
-    [2] = {
-      modulus = 0.00390625 * 2.0
-    },
-    [3] = {
-      modulus = 0.00390625 * 4.0
-    }
-  }
-}
-
-local machine_speed_property_info = {
-  min = 0.001,
-  round = {
-    [2] = {
-      modulus = 0.01
-    },
-    [3] = {
-      modulus = 0.1
-    }
-  }
-}
-
-local inventory_slots_property_info = {
-  min = 1,
-  max = 10,
-  round = {
-    [1] = {
-      modulus = 1
-    },
-    [2] = {
-      modulus = 1
-    }
-  }
-}
-
-local small_inventory_property_info = {
-  min = 0,
-  max = 65535,
-  round = {
-    [1] = {
-      modulus = 1
-    },
-    [2] = {
-      modulus = 1
-    },
-    [3] = {
-      modulus = 1
-    }
-  }
-}
-
-local small_nonempty_inventory_property_info = {
-  min = 1,
-  max = 65535,
-  round = {
-    [1] = {
-      modulus = 1
-    },
-    [2] = {
-      modulus = 1
-    },
-    [3] = {
-      modulus = 1
-    }
-  }
-}
-
-local large_inventory_property_info = {
-  min = 1,
-  max = 65535,
-  round = {
-    [1] = {
-      modulus = 1
-    },
-    [2] = {
-      left_digits_to_keep = 2,
-      modulus = 5
-    }
-  }
-}
-
-local supply_area_property_info = {
-  min = 2,
-  max = 64,
-  round = {
-    [1] = {
-      modulus = 0.5
-    },
-    [2] = {
-      modulus = 0.5
-    },
-    [3] = {
-      modulus = 0.5
-    }
-  }
-}
-
-local wire_distance_property_info = {
-  min = 1.5,
-  max = 64,
-  round = {
-    [3] = {
-      modulus = 1
-    }
-  }
-}
-
-local effectivity_property_info = {
-  min = 0.001,
-  round = {
-    [2] = {
-      modulus = 0.01
-    },
-    [3] = {
-      modulus = 0.1
-    }
-  }
-}
 
 ---------------------------------------------------------------------------------------------------
 -- randomize_assembly_machine_groups
@@ -148,11 +24,8 @@ function randomize_assembly_machine_groups ()
       table.insert(group_params, {
         prototype = prototype_in_upgrade_group,
         property = "crafting_speed",
-        inertia_function = {
-          ["type"] = "proportional",
-          slope = 2
-        },
-        property_info = machine_speed_property_info
+        inertia_function = add_inertia_function_multiplier(2 / 5, inertia_function.crafting_speed),
+        property_info = property_info.machine_speed
       })
     end
 
@@ -172,22 +45,15 @@ function randomize_beacon_properties ()
     randomize_numerical_property{
       prototype = prototype,
       property = "supply_area_distance",
-      inertia_function = {
-        ["type"] = "linear",
-        slope = 3.5 * (3 / 5),
-        ["x-intercept"] = 1.5
-      },
-      property_info = supply_area_property_info
+      inertia_function = add_inertia_function_multiplier(3 / 5, inertia_function.beacon_supply_area_distance),
+      property_info = property_info.supply_area
     }
 
     randomize_numerical_property{
       prototype = prototype,
       property = "distribution_effectivity",
-      inertia_function = {
-        ["type"] = "proportional",
-        slope = 4 * (3 / 5)
-      },
-      property_info = effectivity_property_info
+      inertia_function = add_inertia_function_multiplier(3 / 5, inertia_function.beacon_distribution_effectivity),
+      property_info = property_info.effectivity
     }
   end
 end
@@ -203,22 +69,15 @@ function randomize_beacon_group_properties ()
     table.insert(group_params, {
       prototype = prototype,
       property = "supply_area_distance",
-      inertia_function = {
-        ["type"] = "linear",
-        slope = 3.5 * (2 / 5),
-        ["x-intercept"] = 1.5
-      },
-      property_info = supply_area_property_info
+      inertia_function = add_inertia_function_multiplier(2 / 5, inertia_function.beacon_supply_area_distance),
+      property_info = property_info.supply_area
     })
 
     table.insert(group_params, {
       prototype = prototype,
       property = "distribution_effectivity",
-      inertia_function = {
-        ["type"] = "proportional",
-        slope = 4 * (2 / 5)
-      },
-      property_info = effectivity_property_info
+      inertia_function = add_inertia_function_multiplier(2 / 5, inertia_function.beacon_distribution_effectivity),
+      property_info = property_info.effectivity
     })
   end
 
@@ -235,17 +94,11 @@ end
 function randomize_belt_speed ()
   for _, belt_class in pairs(prototype_tables.transport_belt_classes) do
     for _, prototype in pairs(data.raw[belt_class]) do
-      -- TODO: round to nearest multiple of 0.4 / 480?
       randomize_numerical_property{
         prototype = prototype,
         property = "speed",
-        inertia_function = {
-          {0, 0},
-          {5 / 480, 3 / 480},
-          {10 / 480, 21 / 480},
-          {255, 1200}
-        },
-        property_info = belt_speed_property_info
+        inertia_function = add_inertia_function_multiplier(3 / 5, inertia_function.belt_speed),
+        property_info = property_info.belt_speed
       }
     end
   end
@@ -265,18 +118,8 @@ function randomize_bot_speed ()
       randomize_numerical_property{
         prototype = prototype,
         property = "speed",
-        inertia_function = {
-          ["type"] = "proportional",
-          slope = 5 -- Can be higher since bots aren't as necessary
-        },
-        property_info = {
-          min = 0.1 / 216,
-          round = {
-            [2] = {
-              modulus = 1 / 216
-            }
-          }
-        }
+        inertia_function = inertia_function.bot_speed,
+        property_info = property_info.bot_speed
       }
 
       -- Make sure max_speed is at least speed
@@ -296,10 +139,7 @@ function randomize_car_rotation_speed ()
     randomize_numerical_property{
       prototype = prototype,
       property = "rotation_speed",
-      inertia_function = {
-        ["type"] = "proportional",
-        slope = 5
-      }
+      inertia_function = inertia_function.car_rotation_speed
     }
   end
 end
@@ -313,15 +153,8 @@ function randomize_character_corpse_time_to_live ()
     randomize_numerical_property{
       prototype = prototype,
       property = "time_to_live",
-      inertia_function = {
-        ["type"] = "proportional",
-        slope = 10
-      },
-      round = {
-        [2] = {
-          modulus = 3600
-        }
-      }
+      inertia_function = inertia_function.character_corpse_time_to_live,
+      property_info = property_info.character_corpse_time_to_live
     }
   end
 end
@@ -339,13 +172,19 @@ function randomize_character_respawn_time ()
     randomize_numerical_property{
       prototype = prototype,
       property = "respawn_time",
-      round = {
-        [2] = {
-          round = 60
-        }
-      }
+      property_info = property_info.character_respawn_time
     }
   end
+end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_electric_pole_groups
+---------------------------------------------------------------------------------------------------
+
+function randomize_electric_pole_groups ()
+  local upgrade_groups = find_upgrade_groups("electric-pole")
+
+  --for _, upgrade_group
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -357,33 +196,16 @@ function randomize_electric_poles ()
     randomize_numerical_property{
       prototype = prototype,
       property = "supply_area_distance",
-      inertia_function = {
-        {-2, 3},
-        {1.5, 3},
-        {2, 6},
-        {4, 45},
-        {10, 60},
-        {50, 150},
-        {64, 0}
-      },
-      property_info = supply_area_property_info,
-      walk_params = {
-        bias = 0.565
-      }
+      inertia_function = inertia_function.electric_pole_supply_area,
+      property_info = property_info.supply_area,
+      walk_params = walk_params.electric_pole_supply_area
     }
 
     randomize_numerical_property{
       prototype = prototype,
       property = "maximum_wire_distance",
-      inertia_function = {
-        {1.5, 0},
-        {3.5, 3},
-        {5, 18},
-        {15, 100},
-        {50, 300},
-        {64, 0}
-      },
-      property_info = wire_distance_property_info
+      inertia_function = inertia_function.electric_pole_wire_reach,
+      property_info = property_info.wire_distance
     }
   end
 end
@@ -439,10 +261,7 @@ function randomize_entity_interaction_speed ()
           prototype = prototype,
           tbl = prototype.minable,
           property = "mining_time",
-          inertia_function = {
-            ["type"] = "proportional",
-            slope = 5
-          }
+          inertia_function = inertia_function.entity_interaction_mining_speed
         }
       end
     end
@@ -453,13 +272,11 @@ function randomize_entity_interaction_speed ()
       if prototype.repair_speed_modifier == nil then
         prototype.repair_speed_modifier = 1
       end
+
       randomize_numerical_property{
         prototype = prototype,
         property = "repair_speed_modifier",
-        inertia_function = {
-          ["type"] = "proportional",
-          slope = 15
-        }
+        inertia_function = inertia_function.entity_interaction_repair_speed
       }
     end
   end
@@ -521,10 +338,7 @@ function randomize_gate_opening_speed ()
     randomize_numerical_property{
       prototype = prototype,
       property = "opening_speed",
-      inertia_function = {
-        ["type"] = "proportional",
-        slope = 15
-      }
+      inertia_function = inertia_function.gate_opening_speed
     }
   end
 end
@@ -540,13 +354,8 @@ function randomize_group_belt_speed ()
       table.insert(group_params, {
         prototype = prototype,
         property = "speed",
-        inertia_function = {
-          {0, 0},
-          {5 / 480, 2 / 480},
-          {10 / 480, 24 / 480},
-          {255, 800}
-        },
-        property_info = belt_speed_property_info
+        inertia_function = add_inertia_function_multiplier(2 / 5, inertia_function.belt_speed),
+        property_info = property_info.belt_spped
       })
     end
 
@@ -573,13 +382,7 @@ function randomize_health_properties ()
       randomize_numerical_property{
         prototype = prototype,
         property = "max_health",
-        property_info = {
-          round = {
-            [2] = {
-              modulus = 5
-            }
-          }
-        }
+        property_info = property_info.max_health
       }
 
       randomize_resistances{
@@ -642,29 +445,14 @@ function randomize_inserter_speed ()
     randomize_numerical_property{
       prototype = prototype,
       property = "rotation_speed",
-      inertia_function = {
-        ["type"] = "proportional",
-        slope = 3
-      },
-      property_info = {
-        round = {
-          [2] = {
-            modulus = 10 / (360 * 60)
-          },
-          [3] = {
-            modulus = 100 / (360 * 60)
-          }
-        }
-      }
+      inertia_function = inertia_function.inserter_rotation_speed,
+      property_info = property_info.inserter_rotation_speed
     }
 
     randomize_numerical_property{
       prototype = prototype,
       property = "extension_speed",
-      inertia_function = {
-        ["type"] = "proportional",
-        slope = 4
-      }
+      inertia_function = inertia_function.inserter_extension_speed
     }
   end
 end
@@ -683,21 +471,16 @@ function randomize_inventory_sizes ()
         if prototype[property_name] then
           local property_info_to_use
           if prototype[property_name] == 0 then
-            property_info_to_use = small_inventory_property_info
+            property_info_to_use = property_info.small_inventory
           elseif prototype[property_name] < 10 then
-            property_info_to_use = small_nonempty_inventory_property_info
+            property_info_to_use = property_info.small_nonempty_inventory
           else
-            property_info_to_use = large_inventory_property_info
+            property_info_to_use = property_info.large_inventory
           end
           randomize_numerical_property{
             prototype = prototype,
             property = property_name,
-            inertia_function = {
-              {-4, 100},
-              {4, 100},
-              {10, 80},
-              {65535, 524280}
-            },
+            inertia_function = inertia_function.inventory_size,
             property_info = property_info_to_use
           }
         end
@@ -713,22 +496,16 @@ function randomize_inventory_sizes ()
             prototype = prototype,
             tbl = prototype[property_name],
             property = "fuel_inventory_size",
-            inertia_function = {
-              ["type"] = "constant",
-              value = 40
-            },
-            property_info = small_nonempty_inventory_property_info
+            inertia_function = inertia_function.energy_source_inventory_sizes,
+            property_info = property_info.small_nonempty_inventory
           }
 
           randomize_numerical_property{
             prototype = prototype,
             tbl = prototype[property_name],
             property = "burnt_inventory_size",
-            inertia_function = {
-              ["type"] = "constant",
-              value = 40
-            },
-            property_info = small_inventory_property_info
+            inertia_function = inertia_function.energy_source_inventory_sizes,
+            property_info = property_info.small_inventory
           }
         end
       end
@@ -748,11 +525,7 @@ function randomize_machine_pollution ()
           prototype = prototype,
           tbl = prototype[energy_source_name],
           property = "emissions_per_minute",
-          round = {
-            [3] = {
-              modulus = 1
-            }
-          }
+          property_info = property_info.machine_pollution
         }
       end
     end
@@ -769,56 +542,30 @@ function randomize_machine_speed ()
       randomize_numerical_property{
         prototype = prototype,
         property = "crafting_speed",
-        inertia_function = {
-          ["type"] = "proportional",
-          slope = 2
-        },
-        property_info = {
-          min = 0,
-          round = {
-            [2] = {
-              modulus = 0.01
-            }
-          }
-        }
+        inertia_function = add_inertia_function_multiplier(3 / 5, inertia_function.crafting_speed),
+        property_info = property_info.machine_speed
       }
 
       -- TODO: Make burner mining drill swingier?
       randomize_numerical_property{
         prototype = prototype,
         property = "mining_speed",
-        inertia_function = {
-          ["type"] = "proportional",
-          slope = 2
-        },
-        property_info = machine_speed_property_info
+        inertia_function = inertia_function.machine_mining_speed,
+        property_info = property_info.machine_speed
       }
 
       randomize_numerical_property{
         prototype = prototype,
         property = "pumping_speed",
-        inertia_function = {
-          ["type"] = "proportional",
-          slope = 8
-        },
-        property_info = {
-          min = 10 / 60,
-          round = {
-            [2] = {
-              modulus = 10 / 60
-            }
-          }
-        }
+        inertia_function = inertia_function.pumping_speed,
+        property_info = property_info.pumping_speed
       }
 
       randomize_numerical_property{
         prototype = prototype,
         property = "researching_speed",
-        inertia_function = {
-          ["type"] = "proportional",
-          slope = 10
-        },
-        property_info = machine_speed_property_info
+        inertia_function = inertia_function.researching_speed,
+        property_info = property_info.researching_speed
       }
     end
   end
@@ -899,11 +646,8 @@ function randomize_module_slots ()
           prototype = prototype,
           tbl = prototype["module_specification"],
           property = "module_slots",
-          inertia_function = {
-            ["type"] = "constant",
-            value = 10
-          },
-          property_info = small_inventory_property_info
+          inertia_function = inertia_function.module_specification,
+          property_info = property_info.small_inventory
         }
       end
     end
@@ -932,12 +676,7 @@ function randomize_reactor_neighbour_bonus ()
     randomize_numerical_property{
       prototype = prototype,
       property = "neighbour_bonus",
-      round = {
-        min = 0,
-        [2] = {
-          modulus = 0.1
-        }
-      }
+      property_info = property_info.neighbour_bonus
     }
   end
 end
@@ -951,21 +690,15 @@ function randomize_roboports ()
     randomize_numerical_property{
       prototype = prototype,
       property = "material_slots_count",
-      inertia_function = {
-        ["type"] = "constant",
-        value = 40
-      },
-      property_info = inventory_slots_property_info
+      inertia_function = inertia_function.inventory_slots,
+      property_info = property_info.inventory_slots
     }
     
     randomize_numerical_property{
       prototype = prototype,
       property = "robot_slots_count",
-      inertia_function = {
-        ["type"] = "constant",
-        value = 40
-      },
-      property_info = inventory_slots_property_info
+      inertia_function = inertia_function.inventory_slots,
+      property_info = property_info.inventory_slots
     }
 
     -- Randomize how quickly robots charge
@@ -983,69 +716,24 @@ function randomize_roboports ()
     randomize_numerical_property{
       prototype = prototype,
       property = "charging_station_count",
-      inertia_function = {
-        ["type"] = "constant",
-        value = 40
-      },
-      property_info = {
-        min = 1,
-        round = {
-          [1] = {
-            modulus = 1
-          },
-          [2] = {
-            modulus = 1
-          }
-        }
-      }
+      inertia_function = inertia_function.charging_statiion_count,
+      property_info = property_info.charging_station_count
     }
 
-    -- Randomize carefully in a way so that logistics_connection_distance >= logistics_radius
     if prototype.logistics_connection_distance == nil then
       prototype.logistics_connection_distance = prototype.logistics_radius
     end
-    local logistics_distance_multiplier = randomize_numerical_property{
-      dummy = (prototype.logistics_radius + prototype.logistics_connection_distance) / 2,
-      property_info = {
-        min = 1,
-        round = {
-          [2] = {
-            modulus = 1
-          },
-          [3] = {
-            modulus = 5
-          }
-        }
-      }
-    }
     randomize_numerical_property{
-      prototype = prototype,
-      property = "logistics_radius",
-      property_info = {
-        min = 1,
-        max = logistics_distance_multiplier,
-        round = {
-          [2] = {
-            modulus = 1
-          },
-          [3] = {
-            modulus = 5
-          }
-        }
-      }
-    }
-    randomize_numerical_property{
-      prototype = prototype,
-      property = "logistics_connection_distance",
-      property_info = {
-        min = logistics_distance_multiplier,
-        round = {
-          [2] = {
-            modulus = 1
-          },
-          [3] = {
-            modulus = 5
-          }
+      group_params = {
+        {
+          prototype = prototype,
+          property = "logistics_radius",
+          property_info = property_info.roboport_radius
+        },
+        {
+          prototype = prototype,
+          property = "logistics_connection_distance",
+          property_info = property_info.roboport_radius
         }
       }
     }
@@ -1053,17 +741,7 @@ function randomize_roboports ()
     randomize_numerical_property{
       prototype = prototype,
       property = "construction_radius",
-      property_info = {
-        min = 1,
-        round = {
-          [2] = {
-            modulus = 1
-          },
-          [3] = {
-            modulus = 5
-          }
-        }
-      }
+      property_info = property_info.roboport_radius
     }
   end
 end
@@ -1078,30 +756,9 @@ function randomize_underground_belt_distance ()
     randomize_numerical_property{
       prototype = prototype,
       property = "max_distance",
-      inertia_function = {
-        {-4, 30},
-        {4, 30},
-        {8, 60},
-        {255, 3000}
-      },
-      property_info = {
-        min = 2, -- TODO: Allow underground distance of 1 on extreme mode
-        max = 255,
-        round = {
-          [1] = {
-            modulus = 1
-          },
-          [2] = {
-            modulus = 1
-          },
-          [3] = {
-            modulus = 1
-          }
-        }
-      },
-      walk_params = {
-        bias = 0.525, -- Make bias towards a little higher to fight against the offshoot to the left I was having
-      }
+      inertia_function = inertia_function.underground_belt_length,
+      property_info = property_info.underground_belt_length,
+      walk_params = walk_params.underground_belt_length
     }
   end
 end
@@ -1117,10 +774,7 @@ function randomize_vehicle_crash_damage ()
       randomize_numerical_property{
         prototype = prototype,
         property = "energy_per_hit_point",
-        inertia_function = {
-          ["type"] = "proportional",
-          slope = 20
-        }
+        inertia_function = inertia_function.vehicle_crash_damage
       }
 
       -- Increase impact resistance for higher crash damages so that this isn't just a glass cannon
@@ -1142,10 +796,7 @@ function randomize_vehicle_speed ()
       local new_energy_as_number = randomize_numerical_property{
         dummy = energy_as_number,
         prg_key = prg.get_key(prototype),
-        inertia_function = {
-          ["type"] = "proportional",
-          slope = 10
-        }
+        inertia_function = inertia_function.vehicle_speed
       }
       prototype[speed_key] = new_energy_as_number .. "W"
 

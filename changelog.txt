@@ -10,8 +10,9 @@ Date: ?
     - Added compatibility with abnormal inserter collision boxes (currently I just ignore these inserters)
   Changes:
     - Rounding no longer applies automatically to new randomizations
+    - Logistics radius and connection distance are now simultaneously randomized rather than the more contrived process I was using before
   Organization:
-    - Separated 
+    - Separated out property info tables, prototype tables, inertia functions, and walk_params tables into their own new files
   Balancing:
     - Rebalanced electric poles to have lower variance and be slightly more generous toward the player (again)
 ---------------------------------------------------------------------------------------------------

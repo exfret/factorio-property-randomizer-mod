@@ -42,6 +42,7 @@ if rand_crafting_times then
 end
 
 if rand_electric_poles then
+  table.insert(randomizing_functions_to_call, randomize_electric_pole_groups)
   table.insert(randomizing_functions_to_call, randomize_electric_poles)
 end
 

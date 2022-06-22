@@ -1,6 +1,9 @@
 require("util-randomizer")
 
+local inertia_function = require("randomizer-parameter-data/inertia-function-tables")
+local property_info = require("randomizer-parameter-data/property-info-tables")
 local prototype_tables = require("randomizer-parameter-data/prototype-tables")
+local walk_params = require("randomizer-parameter-data/walk-params-tables")
 
 require("random-utils/random")
 require("random-utils/randomization-algorithms")
@@ -35,15 +38,11 @@ function randomize_ammo ()
     randomize_numerical_property{
       prototype = prototype,
       property = "magazine_size",
-      property_info = {
-        min = 1,
-      },
-      walk_params = {
-        bias = 0.475 -- Make the bias towards smaller magazines to make up for the boost from having the minimum at 1
-      }
+      property_info = property_info.magazine_size,
+      walk_params = walk_params.magazine_size
     }
 
-    if prototype.reload_time == nil then
+    --[[if prototype.reload_time == nil then
       prototype.reload_time = 0
     end
     randomize_numerical_property{
@@ -57,7 +56,7 @@ function randomize_ammo ()
       property_info = {
         min = 0
       }
-    }
+    }]] -- This would just always make reload time worse... Maybe randomize it later?
 
     if prototype.ammo_type.category then
       randomize_ammo_type(prototype, prototype.ammo_type)
@@ -132,16 +131,9 @@ function randomize_item_stack_sizes ()
         randomize_numerical_property{
           prototype = prototype,
           property = "stack_size",
-          inertia_function = {
-            ["type"] = "proportional",
-            slope = 7
-          },
-          property_info = {
-            min = 1
-          },
-          walk_params = {
-            bias = 0.525 -- It's better to give the player enormously large stack sizes than to have enormously small ones, so skew to larger ones
-          }
+          inertia_function = inertia_function.stack_size,
+          property_info = property_info.stack_size,
+          walk_params = walk_params.stack_size
         }
       end
     end
@@ -170,18 +162,8 @@ function randomize_module_effects ()
       prototype = prototype,
       tbl = prototype.effect.consumption,
       property = "bonus",
-      inertia_function = {
-        {-0.8, 0},
-        {-0.4, 1},
-        {-0.2, 3},
-        {0.0, 0.7},
-        {0.3, 3},
-        {0.8, 5},
-        {100, 5}
-      },
-      property_info = {
-        min = -0.8
-      }
+      inertia_function = inertia_function.consumption_effect,
+      property_info = property_info.consumption_effect
     }
 
     if prototype.effect.speed == nil then
@@ -194,17 +176,8 @@ function randomize_module_effects ()
       prototype = prototype,
       tbl = prototype.effect.speed,
       property = "bonus",
-      inertia_function = {
-        {-1, 0},
-        {-0.05, 2},
-        {0, 0.6},
-        {0.1, 1.2},
-        {1, 1.2},
-        {100, 2}
-      },
-      property_info = {
-        min = -1
-      }
+      inertia_function = inertia_function.speed_effect,
+      property_info = property_info.speed_effect
     }
 
     if prototype.effect.productivity == nil then
@@ -217,16 +190,8 @@ function randomize_module_effects ()
       prototype = prototype,
       tbl = prototype.effect.productivity,
       property = "bonus",
-      inertia_function = {
-        {0, 0},
-        {0.03, 0.4},
-        {0.1, 0.4},
-        {0.3, 0.1},
-        {100, 0.1}
-      },
-      property_info = {
-        min = 0
-      }
+      inertia_function = inertia_function.productivity_effect,
+      property_info = property_info.productivity_effect
     }
 
     if prototype.effect.pollution == nil then
@@ -239,16 +204,8 @@ function randomize_module_effects ()
       prototype = prototype,
       tbl = prototype.effect.pollution,
       property = "bonus",
-      inertia_function = {
-        {-1, 0},
-        {-0.2, 2},
-        {0.02, 0.6},
-        {0.2, 1.4},
-        {100, 1.4}
-      },
-      property_info = {
-        min = -1
-      }
+      inertia_function = inertia_function.pollution_effect,
+      property_info = property_info.pollution_effect
     }
   end
 end

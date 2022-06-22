@@ -1,3 +1,5 @@
+local property_info = require("randomizer-parameter-data.property-info-tables")
+
 require("random-utils/randomization-algorithms")
 
 local intermediate_item_names = {}
@@ -69,9 +71,7 @@ function randomize_crafting_times ()
         ["type"] = "proportional",
         slope = slope
       },
-      property_info = {
-        min = 0.01
-      }
+      property_info = property_info.recipe
     }
   end
 

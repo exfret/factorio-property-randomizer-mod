@@ -1,5 +1,8 @@
 local prototype_tables = require("randomizer-parameter-data/prototype-tables")
 
+local inertia_function = require("randomizer-parameter-data/inertia-function-tables")
+local property_info = require("randomizer-parameter-data/property-info-tables")
+
 require("random-utils/randomization-algorithms")
 
 ---------------------------------------------------------------------------------------------------
@@ -68,24 +71,17 @@ function randomize_equipment_grids ()
     randomize_numerical_property{
       prototype = prototype,
       property = "width",
-      property_info = {
-        round = {
-          [1] = {
-            modulus = 1
-          }
-        }
-      }
+      property_info = property_info.equipment_grid
     }
     randomize_numerical_property{
       prototype = prototype,
       property = "height",
-      property_info = {
-        round = {
-          [1] = {
-            modulus = 1
-          }
-        }
-      }
+      property_info = property_info.discrete
+    }
+    randomize_numerical_property{
+      prototype = prototype,
+      property = "width",
+      property_info = property_info.discrete
     }
   end
 end
@@ -98,7 +94,6 @@ end
 
 -- TODO: Mess with equipment shape more
 -- TODO: Just clean this up in general
--- TODO
 function randomize_equipment_properties ()
   for class_name, _ in pairs(defines.prototypes["equipment"]) do
     for _, prototype in pairs(data.raw[class_name]) do
