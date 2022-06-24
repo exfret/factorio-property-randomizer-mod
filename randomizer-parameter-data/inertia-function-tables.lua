@@ -119,19 +119,18 @@ inertia_function.speed_effect = {
 
 inertia_function.inserter_extension_speed = {
   ["type"] = "proportional",
-  slope = 4
+  slope = 10
 }
 
 inertia_function.inserter_rotation_speed = {
   ["type"] = "proportional",
-  slope = 3
+  slope = 6
 }
 
 inertia_function.inventory_size = {
-  {-4, 100},
-  {4, 100},
-  {10, 80},
-  {65535, 524280}
+  {-4, 50},
+  {10, 50},
+  {65535, 327675}
 }
 
 inertia_function.inventory_slots = {

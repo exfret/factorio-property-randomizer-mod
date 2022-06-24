@@ -10,7 +10,7 @@ property_info.belt_speed = {
     [2] = {
       modulus = 0.00390625 * 2.0
     },
-    [3] = {
+    [3] = { -- TODO: Make left_digits_to_keep not apply here (or other places with weird moduli)
       modulus = 0.00390625 * 4.0
     }
   }
@@ -133,7 +133,7 @@ property_info.inventory_slots = {
 }
 
 property_info.large_inventory = {
-  min = 1,
+  min = 5,
   max = 65535,
   round = {
     [1] = {

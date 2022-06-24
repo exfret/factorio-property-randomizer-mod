@@ -150,6 +150,7 @@ end
 -- (I'm given tier info so might as well use it)
 -- TODO: Randomize whether to even add/remove effects, instead of just randomizing each effect into a slurry
 -- TODO: Figure out a smarter way to deal with the OP productivity effect
+-- TODO: Balance the modules/soft link or smth
 function randomize_module_effects ()
   for _, prototype in pairs(data.raw.module) do
     if prototype.effect.consumption == nil then

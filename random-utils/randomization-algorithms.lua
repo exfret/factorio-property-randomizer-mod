@@ -39,15 +39,19 @@ function find_inertia_function_value (inertia_function, input)
 end
 
 function add_inertia_function_multiplier (multiplier, inertia_function)
-  if inertia_function.slope ~= nil then
-    inertia_function.slope = multiplier * inertia_function.slope
-  elseif inertia_function.value then
-    inertia_function.value = multiplier * inertia_function.value
+  local new_inertia_function = util.table.deepcopy(inertia_function)
+
+  if new_inertia_function.slope ~= nil then
+    new_inertia_function.slope = multiplier * new_inertia_function.slope
+  elseif new_inertia_function.value ~= nil then
+    new_inertia_function.value = multiplier * new_inertia_function.value
   else
-    for i = 1,#inertia_function do
-      inertia_function[i][2] = multiplier * inertia_function[i][2]
+    for i = 1,#new_inertia_function do
+      new_inertia_function[i][2] = multiplier * new_inertia_function[i][2]
     end
   end
+
+  return new_inertia_function
 end
 
 -- defaults = {inertia_function = {?}}
@@ -214,12 +218,23 @@ end
 -- simultaneous_params = list of {dummy = ?, prototype = ?, tbl = ?, property = ?, inertia_function = {?}, property_info = {?}}
 -- inertia_function = [See find_inertia_function_value()]
 -- walk_params = {bias = ?, steps = ?}
-function randomize_numerical_property (params)
-  if params == nil then
-    params = {}
+function randomize_numerical_property (passed_params)
+  if passed_params == nil then
+    passed_params = {}
   end
-  if params.group_params == nil then
-    params.group_params = {}
+  if passed_params.group_params == nil then
+    passed_params.group_params = {}
+  end
+
+  -- Only tbl or prototype should be "passed by reference"
+  local params = util.table.deepcopy(passed_params)
+  params.prototype = passed_params.prototype
+  for i, _ in pairs(params.group_params) do
+    params.group_params[i].prototype = passed_params.group_params[i].prototype
+  end
+  params.tbl = passed_params.tbl
+  for i, _ in pairs(params.group_params) do
+    params.group_params[i].tbl = passed_params.group_params[i].tbl
   end
 
   -- TODO: move this to set_randomization_params

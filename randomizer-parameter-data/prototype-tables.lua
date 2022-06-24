@@ -6,6 +6,14 @@ prototype_tables.bot_classes = {
   "logistic-robot"
 }
 
+
+prototype_tables.container_classes = {
+  container = true,
+  ["infinity-container"] = true,
+  ["linked-container"] = true,
+  ["logistic-container"] = true
+}
+
 prototype_tables.energy_source_names = {
   accumulator = {"energy_source"},
   beacon = {"energy_source"},

@@ -105,6 +105,29 @@ function randomize_belt_speed ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_belt_group_speed
+---------------------------------------------------------------------------------------------------
+
+function randomize_belt_group_speed ()
+  for _, belt_class in pairs(prototype_tables.transport_belt_classes) do
+    local group_params = {}
+    for _, prototype in pairs(data.raw[belt_class]) do
+      table.insert(group_params, {
+        prototype = prototype,
+        property = "speed",
+        inertia_function = add_inertia_function_multiplier(2 / 5, inertia_function.belt_speed),
+        property_info = property_info.belt_speed
+      })
+    end
+
+    randomize_numerical_property{
+      prg_key = prg.get_key(belt_class, "class"),
+      group_params = group_params
+    }
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_bot_speed
 ---------------------------------------------------------------------------------------------------
 
@@ -178,25 +201,79 @@ function randomize_character_respawn_time ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_container_group_inventory_sizes
+---------------------------------------------------------------------------------------------------
+
+function randomize_container_group_inventory_sizes ()
+  local group_params = {}
+
+  for class_name, _ in pairs(prototype_tables.container_classes) do
+    for _, prototype in pairs(data.raw[class_name]) do
+      table.insert(group_params, {
+        prototype = prototype,
+        property = "inventory_size",
+        inertia_function = add_inertia_function_multiplier(2 / 3, inertia_function.inventory_size),
+        property_info = property_info.large_inventory
+      })
+    end
+  end
+
+  randomize_numerical_property{
+    group_params = group_params
+  }
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_electric_pole_groups
 ---------------------------------------------------------------------------------------------------
 
+-- TODO: Make this work on fast_replaceable_groups rather than next_upgrade
 function randomize_electric_pole_groups ()
-  local upgrade_groups = find_upgrade_groups("electric-pole")
+  local fast_replaceable_group_tbl = find_fast_replaceable_groups("electric-pole")
 
-  --for _, upgrade_group
+  for _, fast_replaceable_group in pairs(fast_replaceable_group_tbl) do
+    local group_params_supply_area = {}
+    local group_params_wire_distance = {}
+
+    for _, prototype in pairs(fast_replaceable_group) do
+      table.insert(group_params_supply_area, {
+        prototype = prototype,
+        property = "supply_area_distance",
+        inertia_function = add_inertia_function_multiplier(2 / 5, inertia_function.electric_pole_supply_area),
+        property_info = property_info.supply_area,
+        walk_params = walk_params.electric_pole_supply_area
+      })
+
+      table.insert(group_params_wire_distance, {
+        prototype = prototype,
+        property = "maximum_wire_distance",
+        inertia_function = add_inertia_function_multiplier(2 / 5, inertia_function.electric_pole_wire_reach),
+        property_info = property_info.wire_distance
+      })
+    end
+
+    randomize_numerical_property{
+      group_params = group_params_supply_area,
+      walk_params = walk_params.electric_pole_supply_area
+    }
+
+    randomize_numerical_property{
+      group_params = group_params_wire_distance
+    }
+  end
 end
 
 ---------------------------------------------------------------------------------------------------
 -- randomize_electric_poles
 ---------------------------------------------------------------------------------------------------
 
+-- TODO: Soft link to make electric pole reach usually larger than supply area
 function randomize_electric_poles ()
   for _, prototype in pairs(data.raw["electric-pole"]) do
     randomize_numerical_property{
       prototype = prototype,
       property = "supply_area_distance",
-      inertia_function = inertia_function.electric_pole_supply_area,
+      inertia_function = add_inertia_function_multiplier(3 / 5, inertia_function.electric_pole_supply_area),
       property_info = property_info.supply_area,
       walk_params = walk_params.electric_pole_supply_area
     }
@@ -204,7 +281,7 @@ function randomize_electric_poles ()
     randomize_numerical_property{
       prototype = prototype,
       property = "maximum_wire_distance",
-      inertia_function = inertia_function.electric_pole_wire_reach,
+      inertia_function = add_inertia_function_multiplier(3 / 5, inertia_function.electric_pole_wire_reach),
       property_info = property_info.wire_distance
     }
   end
@@ -344,29 +421,6 @@ function randomize_gate_opening_speed ()
 end
 
 ---------------------------------------------------------------------------------------------------
--- randomize_group_belt_speed
----------------------------------------------------------------------------------------------------
-
-function randomize_group_belt_speed ()
-  for _, belt_class in pairs(prototype_tables.transport_belt_classes) do
-    local group_params = {}
-    for _, prototype in pairs(data.raw[belt_class]) do
-      table.insert(group_params, {
-        prototype = prototype,
-        property = "speed",
-        inertia_function = add_inertia_function_multiplier(2 / 5, inertia_function.belt_speed),
-        property_info = property_info.belt_spped
-      })
-    end
-
-    randomize_numerical_property{
-      prg_key = prg.get_key(belt_class, "class"),
-      group_params = group_params
-    }
-  end
-end
-
----------------------------------------------------------------------------------------------------
 -- randomize_health_properties
 ---------------------------------------------------------------------------------------------------
 
@@ -437,6 +491,38 @@ function randomize_inserter_insert_dropoff_positions()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_group_inserter_speed
+---------------------------------------------------------------------------------------------------
+
+function randomize_inserter_group_speed ()
+  local group_params_rotation_speed = {}
+  local group_params_extension_speed = {}
+
+  for _, prototype in pairs(data.raw.inserter) do
+    table.insert(group_params_rotation_speed, {
+      protototype = prototype,
+      property = "rotation_speed",
+      inertia_function = add_inertia_function_multiplier(1 / 3, inertia_function.inserter_rotation_speed),
+      property_info = property_info.inserter_rotation_speed
+    })
+
+    table.insert(group_params_extension_speed, {
+      prototype = prototype,
+      property = "extension_speed",
+      inertia_function = add_inertia_function_multiplier(1 / 3, inertia_function.inserter_extension_speed)
+    })
+  end
+
+  randomize_numerical_property{
+    group_params = group_params_rotation_speed
+  }
+
+  randomize_numerical_property{
+    group_params = group_params_extension_speed
+  }
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_inserter_speed
 ---------------------------------------------------------------------------------------------------
 
@@ -445,14 +531,14 @@ function randomize_inserter_speed ()
     randomize_numerical_property{
       prototype = prototype,
       property = "rotation_speed",
-      inertia_function = inertia_function.inserter_rotation_speed,
+      inertia_function = add_inertia_function_multiplier(2 / 3, inertia_function.inserter_rotation_speed),
       property_info = property_info.inserter_rotation_speed
     }
 
     randomize_numerical_property{
       prototype = prototype,
       property = "extension_speed",
-      inertia_function = inertia_function.inserter_extension_speed
+      inertia_function = add_inertia_function_multiplier(2 / 3, inertia_function.inserter_extension_speed)
     }
   end
 end
@@ -477,10 +563,16 @@ function randomize_inventory_sizes ()
           else
             property_info_to_use = property_info.large_inventory
           end
+
+          local multiplier = 1
+          if prototype_tables[class_name] == true then
+            multiplier = 1 / 3
+          end
+
           randomize_numerical_property{
             prototype = prototype,
             property = property_name,
-            inertia_function = inertia_function.inventory_size,
+            inertia_function = add_inertia_function_multiplier(multiplier, inertia_function.inventory_size),
             property_info = property_info_to_use
           }
         end

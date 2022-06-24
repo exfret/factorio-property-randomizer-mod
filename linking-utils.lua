@@ -94,3 +94,21 @@ function find_upgrade_groups (class_name)
 
   return upgrade_groups
 end
+
+function find_fast_replaceable_groups (class_name)
+  local fast_replaceable_groups = {}
+
+  for _, prototype in pairs(data.raw[class_name]) do
+    if prototype.fast_replaceable_group then
+      if fast_replaceable_groups[prototype.fast_replaceable_group] ~= nil then
+        table.insert(fast_replaceable_groups[prototype.fast_replaceable_group], prototype)
+      else
+        fast_replaceable_groups[prototype.fast_replaceable_group] = {prototype}
+      end
+    else
+      fast_replaceable_groups["aaa" .. prototype.name] = {prototype}
+    end
+  end
+
+  return fast_replaceable_groups
+end
