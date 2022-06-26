@@ -143,6 +143,16 @@ inertia_function.machine_mining_speed = {
   slope = 2
 }
 
+inertia_function.max_health = {
+  ["type"] = "proportional",
+  slope = 4
+}
+
+inertia_function.max_health_sensitive = {
+  ["type"] = "proportional",
+  slope = 1
+}
+
 inertia_function.module_specification = {
   ["type"] = "constant",
   value = 10
@@ -172,12 +182,12 @@ inertia_function.underground_belt_length = {
 
 inertia_function.vehicle_crash_damage = {
   ["type"] = "proportional",
-  slope = 20
+  slope = 5
 }
 
 inertia_function.vehicle_speed = {
   ["type"] = "proportional",
-  slope = 20
+  slope = 3
 }
 
 return inertia_function

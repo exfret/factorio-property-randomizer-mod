@@ -223,6 +223,19 @@ prototype_tables.entities_with_health = {
   "tree"
 }
 
+-- Entities blacklisted from randomizing their health
+prototype_tables.entities_with_health_blacklist = {
+  character = true,
+  ["spider-leg"] = true
+}
+
+-- Modify with health slope 1
+prototype_tables.entities_with_health_sensitive = {
+  ["unit-spawner"] = true,
+  turret = true, -- For worms
+  unit = true
+}
+
 prototype_tables.inventory_names = {
   ["artillery-turret"] = {"inventory_size"},
   container = {"inventory_size"},
@@ -317,7 +330,7 @@ prototype_tables.transport_belt_classes = {
   "loader"
 }
 
-prototype_tables.vehicle_clases = {
+prototype_tables.vehicle_classes = {
   "car",
   "artillery-wagon",
   "cargo-wagon",

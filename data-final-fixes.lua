@@ -18,8 +18,9 @@ if rand_ammo then
 end
 
 if rand_armor_resistances then
-  table.insert(randomizing_functions_to_call, randomize_armor_resistances)
-  table.insert(randomizing_functions_to_call, randomize_armor_group_resistances)
+  -- Disable armor resistance for now
+  --table.insert(randomizing_functions_to_call, randomize_armor_resistances)
+  --table.insert(randomizing_functions_to_call, randomize_armor_group_resistances)
 end
 
 -- Does not randomize module slots (randomized elsewhere)
@@ -100,10 +101,6 @@ end
 
 if rand_mining_drill_productivity then
   table.insert(randomizing_functions_to_call, randomize_mining_productivity)
-end
-
-if rand_mining_drill_output then
-  -- TODO
 end
 
 if rand_module_effects then

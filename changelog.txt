@@ -5,16 +5,22 @@ Date: ?
     - Implemented more rounding rules
     - Added ability to randomize character crafting and running speeds midgame
     - Added group armor resistance randomization (and group resistance randomization capabilities in general)
-    - Added group randomization for beacons
+    - Added group randomization for beacons and other things (too lazy to list all of them)
   Minor Features:
     - Added compatibility with abnormal inserter collision boxes (currently I just ignore these inserters)
   Changes:
     - Rounding no longer applies automatically to new randomizations
     - Logistics radius and connection distance are now simultaneously randomized rather than the more contrived process I was using before
+    - Resistances are now only modified with a 1/10th chance
+    - Hid the armor resistance feature (too hard to balance for now)
+    - Electric pole wire reach is now set to be a little bigger than the supply area at a minimum
   Organization:
     - Separated out property info tables, prototype tables, inertia functions, and walk_params tables into their own new files
   Balancing:
     - Rebalanced electric poles to have lower variance and be slightly more generous toward the player (again)
+    - Bugs and other similar things have less swingy health randomization (before it was possible to just get mobbed by them)
+  Bugfixes:
+    - randomize_numerical_property now interacts with most of its params "by value" (this fixes a lot of bugs introduced by separating out the property tables)
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.2
 Date: 2022.06.18

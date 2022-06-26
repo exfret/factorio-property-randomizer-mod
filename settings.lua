@@ -36,7 +36,8 @@ data:extend({
     type = "bool-setting",
     name = "propertyrandomizer-armor-and-equipment",
     localised_name = "Randomize armor and equipment",
-    default_value = true
+    default_value = false,
+    hidden = true
   },
   {
     setting_type = "startup",

@@ -278,11 +278,14 @@ function randomize_electric_poles ()
       walk_params = walk_params.electric_pole_supply_area
     }
 
+    new_wire_distance_property_info = util.table.deepcopy(property_info.wire_distance)
+    new_wire_distance_property_info.min = math.max(new_wire_distance_property_info.min, 2 * prototype.supply_area_distance + 0.5)
+
     randomize_numerical_property{
       prototype = prototype,
       property = "maximum_wire_distance",
       inertia_function = add_inertia_function_multiplier(3 / 5, inertia_function.electric_pole_wire_reach),
-      property_info = property_info.wire_distance
+      property_info = new_wire_distance_property_info
     }
   end
 end
@@ -430,20 +433,34 @@ end
 function randomize_health_properties ()
   for _, class_name in pairs(prototype_tables.entities_with_health) do
     for _, prototype in pairs(data.raw[class_name]) do
-      if prototype.max_health == nil then
-        prototype.max_health = 10
-      end
-      randomize_numerical_property{
-        prototype = prototype,
-        property = "max_health",
-        property_info = property_info.max_health
-      }
+      if not prototype_tables.entities_with_health_blacklist[prototype.type] then
+        if prototype.max_health == nil then
+          prototype.max_health = 10
+        end
 
-      randomize_resistances{
-        prototypes = {prototype}
-      }
-      -- TODO: Get rid of showing all resistances
-      prototype.hide_resistances = false -- Make it so that players can see that resistances were changed
+        local inertia_function_to_use = inertia_function.max_health
+        local variance = 1
+        if prototype_tables.entities_with_health_sensitive[prototype.type] then
+          inertia_function_to_use = inertia_function.max_health_sensitive
+          variance = 0.2
+        end
+
+        randomize_numerical_property{
+          prototype = prototype,
+          property = "max_health",
+          inertia_function = inertia_function_to_use,
+          property_info = property_info.max_health
+        }
+  
+        -- Disable resistance randomization for now
+        --[[randomize_resistances{
+          prototypes = {prototype},
+          variance = variance
+        }
+        -- TODO: Get rid of showing all resistances
+        prototype.hide_resistances = false -- Make it so that players can see that resistances were changed
+        ]]
+      end
     end
   end
 end
@@ -860,7 +877,7 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function randomize_vehicle_crash_damage ()
-  for _, class_key in pairs(prototype_tables.vehicle_clases) do
+  for _, class_key in pairs(prototype_tables.vehicle_classes) do
     for _, prototype in pairs(data.raw[class_key]) do
       local old_energy_per_hit_point = prototype.energy_per_hit_point
       randomize_numerical_property{

@@ -110,6 +110,8 @@ end
 function prg.get_key (object, type_of_key)
   if type_of_key == "class" then
     return object .. "bbb"
+  elseif type_of_key == "dummy" then
+    return "aaadummyprg"
   end
 
   return object.type .. "aaa" .. object.name

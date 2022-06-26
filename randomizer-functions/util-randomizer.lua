@@ -1,5 +1,8 @@
 require("globals")
 
+local property_info = require("randomizer-parameter-data/property-info-tables")
+local prototype_tables = require("randomizer-parameter-data/prototype-tables")
+
 require("random-utils/randomization-algorithms")
 
 projectile_list = {}
@@ -250,51 +253,38 @@ function randomize_resistances (params)
     end
 
     for _, resistance in pairs(resistances) do
-      if resistance.decrease == nil then
-        resistance.decrease = 0
-      end
-      if resistance.percent == nil then
-        resistance.percent = 0
-      end
+      if prg.range(prg.get_key(nil, "dummy"), 1, 10) == 1 then
+        if resistance.decrease == nil then
+          resistance.decrease = 0
+        end
+        if resistance.percent == nil then
+          resistance.percent = 0
+        end
 
-      -- TODO prg_key
-      table.insert(group_params[resistance.type]["decrease"], {
-        prototype = prototype,
-        tbl = resistance,
-        property = "decrease",
-        inertia_function = {
-          ["type"] = "proportional",
-          slope = DEFAULT_INERTIA_FUNCTION_SLOPE * variance
-        },
-        property_info = {
-          round = {
-            [2] = {
-              modulus = 1
-            }
-          }
-        }
-      })
+        -- TODO prg_key
+        table.insert(group_params[resistance.type]["decrease"], {
+          prototype = prototype,
+          tbl = resistance,
+          property = "decrease",
+          inertia_function = {
+            ["type"] = "proportional",
+            slope = DEFAULT_INERTIA_FUNCTION_SLOPE * variance
+          },
+          property_info = property_info.resistance_decrease
+        })
 
-      table.insert(group_params[resistance.type]["percent"], {
-        prototype = prototype,
-        tbl = resistance,
-        property = "percent",
-        inertia_function = {
-          {-100, 300 * variance},
-          {50, 300 * variance},
-          {110, 0}
-        },
-        property_info = {
-          round = {
-            [2] = {
-              modulus = 1
-            },
-            [3] = {
-              modulus = 10
-            }
-          }
-        }
-      })
+        table.insert(group_params[resistance.type]["percent"], {
+          prototype = prototype,
+          tbl = resistance,
+          property = "percent",
+          inertia_function = {
+            {-100, 300 * variance},
+            {50, 300 * variance},
+            {110, 0}
+          },
+          property_info = property_info.resistance_percent
+        })
+      end
     end
   end
 
