@@ -887,8 +887,12 @@ function randomize_vehicle_crash_damage ()
       }
 
       -- Increase impact resistance for higher crash damages so that this isn't just a glass cannon
-      if prototype.resistances ~= nil and prototype.resistances.impact ~= nil then
-        prototype.resistances.impact.decrease = prototype.resistances.impact.decrease * prototype.energy_per_hit_point / old_energy_per_hit_point
+      if prototype.resistances then
+        for _, resistance in pairs(prototype.resistances) do
+          if resistance.type == "impact" then
+            resistance.decrease = resistance.decrease * prototype.energy_per_hit_point / old_energy_per_hit_point
+          end
+        end
       end
     end
   end
@@ -905,7 +909,8 @@ function randomize_vehicle_speed ()
       local new_energy_as_number = randomize_numerical_property{
         dummy = energy_as_number,
         prg_key = prg.get_key(prototype),
-        inertia_function = inertia_function.vehicle_speed
+        inertia_function = inertia_function.vehicle_speed,
+        walk_params = walk_params.vehicle_speed
       }
       prototype[speed_key] = new_energy_as_number .. "W"
 
@@ -921,6 +926,15 @@ function randomize_vehicle_speed ()
       if energy_as_number ~= 0 then
         -- Scale impact hitpoints taken *inversely* cuz that's a bit more balanced and funny
         prototype.energy_per_hit_point = prototype.energy_per_hit_point * new_energy_as_number / energy_as_number
+
+        -- Also scale flat impact resistance
+        if prototype.resistances then
+          for _, resistance in pairs(prototype.resistances) do
+            if resistance.type == "impact" then
+              resistance.decrease = resistance.decrease * new_energy_as_number / energy_as_number
+            end
+          end
+        end
       end
     end
   end

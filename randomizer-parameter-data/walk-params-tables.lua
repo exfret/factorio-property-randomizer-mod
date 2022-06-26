@@ -16,4 +16,8 @@ walk_params.underground_belt_length = {
   bias = 0.525, -- Make bias towards a little higher to fight against the offshoot to the left I was having
 }
 
+walk_params.vehicle_speed = {
+  bias = 0.53
+}
+
 return walk_params
