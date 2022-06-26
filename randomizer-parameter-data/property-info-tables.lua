@@ -223,6 +223,25 @@ property_info.researching_speed = {
   slope = 10
 }
 
+property_info.resistance_decrease = {
+  round = {
+    [2] = {
+      modulus = 1
+    }
+  }
+}
+
+property_info.resistance_percent = {
+  round = {
+    [2] = {
+      modulus = 1
+    },
+    [3] = {
+      modulus = 10
+    }
+  }
+}
+
 property_info.roboport_radius = {
   min = 1,
   round = {

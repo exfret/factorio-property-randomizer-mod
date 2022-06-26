@@ -46,6 +46,8 @@ Next releases:
   - Add description to mod portal
   - Hard link logistics chest inventory sizes
   - Option for resistances outside of 0-100
+  - Test for tiers by looking at research
+  - Test if electric pole has odd collision box or even one and round supply area accordinglywaw
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call
