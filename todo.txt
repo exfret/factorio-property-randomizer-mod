@@ -4,10 +4,6 @@ Next releases:
   3. Implement auto-testing (to whatever limited extent I can)
 
   - Investigate which entities take pollution and how
-  - Add balancing (for properties that can be balanced)
-    * Maybe a "karma system"? But how to order how the karmas are dished out?
-    * Idea: add all table + properties to be randomized to a list, then randomly pick things from said list to randomize until it's empty, and also include the other parameters for randomization, like the function to use (heck, maybe even just store the individual functions and parameters!)
-    * Add individual prototype karma too so individual prototypes don't get too unbalanced
   - Test mod compatibility
   - Do special evaluation of the "importance" of items to randomize their crafting times more effectively
   - In-game tutorial/tooltips for more obscure randomizations
@@ -42,12 +38,11 @@ Next releases:
   - Add special "compaitibilities" for vanilla
   - Add thumbnail
   - prg_key for group randomizations
-  - Make separate variables for inertia functions
-  - Add description to mod portal
   - Hard link logistics chest inventory sizes
   - Option for resistances outside of 0-100
   - Test for tiers by looking at research
-  - Test if electric pole has odd collision box or even one and round supply area accordinglywaw
+  - Test if electric pole has odd collision box or even one and round supply area accordingly
+  - Increase burner inserter and non-machine things' stats when they're burner energy sources
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call

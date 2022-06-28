@@ -1,3 +1,5 @@
+-- Offshore pump, lab, and burner biases are modified in machine_speed function in entitiy_randomizer
+
 local walk_params = {}
 
 walk_params.electric_pole_supply_area = {
@@ -9,7 +11,7 @@ walk_params.magazine_size = {
 }
 
 walk_params.stack_size = {
-  bias = 0.525 -- It's better to give the player enormously large stack sizes than to have enormously small ones, so skew to larger ones
+  bias = 0.56 -- It's better to give the player enormously large stack sizes than to have enormously small ones, so skew to larger ones
 }
 
 walk_params.underground_belt_length = {

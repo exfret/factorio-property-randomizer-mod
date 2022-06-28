@@ -177,7 +177,7 @@ local function nudge_properties (params, roll)
 end
 
 local function complete_final_randomization_fixes (params)
-  local function fix_individual_property(tbl, property, property_info)
+  local function fix_individual_property(tbl, property, property_info, old_value)
     if tbl[property] == nil then
       return
     end
@@ -202,11 +202,17 @@ local function complete_final_randomization_fixes (params)
     if property_info.max ~= nil then
       tbl[property] = math.min(tbl[property], property_info.max)
     end
+    if property_info.min_factor ~= nil then
+      tbl[property] = math.max(tbl[property], property_info.min_factor * old_value)
+    end
+    if property_info.max_factor ~= nil then
+      tbl[property] = math.min(tbl[property], property_info.max_factor * old_value)
+    end
   end
 
-  fix_individual_property(params.tbl, params.property, params.property_info)
+  fix_individual_property(params.tbl, params.property, params.property_info, params.old_value)
   for _, param_table in pairs(params.group_params) do
-    fix_individual_property(param_table.tbl, param_table.property, params.property_info)
+    fix_individual_property(param_table.tbl, param_table.property, params.property_info, params.old_value)
   end
 end
 
@@ -218,6 +224,7 @@ end
 -- simultaneous_params = list of {dummy = ?, prototype = ?, tbl = ?, property = ?, inertia_function = {?}, property_info = {?}}
 -- inertia_function = [See find_inertia_function_value()]
 -- walk_params = {bias = ?, steps = ?}
+-- ALSO: old_value, but this is written inside this function, don't pass it in
 function randomize_numerical_property (passed_params)
   if passed_params == nil then
     passed_params = {}
@@ -262,6 +269,8 @@ function randomize_numerical_property (passed_params)
   if params.property_info.lower_is_better then
     sign = -1
   end]]
+
+  params.old_value = params.tbl[params.property]
 
   local luckiness_of_this_randomization = 0
   for i = 1,params.walk_params.num_steps do

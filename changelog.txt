@@ -1,6 +1,19 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.1.3
+Version: 0.1.4
 Date: ?
+  Features:
+    - Introduced a separation mechanism for tiers of prototypes that distributes the entities farther apart
+  Changes:
+    - Replaced some group randomizations with the new separation mechanism
+    - Hardlinked extension speed and rotation speed for inserters (no more inserters that take forever to extend but rotate almost instantly)
+  Balancing:
+    - Made item stack sizes lean more toward larger sizes, and made it so that stack size can't decrease below 2/5ths the original
+    - Gave a boost to burner machine speeds
+  Bugfixes:
+    - Removed rocket_result_inventory_size and furnace inventory size properties since they weren't exactly what I was looking for
+---------------------------------------------------------------------------------------------------
+Version: 0.1.3
+Date: 2022.06.26
   Features:
     - Implemented more rounding rules
     - Added ability to randomize character crafting and running speeds midgame
@@ -28,7 +41,7 @@ Date: 2022.06.18
     - Added simultaneous randomization for assembly machines
     - Added ability to find which prototypes are of the same "type" using next_upgrade
     - Randomized mining drill base productivity
-    - Rounding is now present and configurable (though the rounding parameters haven't been fully set yet, so they way some things are rounded might not make sense)
+    - Rounding is now present and configurable (though the rounding parameters haven't been fully set yet, so the way some things are rounded might not make sense)
   Balancing:
     - Made electric pole randomization more generous to the player
   Bugfixes:

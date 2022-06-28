@@ -12,31 +12,6 @@ require("random-utils/random")
 require("random-utils/randomization-algorithms")
 
 ---------------------------------------------------------------------------------------------------
--- randomize_assembly_machine_groups
----------------------------------------------------------------------------------------------------
-
-function randomize_assembly_machine_groups ()
-  local upgrade_groups = find_upgrade_groups("assembling-machine")
-
-  for _, upgrade_group in pairs(upgrade_groups) do
-    local group_params = {}
-    for _, prototype_in_upgrade_group in pairs(upgrade_group) do
-      table.insert(group_params, {
-        prototype = prototype_in_upgrade_group,
-        property = "crafting_speed",
-        inertia_function = add_inertia_function_multiplier(2 / 5, inertia_function.crafting_speed),
-        property_info = property_info.machine_speed
-      })
-    end
-
-    randomize_numerical_property{
-      -- TODO: Add custom prg keys for groups depending on the most upgraded version
-      group_params = group_params
-    }
-  end
-end
-
----------------------------------------------------------------------------------------------------
 -- randomize_beacon_properties
 ---------------------------------------------------------------------------------------------------
 
@@ -45,45 +20,17 @@ function randomize_beacon_properties ()
     randomize_numerical_property{
       prototype = prototype,
       property = "supply_area_distance",
-      inertia_function = add_inertia_function_multiplier(3 / 5, inertia_function.beacon_supply_area_distance),
+      inertia_function = inertia_function.beacon_supply_area_distance,
       property_info = property_info.supply_area
     }
 
     randomize_numerical_property{
       prototype = prototype,
       property = "distribution_effectivity",
-      inertia_function = add_inertia_function_multiplier(3 / 5, inertia_function.beacon_distribution_effectivity),
+      inertia_function = inertia_function.beacon_distribution_effectivity,
       property_info = property_info.effectivity
     }
   end
-end
-
----------------------------------------------------------------------------------------------------
--- randomize_beacon_group_properties
----------------------------------------------------------------------------------------------------
-
-function randomize_beacon_group_properties ()
-  local group_params = {}
-
-  for _, prototype in pairs(data.raw.beacon) do
-    table.insert(group_params, {
-      prototype = prototype,
-      property = "supply_area_distance",
-      inertia_function = add_inertia_function_multiplier(2 / 5, inertia_function.beacon_supply_area_distance),
-      property_info = property_info.supply_area
-    })
-
-    table.insert(group_params, {
-      prototype = prototype,
-      property = "distribution_effectivity",
-      inertia_function = add_inertia_function_multiplier(2 / 5, inertia_function.beacon_distribution_effectivity),
-      property_info = property_info.effectivity
-    })
-  end
-
-  randomize_numerical_property{
-    group_params = group_params
-  }
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -92,38 +39,42 @@ end
 
 -- TODO: Option to sync belt tiers
 function randomize_belt_speed ()
+  local min_bias = 0.45
+  local max_bias = 0.6
+  local prototype_bias_dict = {}
+
+  for _, belt_class in pairs(prototype_tables.transport_belt_classes) do
+    for _, prototype1 in pairs(data.raw[belt_class]) do
+      local num_worse_speed = 0
+      local total_num = 0
+
+      for _, prototype2 in pairs(data.raw[belt_class]) do
+        if prototype2.speed < prototype1.speed then
+          num_worse_speed = num_worse_speed + 1
+        elseif prototype2.speed == prototype1.speed then
+          num_worse_speed = num_worse_speed + 0.5
+        end
+
+        total_num = total_num + 1
+      end
+
+      local speed_score = num_worse_speed / total_num
+      prototype_bias_dict[prototype1.name] = min_bias * (1 - speed_score) + max_bias * speed_score
+    end
+  end
+
   for _, belt_class in pairs(prototype_tables.transport_belt_classes) do
     for _, prototype in pairs(data.raw[belt_class]) do
       randomize_numerical_property{
         prototype = prototype,
         property = "speed",
-        inertia_function = add_inertia_function_multiplier(3 / 5, inertia_function.belt_speed),
-        property_info = property_info.belt_speed
+        inertia_function = 3 / 5, inertia_function.belt_speed,
+        property_info = property_info.belt_speed,
+        walk_params = {
+          bias = prototype_bias_dict[prototype.name]
+        }
       }
     end
-  end
-end
-
----------------------------------------------------------------------------------------------------
--- randomize_belt_group_speed
----------------------------------------------------------------------------------------------------
-
-function randomize_belt_group_speed ()
-  for _, belt_class in pairs(prototype_tables.transport_belt_classes) do
-    local group_params = {}
-    for _, prototype in pairs(data.raw[belt_class]) do
-      table.insert(group_params, {
-        prototype = prototype,
-        property = "speed",
-        inertia_function = add_inertia_function_multiplier(2 / 5, inertia_function.belt_speed),
-        property_info = property_info.belt_speed
-      })
-    end
-
-    randomize_numerical_property{
-      prg_key = prg.get_key(belt_class, "class"),
-      group_params = group_params
-    }
   end
 end
 
@@ -201,69 +152,6 @@ function randomize_character_respawn_time ()
 end
 
 ---------------------------------------------------------------------------------------------------
--- randomize_container_group_inventory_sizes
----------------------------------------------------------------------------------------------------
-
-function randomize_container_group_inventory_sizes ()
-  local group_params = {}
-
-  for class_name, _ in pairs(prototype_tables.container_classes) do
-    for _, prototype in pairs(data.raw[class_name]) do
-      table.insert(group_params, {
-        prototype = prototype,
-        property = "inventory_size",
-        inertia_function = add_inertia_function_multiplier(2 / 3, inertia_function.inventory_size),
-        property_info = property_info.large_inventory
-      })
-    end
-  end
-
-  randomize_numerical_property{
-    group_params = group_params
-  }
-end
-
----------------------------------------------------------------------------------------------------
--- randomize_electric_pole_groups
----------------------------------------------------------------------------------------------------
-
--- TODO: Make this work on fast_replaceable_groups rather than next_upgrade
-function randomize_electric_pole_groups ()
-  local fast_replaceable_group_tbl = find_fast_replaceable_groups("electric-pole")
-
-  for _, fast_replaceable_group in pairs(fast_replaceable_group_tbl) do
-    local group_params_supply_area = {}
-    local group_params_wire_distance = {}
-
-    for _, prototype in pairs(fast_replaceable_group) do
-      table.insert(group_params_supply_area, {
-        prototype = prototype,
-        property = "supply_area_distance",
-        inertia_function = add_inertia_function_multiplier(2 / 5, inertia_function.electric_pole_supply_area),
-        property_info = property_info.supply_area,
-        walk_params = walk_params.electric_pole_supply_area
-      })
-
-      table.insert(group_params_wire_distance, {
-        prototype = prototype,
-        property = "maximum_wire_distance",
-        inertia_function = add_inertia_function_multiplier(2 / 5, inertia_function.electric_pole_wire_reach),
-        property_info = property_info.wire_distance
-      })
-    end
-
-    randomize_numerical_property{
-      group_params = group_params_supply_area,
-      walk_params = walk_params.electric_pole_supply_area
-    }
-
-    randomize_numerical_property{
-      group_params = group_params_wire_distance
-    }
-  end
-end
-
----------------------------------------------------------------------------------------------------
 -- randomize_electric_poles
 ---------------------------------------------------------------------------------------------------
 
@@ -273,7 +161,7 @@ function randomize_electric_poles ()
     randomize_numerical_property{
       prototype = prototype,
       property = "supply_area_distance",
-      inertia_function = add_inertia_function_multiplier(3 / 5, inertia_function.electric_pole_supply_area),
+      inertia_function = inertia_function.electric_pole_supply_area,
       property_info = property_info.supply_area,
       walk_params = walk_params.electric_pole_supply_area
     }
@@ -284,7 +172,7 @@ function randomize_electric_poles ()
     randomize_numerical_property{
       prototype = prototype,
       property = "maximum_wire_distance",
-      inertia_function = add_inertia_function_multiplier(3 / 5, inertia_function.electric_pole_wire_reach),
+      inertia_function = inertia_function.electric_pole_wire_reach,
       property_info = new_wire_distance_property_info
     }
   end
@@ -489,7 +377,7 @@ local inserter_pickup_positions = {
 function randomize_inserter_insert_dropoff_positions()
   for _, prototype in pairs(data.raw.inserter) do
     -- Test that this inserter is a "good" size
-    if prototype.collision_box ~= nil and prototype.collision_box[1][1] == -0.15 and prototype.collision_box[1][2] == -0.15 and prototype.collision_box[2][1] == 0.15 and prototype.collisions_box[2][2] == 0.15 then
+    if prototype.collision_box ~= nil and prototype.collision_box[1][1] == -0.15 and prototype.collision_box[1][2] == -0.15 and prototype.collision_box[2][1] == 0.15 and prototype.collision_box[2][2] == 0.15 then
       local key = prototype.type .. "aaa" .. prototype.name
 
       local inserter_position_variable = prg.range(key, 1,8)
@@ -508,54 +396,25 @@ function randomize_inserter_insert_dropoff_positions()
 end
 
 ---------------------------------------------------------------------------------------------------
--- randomize_group_inserter_speed
----------------------------------------------------------------------------------------------------
-
-function randomize_inserter_group_speed ()
-  local group_params_rotation_speed = {}
-  local group_params_extension_speed = {}
-
-  for _, prototype in pairs(data.raw.inserter) do
-    table.insert(group_params_rotation_speed, {
-      protototype = prototype,
-      property = "rotation_speed",
-      inertia_function = add_inertia_function_multiplier(1 / 3, inertia_function.inserter_rotation_speed),
-      property_info = property_info.inserter_rotation_speed
-    })
-
-    table.insert(group_params_extension_speed, {
-      prototype = prototype,
-      property = "extension_speed",
-      inertia_function = add_inertia_function_multiplier(1 / 3, inertia_function.inserter_extension_speed)
-    })
-  end
-
-  randomize_numerical_property{
-    group_params = group_params_rotation_speed
-  }
-
-  randomize_numerical_property{
-    group_params = group_params_extension_speed
-  }
-end
-
----------------------------------------------------------------------------------------------------
 -- randomize_inserter_speed
 ---------------------------------------------------------------------------------------------------
 
 function randomize_inserter_speed ()
   for _, prototype in pairs(data.raw.inserter) do
     randomize_numerical_property{
-      prototype = prototype,
-      property = "rotation_speed",
-      inertia_function = add_inertia_function_multiplier(2 / 3, inertia_function.inserter_rotation_speed),
-      property_info = property_info.inserter_rotation_speed
-    }
-
-    randomize_numerical_property{
-      prototype = prototype,
-      property = "extension_speed",
-      inertia_function = add_inertia_function_multiplier(2 / 3, inertia_function.inserter_extension_speed)
+      group_params = {
+        {
+          prototype = prototype,
+          property = "rotation_speed",
+          inertia_function = inertia_function.inserter_rotation_speed,
+          property_info = property_info.inserter_rotation_speed
+        },
+        {
+          prototype = prototype,
+          property = "extension_speed",
+          inertia_function = inertia_function.inserter_extension_speed
+        }
+      }
     }
   end
 end
@@ -581,15 +440,10 @@ function randomize_inventory_sizes ()
             property_info_to_use = property_info.large_inventory
           end
 
-          local multiplier = 1
-          if prototype_tables[class_name] == true then
-            multiplier = 1 / 3
-          end
-
           randomize_numerical_property{
             prototype = prototype,
             property = property_name,
-            inertia_function = add_inertia_function_multiplier(multiplier, inertia_function.inventory_size),
+            inertia_function = inertia_function.inventory_size,
             property_info = property_info_to_use
           }
         end
@@ -648,11 +502,26 @@ end
 function randomize_machine_speed ()
   for _, class in pairs(prototype_tables.machine_classes) do
     for _, prototype in pairs(data.raw[class]) do
+      -- TODO: Make it a setting whether to increase burner stats
+      local bias_to_use = 0.5
+      if prototype.type ~= "offshore-pump" and prototype.energy_source.type == "burner" then
+        bias_to_use = bias_to_use + 0.1
+      end
+      if prototype.type == "lab" then
+        bias_to_use = bias_to_use - 0.05
+      end
+      if prototype.type == "offshore-pump" then
+        bias_to_use = bias_to_use - 0.05
+      end
+
       randomize_numerical_property{
         prototype = prototype,
         property = "crafting_speed",
-        inertia_function = add_inertia_function_multiplier(3 / 5, inertia_function.crafting_speed),
-        property_info = property_info.machine_speed
+        inertia_function = inertia_function.crafting_speed,
+        property_info = property_info.machine_speed,
+        walk_params = {
+          bias = bias_to_use
+        }
       }
 
       -- TODO: Make burner mining drill swingier?
@@ -660,21 +529,30 @@ function randomize_machine_speed ()
         prototype = prototype,
         property = "mining_speed",
         inertia_function = inertia_function.machine_mining_speed,
-        property_info = property_info.machine_speed
+        property_info = property_info.machine_speed,
+        walk_params = {
+          bias = bias_to_use
+        }
       }
 
       randomize_numerical_property{
         prototype = prototype,
         property = "pumping_speed",
         inertia_function = inertia_function.pumping_speed,
-        property_info = property_info.pumping_speed
+        property_info = property_info.pumping_speed,
+        walk_params = {
+          bias = bias_to_use
+        }
       }
 
       randomize_numerical_property{
         prototype = prototype,
         property = "researching_speed",
         inertia_function = inertia_function.researching_speed,
-        property_info = property_info.researching_speed
+        property_info = property_info.researching_speed,
+        walk_params = {
+          bias = bias_to_use
+        }
       }
     end
   end

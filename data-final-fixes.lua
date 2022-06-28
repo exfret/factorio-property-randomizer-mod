@@ -26,7 +26,6 @@ end
 -- Does not randomize module slots (randomized elsewhere)
 if rand_beacons then
   table.insert(randomizing_functions_to_call, randomize_beacon_properties)
-  --table.insert(randomizing_functions_to_call, randomize_beacon_group_properties)
 end
 
 if rand_bots then
@@ -43,7 +42,6 @@ if rand_crafting_times then
 end
 
 if rand_electric_poles then
-  --table.insert(randomizing_functions_to_call, randomize_electric_pole_groups)
   table.insert(randomizing_functions_to_call, randomize_electric_poles)
 end
 
@@ -81,16 +79,13 @@ end
 -- TODO: Randomize pump (normal pump, not offshore pump) speed
 if rand_logistic_speed then
   table.insert(randomizing_functions_to_call, randomize_belt_speed)
-  --table.insert(randomizing_functions_to_call, randomize_belt_group_speed)
   table.insert(randomizing_functions_to_call, randomize_inserter_speed)
-  --table.insert(randomizing_functions_to_call, randomize_inserter_group_speed)
   table.insert(randomizing_functions_to_call, randomize_pump_speed) -- TODO once I learn about fluidboxes
 end
 
 if rand_machine_speed then
   -- TODO: This may end up randomizing other classes... find a way to fix this
   -- TODO: Other crafting_machine classes group randomizations
-  --table.insert(randomizing_functions_to_call, randomize_assembly_machine_groups)
   table.insert(randomizing_functions_to_call, randomize_machine_speed)
 end
 
@@ -160,6 +155,10 @@ end
 
 -- randomize_all_game_sounds()
 -- randomize_utility_constants_properties()
+
+---------------------------------------------------------------------------------------------------
+-- Perform the randomizations
+---------------------------------------------------------------------------------------------------
 
 for _, randomizing_function in pairs(randomizing_functions_to_call) do
   randomizing_function()

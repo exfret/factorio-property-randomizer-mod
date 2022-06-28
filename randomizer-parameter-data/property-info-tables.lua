@@ -291,7 +291,16 @@ property_info.speed_effect = {
 }
 
 property_info.stack_size = {
-  min = 1
+  min = 1,
+  min_factor = 2 / 5,
+  round = {
+    [1] = {
+      modulus = 1
+    },
+    [2] = {
+      modulus = 5
+    }
+  }
 }
 
 property_info.supply_area = {

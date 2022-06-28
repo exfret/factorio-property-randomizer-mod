@@ -169,8 +169,10 @@ inertia_function.researching_speed = {
 }
 
 inertia_function.stack_size = {
-  ["type"] = "proportional",
-  slope = 7
+  {1, 4},
+  {20, 20},
+  {100, 1200},
+  {4294967295, 51539607540}
 }
 
 inertia_function.underground_belt_length = {

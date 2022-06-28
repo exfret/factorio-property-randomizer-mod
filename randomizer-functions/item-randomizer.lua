@@ -84,23 +84,6 @@ function randomize_armor_resistances ()
 end
 
 ---------------------------------------------------------------------------------------------------
--- randomize_armor_group_resistances
----------------------------------------------------------------------------------------------------
-
-function randomize_armor_group_resistances ()
-  local prototype_list = {}
-
-  for _, prototype in pairs(data.raw.armor) do
-    table.insert(prototype_list, prototype)
-  end
-
-  randomize_resistances{
-    prototypes = prototype_list,
-    variance = 0.4
-  }
-end
-
----------------------------------------------------------------------------------------------------
 -- randomize_capsules
 ---------------------------------------------------------------------------------------------------
 

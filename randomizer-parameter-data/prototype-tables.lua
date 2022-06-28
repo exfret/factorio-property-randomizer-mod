@@ -236,19 +236,19 @@ prototype_tables.entities_with_health_sensitive = {
   unit = true
 }
 
+-- Furnace inventory sizes and rocket_result_inventory_size are cursed properties... don't randomize
+-- Don't randomize trash inventory sizes
 prototype_tables.inventory_names = {
   ["artillery-turret"] = {"inventory_size"},
   container = {"inventory_size"},
   ["logistic-container"] = {"inventory_size"},
   ["infinity-container"] = {"inventory_size"},
-  ["rocket-silo"] = {"rocket_result_inventory_size"},
-  furnace = {"result_inventory_size"}, -- source_inventory_size can't be anything other than 1 anyways
   ["linked-container"] = {"inventory_size"},
   ["ammo-turret"] = {"inventory_size"},
   car = {"inventory_size"},
   ["artillery-wagon"] = {"inventory_size"},
   ["cargo-wagon"] = {"inventory_size"},
-  ["spider-vehicle"] = {"inventory_size", "trash_inventory_size"}
+  ["spider-vehicle"] = {"inventory_size"}
 }
 
 prototype_tables.item_classes_to_randomize_stack_size = {
