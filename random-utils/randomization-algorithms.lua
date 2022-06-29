@@ -185,12 +185,12 @@ local function complete_final_randomization_fixes (params)
     -- Rounding
     if property_info.round ~= nil then
       local left_digits_to_keep = property_info.round[rounding_mode].left_digits_to_keep
-      if left_digits_to_keep ~= nil and tbl[property] ~= 0 then
+      if left_digits_to_keep ~= nil and left_digits_to_keep ~= 0 and tbl[property] ~= 0 then
         local digits_modulus = math.pow(10, math.floor(math.log(math.abs(tbl[property]), 10) - left_digits_to_keep + 1))
         tbl[property] = math.floor((tbl[property] + digits_modulus / 2) / digits_modulus) * digits_modulus
       end
       local modulus = property_info.round[rounding_mode].modulus
-      if modulus ~= nil then
+      if modulus ~= nil and modulus ~= 0 then
         tbl[property] = math.floor((tbl[property] + modulus / 2) / modulus) * modulus
       end
     end
@@ -212,7 +212,7 @@ local function complete_final_randomization_fixes (params)
 
   fix_individual_property(params.tbl, params.property, params.property_info, params.old_value)
   for _, param_table in pairs(params.group_params) do
-    fix_individual_property(param_table.tbl, param_table.property, params.property_info, params.old_value)
+    fix_individual_property(param_table.tbl, param_table.property, param_table.property_info, param_table.old_value)
   end
 end
 

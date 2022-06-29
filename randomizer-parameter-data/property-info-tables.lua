@@ -54,7 +54,15 @@ property_info.charging_station_count = {
 }
 
 property_info.consumption_effect = {
-  min = -0.8
+  min = -0.8,
+  round = {
+    [2] = {
+      modulus = 0.01
+    },
+    [3] = {
+      modulus = 0.1
+    }
+  }
 }
 
 property_info.discrete = {
@@ -96,6 +104,17 @@ property_info.equipment_grid = {
   }
 }
 
+property_info.fluid_emissions_multiplier = {
+  round = {
+    [2] = {
+      modulus = 0.01
+    },
+    [3] = {
+      modulus = 0.1
+    }
+  }
+}
+
 property_info.fluid_usage = {
   min = 0.1,
   round = {
@@ -114,6 +133,7 @@ property_info.inserter_rotation_speed = {
       modulus = 10 / (360 * 60)
     },
     [3] = {
+      left_digits_to_keep = 0,
       modulus = 100 / (360 * 60)
     }
   }
@@ -168,6 +188,11 @@ property_info.machine_speed = {
 
 property_info.magazine_size = {
   min = 1,
+  round = {
+    [2] = {
+      modulus = 1
+    }
+  }
 }
 
 property_info.max_health = {
@@ -187,8 +212,22 @@ property_info.neighbour_bonus = {
   }
 }
 
+property_info.offshore_pumping_speed = {
+  min = 10 / 60,
+  round = {
+    [2] = {
+      modulus = 10 / 60
+    }
+  }
+}
+
 property_info.pollution_effect = {
-  min = -1
+  min = -1,
+  round = {
+    [2] = {
+      modulus = 0.01
+    }
+  }
 }
 
 property_info.power = {
@@ -202,14 +241,10 @@ property_info.power = {
 }
 
 property_info.productivity_effect = {
-  min = 0
-}
-
-property_info.pumping_speed = {
-  min = 10 / 60,
+  min = 0,
   round = {
     [2] = {
-      modulus = 10 / 60
+      modulus = 0.01
     }
   }
 }
@@ -218,9 +253,23 @@ property_info.recipe = {
   min = 0.01
 }
 
+property_info.repair_tool_speed = {
+  min = 0.1,
+  round = {
+    [2] = {
+      modulus = 0.1
+    }
+  }
+}
+
 property_info.researching_speed = {
   ["type"] = "proportional",
-  slope = 10
+  slope = 10,
+  round = {
+    [2] = {
+      modulus = 0.1
+    }
+  }
 }
 
 property_info.resistance_decrease = {
@@ -287,7 +336,12 @@ property_info.small_nonempty_inventory = {
 }
 
 property_info.speed_effect = {
-  min = -1
+  min = -1,
+  round = {
+    [2] = {
+      modulus = 0.01
+    }
+  }
 }
 
 property_info.stack_size = {
@@ -327,6 +381,15 @@ property_info.temperature = {
   }
 }
 
+property_info.tool_durability = {
+  min = 1,
+  round = {
+    [2] = {
+      modulus = 1
+    }
+  }
+}
+
 property_info.underground_belt_length = {
   min = 2, -- TODO: Allow underground distance of 1 on extreme mode
   max = 255,
@@ -335,9 +398,6 @@ property_info.underground_belt_length = {
       modulus = 1
     },
     [2] = {
-      modulus = 1
-    },
-    [3] = {
       modulus = 1
     }
   }

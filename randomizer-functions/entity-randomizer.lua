@@ -68,7 +68,7 @@ function randomize_belt_speed ()
       randomize_numerical_property{
         prototype = prototype,
         property = "speed",
-        inertia_function = 3 / 5, inertia_function.belt_speed,
+        inertia_function = inertia_function.belt_speed,
         property_info = property_info.belt_speed,
         walk_params = {
           bias = prototype_bias_dict[prototype.name]
@@ -407,7 +407,17 @@ function randomize_inserter_speed ()
           prototype = prototype,
           property = "rotation_speed",
           inertia_function = inertia_function.inserter_rotation_speed,
-          property_info = property_info.inserter_rotation_speed
+          property_info = {
+            round = {
+              [2] = {
+                modulus = 10 / (360 * 60)
+              },
+              [3] = {
+                left_digits_to_keep = 0,
+                modulus = 100 / (360 * 60)
+              }
+            }
+          }
         },
         {
           prototype = prototype,
@@ -538,8 +548,8 @@ function randomize_machine_speed ()
       randomize_numerical_property{
         prototype = prototype,
         property = "pumping_speed",
-        inertia_function = inertia_function.pumping_speed,
-        property_info = property_info.pumping_speed,
+        inertia_function = inertia_function.offshore_pumping_speed,
+        property_info = property_info.offshore_pumping_speed,
         walk_params = {
           bias = bias_to_use
         }

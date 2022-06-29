@@ -159,7 +159,8 @@ function randomize_fluid_properties ()
 
     randomize_numerical_property{
       prototype = prototype,
-      property = "emissions_multiplier"
+      property = "emissions_multiplier",
+      property_info = property_info.fluid_emissions_multiplier
     }
   end
 end

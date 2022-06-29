@@ -158,14 +158,14 @@ inertia_function.module_specification = {
   value = 10
 }
 
-inertia_function.pumping_speed = {
+inertia_function.offshore_pumping_speed = {
   ["type"] = "proportional",
-  slope = 8
+  slope = 7
 }
 
 inertia_function.researching_speed = {
   ["type"] = "proportional",
-  slope = 10
+  slope = 6
 }
 
 inertia_function.stack_size = {

@@ -203,7 +203,8 @@ function randomize_tools ()
     for _, prototype in pairs(data.raw[class_name]) do
       randomize_numerical_property{
         prototype = prototype,
-        property = "durability"
+        property = "durability",
+        property_info = property_info.tool_durability
       }
     end
   end
@@ -211,7 +212,8 @@ function randomize_tools ()
   for _, prototype in pairs(data.raw["repair-tool"]) do
     randomize_numerical_property{
       prototype = prototype,
-      property = "speed"
+      property = "speed",
+      property_info = property_info.repair_tool_speed
     }
   end
 end

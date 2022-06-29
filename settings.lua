@@ -64,13 +64,6 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
-    name = "propertyrandomizer-crafting-times",
-    localised_name = "Randomize crafting times",
-    default_value = true
-  },
-  {
-    setting_type = "startup",
-    type = "bool-setting",
     name = "propertyrandomizer-electric-pole",
     localised_name = "Randomize electric poles",
     default_value = true
@@ -157,6 +150,13 @@ data:extend({
     name = "propertyrandomizer-character-values-midgame",
     localised_name = "Randomize character values midgame",
     localised_description = "Randomize character crafting speed and walking speed every 10 minutes",
+    default_value = false
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
+    name = "propertyrandomizer-crafting-times",
+    localised_name = "Randomize crafting times",
     default_value = false
   },
   {

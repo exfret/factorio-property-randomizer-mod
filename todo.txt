@@ -43,6 +43,10 @@ Next releases:
   - Test for tiers by looking at research
   - Test if electric pole has odd collision box or even one and round supply area accordingly
   - Increase burner inserter and non-machine things' stats when they're burner energy sources
+  - Add option to only change some recipe times
+  - Function for find_separation_bias
+  - Documentation for randomization_algorithms
+  - Double check rounding settings
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call

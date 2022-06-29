@@ -11,6 +11,7 @@ Date: ?
     - Gave a boost to burner machine speeds
   Bugfixes:
     - Removed rocket_result_inventory_size and furnace inventory size properties since they weren't exactly what I was looking for
+    - group_params now does final_fixes function correctly (before it wasn't passing the property info correctly)
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.3
 Date: 2022.06.26
