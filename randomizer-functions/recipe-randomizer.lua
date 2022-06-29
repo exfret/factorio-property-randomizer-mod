@@ -71,7 +71,7 @@ function randomize_crafting_times ()
         ["type"] = "proportional",
         slope = slope
       },
-      property_info = property_info.recipe
+      property_info = property_info.recipe_crafting_time
     }
   end
 

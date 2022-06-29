@@ -15,7 +15,8 @@ function randomize_trigger_effect (prototype, trigger)
     randomize_numerical_property{
       prototype = prototype,
       tbl = trigger.damage,
-      property = "amount"
+      property = "amount",
+      property_info = property_info.trigger_damage
     }
   elseif trigger.type == "create-entity" then
     -- TODO
@@ -152,7 +153,8 @@ function randomize_ammo_type (prototype, ammo_type)
   randomize_numerical_property{
     prototype = prototype,
     tbl = ammo_type,
-    property = "range_modifier"
+    property = "range_modifier",
+    property_info = property_info.ammo_type_range_modifier
   }
 end
 
@@ -166,9 +168,11 @@ function randomize_attack_parameters (prototype, attack_parameters)
   randomize_numerical_property{
     prototype = prototype,
     tbl = attack_parameters,
-    property = "range"
+    property = "range",
+    property_info = property_info.attack_parameters_range
   }
   -- Randomize minimum range by a proportional amount if it exists
+  -- TODO: Make this a group randomization
   if attack_parameters.min_range then
     attack_parameters.min_range = attack_parameters.min_range * attack_parameters[range] / old_range
   end
@@ -181,7 +185,8 @@ function randomize_attack_parameters (prototype, attack_parameters)
   randomize_numerical_property{
     prototype = prototype,
     tbl = attack_parameters,
-    property = "cooldown"
+    property = "cooldown",
+    property_info = property_info.attack_parameters_cooldown
   }
 
   randomize_numerical_property{

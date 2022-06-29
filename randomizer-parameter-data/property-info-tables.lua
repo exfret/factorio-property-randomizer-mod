@@ -1,5 +1,36 @@
 local property_info = {}
 
+property_info.ammo_type_range_modifier = {
+  round = {
+    [2] = {
+      modulus = 0.1
+    }
+  }
+}
+
+property_info.attack_parameters_cooldown = {
+  --[[round = {
+    [2] = {
+      modulus = 6
+    },
+    [3] = {
+      left_digits_to_keep = 0,
+      modulus = 6
+    }
+  }]] -- Since the display value is *inversely proportional* to the actual value, rounding properly will be a little harder
+}
+
+property_info.attack_parameters_range = {
+  round = {
+    [2] = {
+      modulus = 0.1
+    },
+    [3] = {
+      modulus = 1
+    }
+  }
+}
+
 property_info.belt_speed = {
   min = 0.00390625,
   max = 255,
@@ -249,8 +280,13 @@ property_info.productivity_effect = {
   }
 }
 
-property_info.recipe = {
-  min = 0.01
+property_info.recipe_crafting_time = {
+  min = 0.01,
+  round = {
+    [2] = {
+      modulus = 0.1
+    }
+  }
 }
 
 property_info.repair_tool_speed = {
@@ -385,6 +421,17 @@ property_info.tool_durability = {
   min = 1,
   round = {
     [2] = {
+      modulus = 1
+    }
+  }
+}
+
+property_info.trigger_damage = {
+  round = {
+    [2] = {
+      modulus = 0.1
+    },
+    [3] = {
       modulus = 1
     }
   }

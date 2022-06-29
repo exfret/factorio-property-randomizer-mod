@@ -3,6 +3,7 @@ Version: 0.1.4
 Date: ?
   Features:
     - Introduced a separation mechanism for tiers of prototypes that distributes the entities farther apart
+    - Rounding should now be implemented for almost everything
   Changes:
     - Replaced some group randomizations with the new separation mechanism
     - Hardlinked extension speed and rotation speed for inserters (no more inserters that take forever to extend but rotate almost instantly)
