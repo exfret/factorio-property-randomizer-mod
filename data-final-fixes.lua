@@ -139,6 +139,10 @@ if rand_gate_opening_speed then
   table.insert(randomizing_functions_to_call, randomize_gate_opening_speed)
 end
 
+if rand_mining_drill_dropoff then
+  table.insert(randomizing_functions_to_call, randomize_mining_drill_dropoff_location)
+end
+
 if rand_inserter_position then
   table.insert(randomizing_functions_to_call, randomize_inserter_insert_dropoff_positions)
 end

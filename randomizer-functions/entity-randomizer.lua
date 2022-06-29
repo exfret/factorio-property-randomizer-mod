@@ -569,6 +569,32 @@ function randomize_machine_speed ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_mining_drill_dropoff_location
+---------------------------------------------------------------------------------------------------
+
+function randomize_mining_drill_dropoff_location ()
+  for _, prototype in pairs(data.raw["mining-drill"]) do
+    -- Need to check that this isn't a purely fluid-based thing, which is usually indicated by a (0,0) place vector
+    if prototype.vector_to_place_result[1] ~= 0 or prototype.vector_to_place_result[2] ~= 0 then
+      randomize_numerical_property{
+        prototype = prototype,
+        tbl = prototype.vector_to_place_result,
+        property = 1,
+        inertia_function = inertia_function.mining_drill_dropoff
+      }
+
+      randomize_numerical_property{
+        prototype = prototype,
+        tbl = prototype.vector_to_place_result,
+        property = 2,
+        inertia_function = inertia_function.mining_drill_dropoff,
+        property_info = property_info.mining_drill_dropoff
+      }
+    end
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_mining_productivity
 ---------------------------------------------------------------------------------------------------
 

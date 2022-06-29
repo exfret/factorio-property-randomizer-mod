@@ -234,6 +234,10 @@ property_info.max_health = {
   }
 }
 
+property_info.mining_drill_dropoff = {
+  max_factor = 1
+}
+
 property_info.neighbour_bonus = {
   round = {
     min = 0,

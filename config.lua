@@ -42,7 +42,9 @@ rand_entity_interaction_speed = settings.startup["propertyrandomizer-entity-inte
 rand_gate_opening_speed = settings.startup["propertyrandomizer-misc-properties"].value
 rand_inserter_position = settings.startup["propertyrandomizer-inserter-position"].value
 rand_mining_drill_productivity = settings.startup["propertyrandomizer-mining-drill-productivity"].value
+rand_mining_drill_dropoff = settings.startup["propertyrandomizer-mining-drill-dropoff"].value
 --rand_switch_projectiles = settings.startup["propertyrandomizer-switch-projectiles"].value
+
 rand_tools = settings.startup["propertyrandomizer-misc-properties"].value
 
 -- Silly randomizations

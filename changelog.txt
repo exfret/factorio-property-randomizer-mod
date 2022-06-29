@@ -1,6 +1,11 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.1.4
+Version: 0.1.5
 Date: ?
+  Features:
+    - Mining drill dropoff location for resources is now randomized
+---------------------------------------------------------------------------------------------------
+Version: 0.1.4
+Date: 2022.06.29
   Features:
     - Introduced a separation mechanism for tiers of prototypes that distributes the entities farther apart
     - Rounding should now be implemented for almost everything

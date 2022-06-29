@@ -153,6 +153,11 @@ inertia_function.max_health_sensitive = {
   slope = 1
 }
 
+inertia_function.mining_drill_dropoff = {
+  ["type"] = "constant",
+  value = 30
+}
+
 inertia_function.module_specification = {
   ["type"] = "constant",
   value = 10

@@ -191,11 +191,20 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
+    name = "propertyrandomizer-mining-drill-dropoff",
+    localised_name = "Randomize mining drill dropoff location",
+    localised_description = "Randomize where mining drills place the items they mine... be ready to completely change your mining layouts. Note: May not be compatible with some mods that add new miners in a nonstandard way.",
+    default_value = false
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
     name = "propertyrandomizer-misc-properties",
     localised_name = "(Almost) everything else",
     localised_description = "Yo dawg, I see you got some extra properties to randomize there. Wanna fix that?",
     default_value = false
-  }--[[, TODO
+  }
+  --[[, TODO
   {
     setting_type = "startup",
     type = "bool-setting",
