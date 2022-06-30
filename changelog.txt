@@ -3,6 +3,7 @@ Version: 0.1.5
 Date: ?
   Features:
     - Mining drill dropoff location for resources is now randomized
+    - Added a thumbnail :)
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.4
 Date: 2022.06.29

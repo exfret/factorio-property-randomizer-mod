@@ -132,6 +132,13 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
+    name = "propertyrandomizer-tech-costs",
+    localised_name = "Randomize technology costs",
+    default_value = true
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
     name = "propertyrandomizer-underground-distance",
     localised_name = "Randomize underground distance",
     localised_description = "Randomize underground belt AND pipe distance.",

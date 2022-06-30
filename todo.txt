@@ -1,3 +1,7 @@
+Goals for 0.2.0:
+  1. Rounding pretty much completely implemented
+  2. group_randomization started up
+
 Next releases:
   1. Implement auto-testing (to whatever limited extent I can)
   2. Distance-related group randomization
@@ -10,7 +14,6 @@ Next releases:
   - Randomly randomized mode where which settings are randomized is randomized
   - Add "separation function"
 
-  - Randomize where productivity modules can go (figure out how to do this in a smart way)
   - Randomize biter spawner in a smarter fashion
   - Learn about fluid boxes and randomize those
   - Randomize collision boxes (do more carefully than before, like also changing graphics)
@@ -19,13 +22,10 @@ Next releases:
   - Crafting times less variance for items need for science
   - Sample from gamma distribution for simpler properties
   - Use local functions instead of globals
-  - Fast replaceable group and next_upgrade - use to determine things of the same type and the tiers
   - Player chooses between different prototypes
-  - Find similar type entities in a better way
   - Randomize research
-  - Link inserters (specifically, filter inserters should be hard linked)
+  - Link inserters (specifically, filter inserters/fast inserters, for example, should be hard linked)
   - Account for efficiency when rounding energy_used for furnaces (and other such objects)
-  - Finish adding rounding paramaters in randomizers!
   - Round min consumption
   - Check for extra properties in params for randomize_numerical_property to catch errors
   - Make control.lua work for existing saves
@@ -46,6 +46,8 @@ Next releases:
   - Function for find_separation_bias
   - Documentation for randomization_algorithms
   - Double check rounding settings
+  - Add offshoots for furnace speeds and such
+  - Max factor change setting
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call
@@ -62,7 +64,6 @@ Configuration options
   - Add option for variance
 
 Properties:
-  - vector_to_place_result for mining drill
   - Biter pollution absorbed
   - emissions_per_second
   - healing_per_tick

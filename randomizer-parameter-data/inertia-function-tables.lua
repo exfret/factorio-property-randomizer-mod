@@ -180,6 +180,11 @@ inertia_function.stack_size = {
   {4294967295, 51539607540}
 }
 
+inertia_function.tech_time = {
+  ["type"] = "proportional",
+  slope = 5
+}
+
 inertia_function.underground_belt_length = {
   {-4, 30},
   {4, 30},

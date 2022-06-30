@@ -100,6 +100,9 @@ property_info.discrete = {
   round = {
     [1] = {
       modulus = 1
+    },
+    [2] = {
+      modulus = 1
     }
   }
 }
@@ -409,6 +412,14 @@ property_info.supply_area = {
     },
     [3] = {
       modulus = 0.5
+    }
+  }
+}
+
+property_info.tech_time = {
+  round = {
+    [2] = {
+      modulus = 1
     }
   }
 }

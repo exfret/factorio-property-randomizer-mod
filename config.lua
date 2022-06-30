@@ -29,6 +29,7 @@ rand_machine_pollution = settings.startup["propertyrandomizer-machine-pollution"
 rand_module_effects = settings.startup["propertyrandomizer-module-effects"].value
 rand_module_slots = settings.startup["propertyrandomizer-module-slots"].value
 rand_underground_distance = settings.startup["propertyrandomizer-underground-distance"].value
+rand_tech_costs = settings.startup["propertyrandomizer-tech-costs"].value
 rand_vehicles = settings.startup["propertyrandomizer-vehicles"].value
 
 -- Advanced randomizations

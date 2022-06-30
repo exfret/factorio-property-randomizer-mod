@@ -3,6 +3,7 @@ require("randomizer-functions/entity-randomizer")
 require("randomizer-functions/item-randomizer")
 require("randomizer-functions/misc-randomizer")
 require("randomizer-functions/recipe-randomizer")
+require("randomizer-functions/technology-randomizer")
 require("config")
 
 prg.seed(seed_setting)
@@ -102,6 +103,10 @@ end
 
 if rand_module_slots then
   table.insert(randomizing_functions_to_call, randomize_module_slots)
+end
+
+if rand_tech_costs then
+  table.insert(randomizing_functions_to_call, randomize_technology_science_cost)
 end
 
 if rand_underground_distance then
