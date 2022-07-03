@@ -2,7 +2,7 @@
 Version: 0.1.5
 Date: ?
   Features:
-    - Mining drill dropoff location for resources is now randomized
+    - Mining drill dropoff location for resources is now able to be randomized
     - Added a thumbnail :)
     - Randomized technology
     - Electric poles that are placed in the center of a tile now have odd supply area, and those placed on tile intersections now have even supply area
