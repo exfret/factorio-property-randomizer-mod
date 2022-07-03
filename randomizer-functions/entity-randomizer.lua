@@ -158,6 +158,29 @@ end
 -- TODO: Soft link to make electric pole reach usually larger than supply area
 function randomize_electric_poles ()
   for _, prototype in pairs(data.raw["electric-pole"]) do
+    -- Use tile_width and collision_box to determine whether this is odd or even
+    -- Simultaneously randomize supply distance and wire distance?..
+    local odd_placement = false
+    local even_placement = false
+    if prototype.tile_width ~= nil and prototype.tile_width % 2 == 0 then
+      even_placement = true
+    elseif prototype.tile_width ~= nil and prototype.tile_width % 2 == 1 then
+      odd_placement = true
+    end
+    if prototype.tile_height ~= nil and prototype.tile_height % 2 == 0 then
+      even_placement = true
+    elseif prototype.tile_height ~= nil and prototype.tile_height % 1 then
+      odd_placement = true
+    end
+
+    local collision_box_width_parity = math.floor(prototype.collision_box[2][1] - prototype.collision_box[1][1] + 0.5) % 2
+    local collision_box_height_parity = math.floor(prototype.collision_box[2][2] - prototype.collision_box[1][2] + 0.5) % 2
+    if prototype.tile_width == nil and collision_box_width_parity == 0 then
+      even_placement = true
+    elseif prototype.tile_height == nil and collision_box_height_parity == 1 then
+      odd_placement = true
+    end
+
     randomize_numerical_property{
       prototype = prototype,
       property = "supply_area_distance",
@@ -166,8 +189,14 @@ function randomize_electric_poles ()
       walk_params = walk_params.electric_pole_supply_area
     }
 
+    if odd_placement == false then
+      prototype.supply_area_distance = math.floor(prototype.supply_area_distance + 1) - 0.5
+    elseif even_placement == false then
+      prototype.supply_area_distance = math.floor(prototype.supply_area_distance + 0.5)
+    end
+
     new_wire_distance_property_info = util.table.deepcopy(property_info.wire_distance)
-    new_wire_distance_property_info.min = math.max(new_wire_distance_property_info.min, 2 * prototype.supply_area_distance + 0.5)
+    new_wire_distance_property_info.min = math.max(new_wire_distance_property_info.min, 2 * prototype.supply_area_distance)
 
     randomize_numerical_property{
       prototype = prototype,

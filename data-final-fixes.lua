@@ -107,6 +107,7 @@ end
 
 if rand_tech_costs then
   table.insert(randomizing_functions_to_call, randomize_technology_science_cost)
+  table.insert(randomizing_functions_to_call, randomize_technology_time_cost)
 end
 
 if rand_underground_distance then

@@ -1,6 +1,6 @@
 Goals for 0.2.0:
   1. Rounding pretty much completely implemented
-  2. group_randomization started up
+  2. Distance group randomization started up
 
 Next releases:
   1. Implement auto-testing (to whatever limited extent I can)
@@ -28,13 +28,10 @@ Next releases:
   - Account for efficiency when rounding energy_used for furnaces (and other such objects)
   - Round min consumption
   - Check for extra properties in params for randomize_numerical_property to catch errors
-  - Make control.lua work for existing saves
-  - Check about problem with hive mind
-  - More random game changing midgame
-  - Link inserter positions so that no two inserters have two positions
+  - Make mid-game changing of character values work for existing saves
   - Optional mod dependencies with "extra thing" mods in mind
   - Add recommended mods (increased inventory)
-  - Add special "compaitibilities" for vanilla
+  - Add special "compaitibilities" for vanilla (and for other mods?)
   - Add thumbnail
   - prg_key for group randomizations
   - Hard link logistics chest inventory sizes
@@ -48,6 +45,8 @@ Next releases:
   - Double check rounding settings
   - Add offshoots for furnace speeds and such
   - Max factor change setting
+  - Round health even in no rounding mode to prevent confusion over 78/79 health and such
+  - Link gate opening speed and approach distance to prevent train crashes through them
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call

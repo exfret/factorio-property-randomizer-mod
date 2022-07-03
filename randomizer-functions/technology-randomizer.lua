@@ -17,7 +17,11 @@ function randomize_technology_science_cost ()
       local formula_multiplier = randomize_numerical_property()
       prototype.unit.count_formula = formula_multiplier .. "*(" .. prototype.unit.count_formula .. ")"
     end
+  end
+end
 
+function randomize_technology_time_cost ()
+  for _, prototype in pairs(data.raw.technology) do
     randomize_numerical_property{
       prototype = prototype,
       tbl = prototype.unit,
