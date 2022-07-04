@@ -107,6 +107,18 @@ property_info.discrete = {
   }
 }
 
+property_info.discrete_positive = {
+  min = 1,
+  round = {
+    [1] = {
+      modulus = 1
+    },
+    [2] = {
+      modulus = 1
+    }
+  }
+}
+
 property_info.effectivity = {
   min = 0.001,
   round = {
@@ -230,6 +242,7 @@ property_info.magazine_size = {
 }
 
 property_info.max_health = {
+  min = 1,
   round = {
     [2] = {
       modulus = 5
@@ -417,6 +430,7 @@ property_info.supply_area = {
 }
 
 property_info.tech_time = {
+  min = 0.01,
   round = {
     [2] = {
       modulus = 1

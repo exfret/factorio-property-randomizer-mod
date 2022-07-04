@@ -173,11 +173,16 @@ function randomize_electric_poles ()
       odd_placement = true
     end
 
-    local collision_box_width_parity = math.floor(prototype.collision_box[2][1] - prototype.collision_box[1][1] + 0.5) % 2
-    local collision_box_height_parity = math.floor(prototype.collision_box[2][2] - prototype.collision_box[1][2] + 0.5) % 2
-    if prototype.tile_width == nil and collision_box_width_parity == 0 then
+    if prototype.collision_box ~= nil then
+      local collision_box_width_parity = math.floor(prototype.collision_box[2][1] - prototype.collision_box[1][1] + 0.5) % 2
+      local collision_box_height_parity = math.floor(prototype.collision_box[2][2] - prototype.collision_box[1][2] + 0.5) % 2
+      if prototype.tile_width == nil and collision_box_width_parity == 0 then
+        even_placement = true
+      elseif prototype.tile_height == nil and collision_box_height_parity == 1 then
+        odd_placement = true
+      end
+    else
       even_placement = true
-    elseif prototype.tile_height == nil and collision_box_height_parity == 1 then
       odd_placement = true
     end
 
@@ -190,9 +195,9 @@ function randomize_electric_poles ()
     }
 
     if odd_placement == false then
-      prototype.supply_area_distance = math.floor(prototype.supply_area_distance + 1) - 0.5
+      prototype.supply_area_distance = math.min(64, math.floor(prototype.supply_area_distance + 1) - 0.5)
     elseif even_placement == false then
-      prototype.supply_area_distance = math.floor(prototype.supply_area_distance + 0.5)
+      prototype.supply_area_distance = math.min(64, math.floor(prototype.supply_area_distance + 0.5))
     end
 
     new_wire_distance_property_info = util.table.deepcopy(property_info.wire_distance)
@@ -470,6 +475,9 @@ function randomize_inventory_sizes ()
     for _, prototype in pairs(data.raw[class_name]) do
       for _, property_name in pairs(inventory_property_list) do
         if prototype[property_name] then
+          -- I have to turn these to numbers because some modders are writing inventory sizes as strings somehow
+          prototype[property_name] = tonumber(prototype[property_name])
+
           local property_info_to_use
           if prototype[property_name] == 0 then
             property_info_to_use = property_info.small_inventory
@@ -701,6 +709,11 @@ function randomize_module_slots ()
           inertia_function = inertia_function.module_specification,
           property_info = property_info.small_inventory
         }
+
+        -- If no effects are allowed, turn the number of modules back to 0
+        if prototype.allowed_effects == nil or next(prototype.allowed_effects) == nil then
+          prototype["module_specification"].module_slots = 0
+        end
       end
     end
   end
@@ -763,7 +776,11 @@ function randomize_roboports ()
     -- TODO: Keep the charging offsets instead of discarding these vectors entirely (or just make them charge in a circle)
     -- Randomize how many robots can charge at the roboport
     if prototype.charging_station_count == nil or prototype.charging_station_count == 0 then
-      prototype.charging_station_count = #prototype.charging_offsets
+      if prototype.charging_offsets ~= nil then
+        prototype.charging_station_count = #prototype.charging_offsets
+      else
+        prototype.charging_station_count = 0
+      end
     end
     randomize_numerical_property{
       prototype = prototype,

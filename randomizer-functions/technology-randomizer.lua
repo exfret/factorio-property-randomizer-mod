@@ -11,7 +11,8 @@ function randomize_technology_science_cost ()
       randomize_numerical_property{
         prototype = prototype,
         tbl = prototype.unit,
-        property = "count"
+        property = "count",
+        property_info = property_info.discrete_positive
       }
     elseif prototype.unit.count_formula ~= nil then
       local formula_multiplier = randomize_numerical_property()

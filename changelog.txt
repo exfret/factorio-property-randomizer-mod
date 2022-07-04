@@ -1,6 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.6
+Date: 2022.07.03
+  Bugfixes:
+    - Misc. bugfixes for compatibility with some mods
+    - Not really a problem on my end, but fixed compatibility with mods that wrote inventory sizes as strings rather than numbers
+    - Some other bugfixes not even related to mod compatibility that were just results of me being stupid
+---------------------------------------------------------------------------------------------------
 Version: 0.1.5
-Date: ?
+Date: 2022.07.03
   Features:
     - Mining drill dropoff location for resources is now able to be randomized
     - Added a thumbnail :)

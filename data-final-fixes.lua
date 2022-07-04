@@ -73,7 +73,6 @@ end
 -- TODO: Modify fluid "inventory" sizes too
 if rand_inventory_properties then
   table.insert(randomizing_functions_to_call, randomize_inventory_sizes)
-  table.insert(randomizing_functions_to_call, randomize_container_group_inventory_sizes)
   table.insert(randomizing_functions_to_call, randomize_item_stack_sizes)
 end
 
