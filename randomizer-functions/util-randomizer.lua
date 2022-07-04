@@ -109,7 +109,7 @@ function randomize_trigger_item (prototype, trigger)
   end
 
   -- AreaTriggerItem
-  if trigger.radius then
+  --[[if trigger.radius then
     trigger.radius = trigger.radius * random_modifier()
   end
 
@@ -133,7 +133,7 @@ function randomize_trigger_item (prototype, trigger)
   end
   if trigger.distance_deviation then
     trigger.distance_deviation = trigger.distance_deviation * random_modifier()
-  end
+  end]]
 end
 
 function randomize_ammo_type (prototype, ammo_type)
