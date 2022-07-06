@@ -1,10 +1,58 @@
-require("random-utils/randomization-algorithms")
-
 local param_table_utils = {}
 
 local INFINITE_DISTANCE_NUMBER = 1000000000
 
-function find_inertia_function_distance (inertia_function, x1, x2)
+-- inertia_function assumed to drop to zero between inputs and outputs
+-- inertia_function must be sorted
+function param_table_utils.find_inertia_function_value (inertia_function, input)
+  -- First check if min/max is specified and input is outside this
+  if inertia_function.min and input <= inertia_function.min then
+    return 0
+  elseif inertia_function.max and input >= inertia_function.max then
+    return 0
+  end
+
+  -- First check if the inertia function is given in a special form
+  if inertia_function.type == "constant" then
+    return inertia_function.value
+  elseif inertia_function.type == "proportional" then
+    return inertia_function.slope * input
+  elseif inertia_function.type == "linear" then
+    return inertia_function.slope * (input - inertia_function["x-intercept"])
+  end
+
+  if input <= inertia_function[1][1] then
+    return 0
+  elseif input >= inertia_function[#inertia_function][1] then
+    return 0
+  end
+
+  for i = 1,#inertia_function do
+    if input <= inertia_function[i][1] then
+      local slope = (inertia_function[i][2] - inertia_function[i - 1][2]) / (inertia_function[i][1] - inertia_function[i - 1][1])
+
+      return slope * (input - inertia_function[i - 1][1]) + inertia_function[i - 1][2]
+    end
+  end
+end
+
+function param_table_utils.add_inertia_function_multiplier (multiplier, inertia_function)
+  local new_inertia_function = util.table.deepcopy(inertia_function)
+
+  if new_inertia_function.slope ~= nil then
+    new_inertia_function.slope = multiplier * new_inertia_function.slope
+  elseif new_inertia_function.value ~= nil then
+    new_inertia_function.value = multiplier * new_inertia_function.value
+  else
+    for i = 1,#new_inertia_function do
+      new_inertia_function[i][2] = multiplier * new_inertia_function[i][2]
+    end
+  end
+
+  return new_inertia_function
+end
+
+function param_table_utils.find_inertia_function_distance (inertia_function, x1, x2)
   local function find_linear_distance (slope, x1, x2)
     if x1 * x2 < 0 then
       return INFINITE_DISTANCE_NUMBER
@@ -67,3 +115,5 @@ function find_inertia_function_distance (inertia_function, x1, x2)
 
   return dist_acc
 end
+
+return param_table_utils
