@@ -82,7 +82,7 @@ function param_table_utils.find_inertia_function_distance (inertia_function, x1,
   local dist_acc = 0
   for i = 1,#inertia_function do
     if x1 < inertia_function[i][1] and inertia_function[i][1] < x2 then
-      local value_at_x1 = find_inertia_function_value(inertia_function, x1)
+      local value_at_x1 = param_table_utils.find_inertia_function_value(inertia_function, x1)
       local slope = (inertia_function[i][2] - value_at_x1) / (inertia_function[i][1] - x1)
       if slope == 0 then
         dist_acc = dist_acc + (1 / value_at_x1) * (inertia_function[i][1] - x1)
@@ -96,8 +96,8 @@ function param_table_utils.find_inertia_function_distance (inertia_function, x1,
         x1 = inertia_function[i][1]
       end
     elseif x1 <= inertia_function[i][1] and x2 <= inertia_function[i][1] and x1 ~= x2 then
-      local value_at_x1 = find_inertia_function_value(inertia_function, x1)
-      local value_at_x2 = find_inertia_function_value(inertia_function, x2)
+      local value_at_x1 = param_table_utils.find_inertia_function_value(inertia_function, x1)
+      local value_at_x2 = param_table_utils.find_inertia_function_value(inertia_function, x2)
       local slope = (value_at_x2 - value_at_x1) / (x2 - x1)
       if slope == 0 then
         dist_acc = dist_acc + (1 / value_at_x1) * (x2 - x1)

@@ -228,7 +228,7 @@ end
 
 -- params = {points, dimension_information, prg_key, walk_params}
 -- dimension_information = list of {inertia_function, property_info}
-function randomize_points_in_space (params)
+--[[function randomize_points_in_space (params)
   if params.walk_params == nil then
     params.walk_params = {}
   end
@@ -238,10 +238,17 @@ function randomize_points_in_space (params)
   if params.walk_params.num_steps == nil then
     params.walk_params.num_steps = DEFUALT_WALK_PARAMS_NUM_STEPS
   end
-  
+
   -- TODO: Logic for deciding prg_key?
 
   for i = 1,params.walk_params.num_steps do
-    
+    for _, point in pairs(params.points) do
+      local force_vector
+
+      -- Calculate the forces on point
+      for _, other_point in pairs(params.points) do
+        
+      end
+    end
   end
-end
+end]]

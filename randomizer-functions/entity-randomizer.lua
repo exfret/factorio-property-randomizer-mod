@@ -2,6 +2,7 @@ require("energy-randomizer")
 require("util-randomizer")
 
 require("linking-utils")
+local param_table_utils = require("param-table-utils")
 
 local inertia_function = require("randomizer-parameter-data/inertia-function-tables")
 local property_info = require("randomizer-parameter-data/property-info-tables")
@@ -155,61 +156,86 @@ end
 -- randomize_electric_poles
 ---------------------------------------------------------------------------------------------------
 
--- TODO: Soft link to make electric pole reach usually larger than supply area
+-- TODO: Also soft link to make electric pole reach usually larger than supply area anyways
 function randomize_electric_poles ()
-  for _, prototype in pairs(data.raw["electric-pole"]) do
-    -- Use tile_width and collision_box to determine whether this is odd or even
-    -- Simultaneously randomize supply distance and wire distance?..
-    local odd_placement = false
-    local even_placement = false
-    if prototype.tile_width ~= nil and prototype.tile_width % 2 == 0 then
-      even_placement = true
-    elseif prototype.tile_width ~= nil and prototype.tile_width % 2 == 1 then
-      odd_placement = true
-    end
-    if prototype.tile_height ~= nil and prototype.tile_height % 2 == 0 then
-      even_placement = true
-    elseif prototype.tile_height ~= nil and prototype.tile_height % 1 then
-      odd_placement = true
-    end
+  -- TODO: Working on group randomization here... under progress
 
-    if prototype.collision_box ~= nil then
-      local collision_box_width_parity = math.floor(prototype.collision_box[2][1] - prototype.collision_box[1][1] + 0.5) % 2
-      local collision_box_height_parity = math.floor(prototype.collision_box[2][2] - prototype.collision_box[1][2] + 0.5) % 2
-      if prototype.tile_width == nil and collision_box_width_parity == 0 then
+  local too_lazy_to_do_this_right = util.table.deepcopy(data.raw["electric-pole"])
+
+  repeat
+
+    for _, prototype in pairs(too_lazy_to_do_this_right) do
+      -- Use tile_width and collision_box to determine whether this is odd or even
+      -- Simultaneously randomize supply distance and wire distance?..
+      local odd_placement = false
+      local even_placement = false
+      if prototype.tile_width ~= nil and prototype.tile_width % 2 == 0 then
         even_placement = true
-      elseif prototype.tile_height == nil and collision_box_height_parity == 1 then
+      elseif prototype.tile_width ~= nil and prototype.tile_width % 2 == 1 then
         odd_placement = true
       end
-    else
-      even_placement = true
-      odd_placement = true
+      if prototype.tile_height ~= nil and prototype.tile_height % 2 == 0 then
+        even_placement = true
+      elseif prototype.tile_height ~= nil and prototype.tile_height % 1 then
+        odd_placement = true
+      end
+
+      if prototype.collision_box ~= nil then
+        local collision_box_width_parity = math.floor(prototype.collision_box[2][1] - prototype.collision_box[1][1] + 0.5) % 2
+        local collision_box_height_parity = math.floor(prototype.collision_box[2][2] - prototype.collision_box[1][2] + 0.5) % 2
+        if prototype.tile_width == nil and collision_box_width_parity == 0 then
+          even_placement = true
+        elseif prototype.tile_height == nil and collision_box_height_parity == 1 then
+          odd_placement = true
+        end
+      else
+        even_placement = true
+        odd_placement = true
+      end
+
+      randomize_numerical_property{
+        prototype = prototype,
+        property = "supply_area_distance",
+        inertia_function = inertia_function.electric_pole_supply_area,
+        property_info = property_info.supply_area,
+        walk_params = walk_params.electric_pole_supply_area
+      }
+
+      if odd_placement == false then
+        prototype.supply_area_distance = math.min(64, math.floor(prototype.supply_area_distance + 1) - 0.5)
+      elseif even_placement == false then
+        prototype.supply_area_distance = math.min(64, math.floor(prototype.supply_area_distance + 0.5))
+      end
+
+      new_wire_distance_property_info = util.table.deepcopy(property_info.wire_distance)
+      new_wire_distance_property_info.min = math.max(new_wire_distance_property_info.min, 2 * prototype.supply_area_distance)
+
+      randomize_numerical_property{
+        prototype = prototype,
+        property = "maximum_wire_distance",
+        inertia_function = inertia_function.electric_pole_wire_reach,
+        property_info = new_wire_distance_property_info
+      }
     end
 
-    randomize_numerical_property{
-      prototype = prototype,
-      property = "supply_area_distance",
-      inertia_function = inertia_function.electric_pole_supply_area,
-      property_info = property_info.supply_area,
-      walk_params = walk_params.electric_pole_supply_area
-    }
+    local is_good_randomization = true
 
-    if odd_placement == false then
-      prototype.supply_area_distance = math.min(64, math.floor(prototype.supply_area_distance + 1) - 0.5)
-    elseif even_placement == false then
-      prototype.supply_area_distance = math.min(64, math.floor(prototype.supply_area_distance + 0.5))
+    local min_distance_apart = 0.0000
+    for _, prototype1 in pairs(too_lazy_to_do_this_right) do
+      for _, prototype2 in pairs(too_lazy_to_do_this_right) do
+        if prototype1 ~= prototype2 then
+          local x_dist = param_table_utils.find_inertia_function_distance(inertia_function.electric_pole_supply_area, prototype1.supply_area_distance, prototype2.supply_area_distance)
+          local y_dist = param_table_utils.find_inertia_function_distance(inertia_function.electric_pole_wire_reach, prototype1.maximum_wire_distance, prototype2.maximum_wire_distance)
+
+          if x_dist * x_dist + y_dist * y_dist < min_distance_apart then
+            is_good_randomization = false
+          end
+        end
+      end
     end
+  until is_good_randomization
 
-    new_wire_distance_property_info = util.table.deepcopy(property_info.wire_distance)
-    new_wire_distance_property_info.min = math.max(new_wire_distance_property_info.min, 2 * prototype.supply_area_distance)
-
-    randomize_numerical_property{
-      prototype = prototype,
-      property = "maximum_wire_distance",
-      inertia_function = inertia_function.electric_pole_wire_reach,
-      property_info = new_wire_distance_property_info
-    }
-  end
+  data.raw["electric-pole"] = too_lazy_to_do_this_right
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -337,11 +363,16 @@ end]]
 
 function randomize_gate_opening_speed ()
   for _, prototype in pairs(data.raw.gate) do
+    
+
     randomize_numerical_property{
       prototype = prototype,
       property = "opening_speed",
       inertia_function = inertia_function.gate_opening_speed
     }
+
+    -- Modify approach distance so gate has enough time to open
+
   end
 end
 

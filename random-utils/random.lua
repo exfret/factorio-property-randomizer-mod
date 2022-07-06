@@ -24,56 +24,6 @@ function prg.seed(key)
   prg.value(key)
   prg.value(key)
   prg.value(key)
-
-  --[[
-
-  for class_name, class in pairs(data.raw) do
-    for _, prototype in pairs(class) do
-      -- aaa should separate the class from the name since this doesn't occur in any class names
-      local key = prototype.type .. "aaa" .. prototype.name
-
-      local using = {}
-
-      local new_seed = seed + (CRC32.Hash(key) % D20) -- Mod by D20 to make sure it's small enough
-
-      using["X1"] = (new_seed * 2 + 11111) % D20
-      using["X2"] = (new_seed * 4 + 1) % D20
-
-      prg_table[key] = using
-
-      prg.value(key)
-      prg.value(key)
-      prg.value(key)
-    end
-
-    local key = class_name .. "bbb"
-
-    local using = {}
-
-    local new_seed = seed + D20 + (CRC32.Hash(key) % D20)
-
-    using["X1"] = (new_seed * 2 + 11111) % D20
-    using["X2"] = (new_seed * 4 + 1) % D20
-
-    prg_table[key] = using
-
-    prg.value(key)
-    prg.value(key)
-    prg.value(key)]
-  end
-
-  local using = {}
-
-  local new_seed = seed - 1
-  
-  using["X1"] = (new_seed * 2 + 11111) % D20
-  using["X2"] = (new_seed * 4 + 1) % D20
-
-  prg_table["aaadummyprg"] = using
-
-  prg.value("aaadummyprg")
-  prg.value("aaadummyprg")
-  prg.value("aaadummyprg")]]
 end
 
 -- TODO: Make this cleaner while still having this file for both data and control stage
