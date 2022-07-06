@@ -555,10 +555,10 @@ function randomize_machine_speed ()
         bias_to_use = bias_to_use + 0.1
       end
       if prototype.type == "lab" then
-        bias_to_use = bias_to_use - 0.05
+        bias_to_use = bias_to_use - 0.03
       end
       if prototype.type == "offshore-pump" then
-        bias_to_use = bias_to_use - 0.05
+        bias_to_use = bias_to_use - 0.03
       end
 
       randomize_numerical_property{
@@ -711,6 +711,7 @@ function randomize_module_slots ()
         }
 
         -- If no effects are allowed, turn the number of modules back to 0
+        -- Factorio doesn't like modules slots with no allowed modules
         if prototype.allowed_effects == nil or next(prototype.allowed_effects) == nil then
           prototype["module_specification"].module_slots = 0
         end

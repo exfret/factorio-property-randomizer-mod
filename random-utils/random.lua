@@ -11,7 +11,22 @@ D20 = 1048576
 D40 = 1099511627776
 
 -- Seed the generator
-function prg.seed(seed)
+function prg.seed(key)
+  local using = {}
+
+  local new_seed = seed_setting + (CRC32.Hash(key) % D20)
+
+  using["X1"] = (new_seed * 2 + 11111) % D20
+  using["X2"] = (new_seed * 4 + 1) % D20
+
+  prg_table[key] = using
+
+  prg.value(key)
+  prg.value(key)
+  prg.value(key)
+
+  --[[
+
   for class_name, class in pairs(data.raw) do
     for _, prototype in pairs(class) do
       -- aaa should separate the class from the name since this doesn't occur in any class names
@@ -44,7 +59,7 @@ function prg.seed(seed)
 
     prg.value(key)
     prg.value(key)
-    prg.value(key)
+    prg.value(key)]
   end
 
   local using = {}
@@ -58,7 +73,7 @@ function prg.seed(seed)
 
   prg.value("aaadummyprg")
   prg.value("aaadummyprg")
-  prg.value("aaadummyprg")
+  prg.value("aaadummyprg")]]
 end
 
 -- TODO: Make this cleaner while still having this file for both data and control stage
@@ -71,6 +86,10 @@ function prg.value(key, XTable)
     XTable.X1 = math.floor(V / D20)
     XTable.X2 = V - XTable.X1 * D20
     return V / D40
+  end
+
+  if prg_table[key] == nil then
+    prg.seed(key)
   end
 
   local using = prg_table[key]

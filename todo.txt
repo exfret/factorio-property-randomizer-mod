@@ -44,6 +44,7 @@ Next releases:
   - Max factor change setting
   - Round health even in no rounding mode to prevent confusion over 78/79 health and such
   - Link gate opening speed and approach distance to prevent train crashes through them
+  - Change color of lights/lamps/labs to disco/different colors
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call

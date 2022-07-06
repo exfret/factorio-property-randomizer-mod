@@ -6,8 +6,6 @@ require("randomizer-functions/recipe-randomizer")
 require("randomizer-functions/technology-randomizer")
 require("config")
 
-prg.seed(seed_setting)
-
 local randomizing_functions_to_call = {}
 
 ---------------------------------------------------------------------------------------------------
@@ -155,6 +153,8 @@ end
 if rand_tools then
   table.insert(randomizing_functions_to_call, randomize_tools)
 end
+
+data.raw.recipe["electronic-circuit"].normal.ingredients[1][1] = "iron-gear-wheel"
 
 ---------------------------------------------------------------------------------------------------
 -- Silly randomizations

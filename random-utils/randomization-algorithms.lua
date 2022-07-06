@@ -1,58 +1,7 @@
 require("random")
 
 require("globals")
-
--- TODO: function for simultaneous randomization?
-
--- inertia_function assumed to drop to zero between inputs and outputs
--- inertia_function must be sorted
-function find_inertia_function_value (inertia_function, input)
-  -- First check if min/max is specified and input is outside this
-  if inertia_function.min and input <= inertia_function.min then
-    return 0
-  elseif inertia_function.max and input >= inertia_function.max then
-    return 0
-  end
-
-  -- First check if the inertia function is given in a special form
-  if inertia_function.type == "constant" then
-    return inertia_function.value
-  elseif inertia_function.type == "proportional" then
-    return inertia_function.slope * input
-  elseif inertia_function.type == "linear" then
-    return inertia_function.slope * (input - inertia_function["x-intercept"])
-  end
-
-  if input <= inertia_function[1][1] then
-    return 0
-  elseif input >= inertia_function[#inertia_function][1] then
-    return 0
-  end
-
-  for i = 1,#inertia_function do
-    if input <= inertia_function[i][1] then
-      local slope = (inertia_function[i][2] - inertia_function[i - 1][2]) / (inertia_function[i][1] - inertia_function[i - 1][1])
-
-      return slope * (input - inertia_function[i - 1][1]) + inertia_function[i - 1][2]
-    end
-  end
-end
-
-function add_inertia_function_multiplier (multiplier, inertia_function)
-  local new_inertia_function = util.table.deepcopy(inertia_function)
-
-  if new_inertia_function.slope ~= nil then
-    new_inertia_function.slope = multiplier * new_inertia_function.slope
-  elseif new_inertia_function.value ~= nil then
-    new_inertia_function.value = multiplier * new_inertia_function.value
-  else
-    for i = 1,#new_inertia_function do
-      new_inertia_function[i][2] = multiplier * new_inertia_function[i][2]
-    end
-  end
-
-  return new_inertia_function
-end
+local param_table_utils = require("param-table-utils")
 
 -- defaults = {inertia_function = {?}}
 local function set_randomization_param_values(params, defaults)
@@ -129,7 +78,7 @@ local function set_randomization_param_values(params, defaults)
   if params.walk_params.num_steps ~= nil then
     num_steps = params.walk_params.num_steps
   else
-    num_steps = 75
+    num_steps = DEFUALT_WALK_PARAMS_NUM_STEPS
   end
 
   params.prototype = prototype
@@ -167,7 +116,7 @@ local function nudge_properties (params, roll)
       return
     end
 
-    tbl[property] = tbl[property] + sign * (1 / num_steps) * find_inertia_function_value(inertia_function, tbl[property])
+    tbl[property] = tbl[property] + sign * (1 / num_steps) * param_table_utils.find_inertia_function_value(inertia_function, tbl[property])
   end
 
   nudge_individual_property(params.tbl, params.property, find_sign(roll, params), params.walk_params.num_steps, params.inertia_function)
@@ -217,12 +166,13 @@ local function complete_final_randomization_fixes (params)
 end
 
 -- TODO: Finish moving min/max out of walk_params
--- params = {dummy = ?, prototype = ?, tbl = ?, property = ?, inertia function = {?}, property_info = {?} prg_key = ?, group_params = {?}, randomization_params = {?}}
+-- params = {dummy = ?, prototype = ?, tbl = ?, property = ?, property_list = {?}, inertia function = {?}, property_info = {?}, group_params = {?}, prg_key = ?, walk_params = {?}}
+-- property_list = list of property name strings
+-- inertia_function = [See find_inertia_function_value()]
 -- property_info = {lower_is_better = ?, min = ?, max = ?, round = {?}}
 -- round = {rounding_params1, rounding_params2, rounding_params3}
 -- rounding_params = {modulus = ?}
--- simultaneous_params = list of {dummy = ?, prototype = ?, tbl = ?, property = ?, inertia_function = {?}, property_info = {?}}
--- inertia_function = [See find_inertia_function_value()]
+-- group_params = list of {dummy = ?, prototype = ?, tbl = ?, property = ?, inertia_function = {?}, property_info = {?}}
 -- walk_params = {bias = ?, steps = ?}
 -- ALSO: old_value, but this is written inside this function, don't pass it in
 function randomize_numerical_property (passed_params)
@@ -260,34 +210,38 @@ function randomize_numerical_property (passed_params)
     set_randomization_param_values(param_table, {inertia_function = params.inertia_function})
   end
 
-  -- Account for karma
-  --[[bias = bias + karma.prototype_values[prg_key]
-  if params.prototype then
-    bias = bias + karma.class_values[params.prototype.type]
-  end
-  local sign = 1
-  if params.property_info.lower_is_better then
-    sign = -1
-  end]]
-
   params.old_value = params.tbl[params.property]
 
   local luckiness_of_this_randomization = 0
   for i = 1,params.walk_params.num_steps do
     if prg.value(params.prg_key) < params.walk_params.bias then -- "better" option
       nudge_properties(params, "make_property_better")
-      
-      --luckiness_of_this_randomization = luckiness_of_this_randomization + 1 / num_steps
     else
       nudge_properties(params, "make_property_worse")
-      
-      --luckiness_of_this_randomization = luckiness_of_this_randomization - 1 / num_steps
     end
   end
 
   complete_final_randomization_fixes(params)
 
-  -- TODO: Update karma.values here
-
   return params.tbl[params.property]
+end
+
+-- params = {points, dimension_information, prg_key, walk_params}
+-- dimension_information = list of {inertia_function, property_info}
+function randomize_points_in_space (params)
+  if params.walk_params == nil then
+    params.walk_params = {}
+  end
+  if params.walk_params.bias == nil then
+    params.walk_params.bais = 1 / 2
+  end
+  if params.walk_params.num_steps == nil then
+    params.walk_params.num_steps = DEFUALT_WALK_PARAMS_NUM_STEPS
+  end
+  
+  -- TODO: Logic for deciding prg_key?
+
+  for i = 1,params.walk_params.num_steps do
+    
+  end
 end

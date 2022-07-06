@@ -28,7 +28,7 @@ script.on_init(function ()
 end)
 
 script.on_event(defines.events.on_tick, function(event)
-  if event.tick % (60 * 600) and rand_character_properties_midgame == 0 then
+  if event.tick % (60 * 60 * 30) and rand_character_properties_midgame == 0 then
     local old_force_modifications = util.table.deepcopy(global.force_modifications)
 
     local new_force_modifications = global.force_modifications
