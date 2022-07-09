@@ -95,6 +95,42 @@ function randomize_capsules ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_gun_damage_modifier
+---------------------------------------------------------------------------------------------------
+
+function randomize_gun_damage_modifier ()
+end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_gun_range
+---------------------------------------------------------------------------------------------------
+
+function randomize_gun_range ()
+  for _, prototype in pairs(data.raw.gun) do
+    randomize_numerical_property{
+      prototype = prototype,
+      tbl = prototype.attack_parameters,
+      property = "range",
+      property_info = property_info.gun_shooting_range
+    }
+  end
+end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_gun_speed
+---------------------------------------------------------------------------------------------------
+
+function randomize_gun_speed ()
+  for _, prototype in pairs(data.raw.gun) do
+    randomize_numerical_property{
+      prototype = prototype,
+      tbl = prototype.attack_parameters,
+      property = "cooldown", -- I would round, but that requires taking the inverses into account
+    }
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_item_stack_sizes
 ---------------------------------------------------------------------------------------------------
 

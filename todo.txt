@@ -43,6 +43,7 @@ Next releases:
   - Add offshoots for furnace speeds and such (just like with stack sizes)
   - Max factor changeable with setting
   - Change color of lights/lamps/labs to disco/different colors
+  - Make prg_key for entities depend on properties being randomized too
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call
@@ -58,6 +59,7 @@ Configuration options
   - Add option for variance
 
 Properties:
+  - Gun shooting speed and range
   - Biter pollution absorbed
   - emissions_per_second
   - healing_per_tick

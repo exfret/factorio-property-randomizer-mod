@@ -94,6 +94,30 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
+    name = "propertyrandomizer-gun-damage-modifier",
+    localised_name = "Randomize personal gun damage modifier",
+    localised_description = "Add a random modifier that can either be a penalty or bonus to the attack damage of guns",
+    default_value = true
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
+    name = "propertyrandomizer-gun-range",
+    localised_name = "Randomize personal gun shooting range",
+    localised_description = "This only randomizes personal guns (or vehicle guns), not turrets.",
+    default_value = true
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
+    name = "propertyrandomizer-gun-speed",
+    localised_name = "Randomize personal gun shooting speed",
+    localised_description = "This only randomizes personal guns (or vehicle guns), not turrets.",
+    default_value = true
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
     name = "propertyrandomizer-health-properties",
     localised_name = "Randomize health properties",
     default_value = true

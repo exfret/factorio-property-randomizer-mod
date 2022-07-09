@@ -73,6 +73,18 @@ if rand_equipment_shapes then
   table.insert(randomizing_functions_to_call, randomize_equipment_shapes)
 end
 
+if rand_gun_damage_modifier then
+  table.insert(randomizing_functions_to_call, randomize_gun_damage_modifier)
+end
+
+if rand_gun_range then
+  table.insert(randomizing_functions_to_call, randomize_gun_range)
+end
+
+if rand_gun_speed then
+  table.insert(randomizing_functions_to_call, randomize_gun_speed)
+end
+
 if rand_health_properties then
   table.insert(randomizing_functions_to_call, randomize_health_properties)
 end

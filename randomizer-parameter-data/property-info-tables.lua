@@ -177,6 +177,15 @@ property_info.gate_opening_speed = {
   min = 0.01 / 60
 }
 
+property_info.gun_shooting_range = {
+  min = 0.1,
+  round = {
+    [2] = {
+      modulus = 1
+    }
+  }
+}
+
 property_info.inserter_rotation_speed = {
   round = {
     [2] = {

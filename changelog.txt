@@ -2,7 +2,8 @@
 Version: 0.1.7
 Date: ?
   Features:
-    - Separated out settings so that things can be customized more
+    - Separated out some settings so that things can be customized more
+    - Randomized some gun properties
   Organization:
     - Started the groundwork for the new distance-based randomization
   Balancing:
