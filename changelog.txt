@@ -1,10 +1,13 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.7
 Date: ?
+  Features:
+    - Separated out settings so that things can be customized more
   Organization:
     - Started the groundwork for the new distance-based randomization
   Balancing:
-    - Lab research speeds are now better on average than they were before
+    - Lab research speeds are now better on average than they were before, and so are offshore pumping speeds
+    - Gates now have their approach distance modified by their opening speed (so that trains don't crash into them if they're too slow, at least not as often)
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.6
 Date: 2022.07.03

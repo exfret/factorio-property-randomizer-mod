@@ -14,6 +14,12 @@ prototype_tables.container_classes = {
   ["logistic-container"] = true
 }
 
+prototype_tables.crafting_machine_classes = {
+  "assembling-machine",
+  "rocket-silo",
+  "furnace"
+}
+
 prototype_tables.energy_source_names = {
   accumulator = {"energy_source"},
   beacon = {"energy_source"},

@@ -28,6 +28,10 @@ if rand_beacons then
   table.insert(randomizing_functions_to_call, randomize_beacon_properties)
 end
 
+if rand_belt_speeds then
+  table.insert(randomizing_functions_to_call, randomize_belt_speed)
+end
+
 if rand_bots then
   table.insert(randomizing_functions_to_call, randomize_bot_speed)
   table.insert(randomizing_functions_to_call, randomize_roboports)
@@ -35,6 +39,10 @@ end
 
 if rand_capsules then
   table.insert(randomizing_functions_to_call, randomize_capsules)
+end
+
+if rand_crafting_machine_speed then
+  table.insert(randomizing_functions_to_call, randomize_crafting_machine_speeds)
 end
 
 if rand_crafting_times then
@@ -69,10 +77,18 @@ if rand_health_properties then
   table.insert(randomizing_functions_to_call, randomize_health_properties)
 end
 
+if rand_inserter_rotation_speed then
+  table.insert(randomizing_functions_to_call, randomize_inserter_speed)
+end
+
 -- TODO: Modify fluid "inventory" sizes too
 if rand_inventory_properties then
   table.insert(randomizing_functions_to_call, randomize_inventory_sizes)
   table.insert(randomizing_functions_to_call, randomize_item_stack_sizes)
+end
+
+if rand_lab_speed then
+  table.insert(randomizing_functions_to_call, randomize_lab_research_speed)
 end
 
 -- TODO: Randomize pump (normal pump, not offshore pump) speed
@@ -80,10 +96,6 @@ if rand_logistic_speed then
   table.insert(randomizing_functions_to_call, randomize_belt_speed)
   table.insert(randomizing_functions_to_call, randomize_inserter_speed)
   table.insert(randomizing_functions_to_call, randomize_pump_speed) -- TODO once I learn about fluidboxes
-end
-
-if rand_machine_speed then
-  table.insert(randomizing_functions_to_call, randomize_machine_speed)
 end
 
 -- TODO: Figure out what extra things support pollution
@@ -95,12 +107,20 @@ if rand_mining_drill_productivity then
   table.insert(randomizing_functions_to_call, randomize_mining_productivity)
 end
 
+if rand_mining_speed then
+  table.insert(randomizing_functions_to_call, randomize_mining_speeds)
+end
+
 if rand_module_effects then
   table.insert(randomizing_functions_to_call, randomize_module_effects)
 end
 
 if rand_module_slots then
   table.insert(randomizing_functions_to_call, randomize_module_slots)
+end
+
+if rand_offshore_pump_speed then
+  table.insert(randomizing_functions_to_call, randomize_offshore_pump_speed)
 end
 
 if rand_tech_costs then

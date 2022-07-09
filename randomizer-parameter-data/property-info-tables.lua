@@ -173,6 +173,10 @@ property_info.fluid_usage = {
   }
 }
 
+property_info.gate_opening_speed = {
+  min = 0.01 / 60
+}
+
 property_info.inserter_rotation_speed = {
   round = {
     [2] = {
@@ -244,6 +248,9 @@ property_info.magazine_size = {
 property_info.max_health = {
   min = 1,
   round = {
+    [1] = { -- Due to weird display bugs, I'm rounding even in no rounding mode
+      modulus = 1
+    },
     [2] = {
       modulus = 5
     }

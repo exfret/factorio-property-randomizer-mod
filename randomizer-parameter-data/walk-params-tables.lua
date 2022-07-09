@@ -10,6 +10,10 @@ walk_params.magazine_size = {
   bias = 0.475 -- Make the bias towards smaller magazines to make up for the boost from having the minimum at 1
 }
 
+walk_params.offshore_pumping_speed = {
+  bias = 0.47
+}
+
 walk_params.stack_size = {
   bias = 0.56 -- It's better to give the player enormously large stack sizes than to have enormously small ones, so skew to larger ones
 }

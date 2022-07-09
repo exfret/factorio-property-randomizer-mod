@@ -1,6 +1,7 @@
 require("energy-randomizer")
 require("util-randomizer")
 
+require("globals")
 require("linking-utils")
 local param_table_utils = require("param-table-utils")
 
@@ -149,6 +150,31 @@ function randomize_character_respawn_time ()
       property = "respawn_time",
       property_info = property_info.character_respawn_time
     }
+  end
+end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_crafting_machine_speeds
+---------------------------------------------------------------------------------------------------
+
+function randomize_crafting_machine_speeds ()
+  for _, class in pairs(prototype_tables.crafting_machine_classes) do
+    for _, prototype in pairs(data.raw[class]) do
+      local bias_to_use = 0.5
+      if prototype.energy_source.type == "burner" then
+        bias_to_use = bias_to_use + BURNER_MACHINE_BIAS_BONUS
+      end
+
+      randomize_numerical_property{
+        prototype = prototype,
+        property = "crafting_speed",
+        inertia_function = inertia_function.crafting_speed,
+        property_info = property_info.machine_speed,
+        walk_params = {
+          bias = bias_to_use
+        }
+      }
+    end
   end
 end
 
@@ -363,16 +389,18 @@ end]]
 
 function randomize_gate_opening_speed ()
   for _, prototype in pairs(data.raw.gate) do
-    
+    local old_opening_speed = prototype.opening_speed
 
     randomize_numerical_property{
       prototype = prototype,
       property = "opening_speed",
-      inertia_function = inertia_function.gate_opening_speed
+      inertia_function = inertia_function.gate_opening_speed,
+      property_info = property_info.gate_opening_speed
     }
 
     -- Modify approach distance so gate has enough time to open
-
+    -- opening speed will always be >0 after randomization due to this being included in property_info
+    prototype.activation_distance = prototype.activation_distance / (prototype.opening_speed / old_opening_speed)
   end
 end
 
@@ -555,6 +583,29 @@ function randomize_inventory_sizes ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_lab_research_speed
+---------------------------------------------------------------------------------------------------
+
+function randomize_lab_research_speed ()
+  for _, prototype in pairs(data.raw.lab) do
+    local bias_to_use = 0.5 - LAB_BIAS_PENALTY
+    if prototype.energy_source.type == "burner" then
+      bias_to_use = bias_to_use + BURNER_MACHINE_BIAS_BONUS
+    end
+
+    randomize_numerical_property{
+      prototype = prototype,
+      property = "researching_speed",
+      inertia_function = inertia_function.researching_speed,
+      property_info = property_info.researching_speed,
+      walk_params = {
+        bias = bias_to_use
+      }
+    }
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_machine_pollution
 ---------------------------------------------------------------------------------------------------
 
@@ -569,69 +620,6 @@ function randomize_machine_pollution ()
           property_info = property_info.machine_pollution
         }
       end
-    end
-  end
-end
-
----------------------------------------------------------------------------------------------------
--- randomize_machine_speed
----------------------------------------------------------------------------------------------------
-
-function randomize_machine_speed ()
-  for _, class in pairs(prototype_tables.machine_classes) do
-    for _, prototype in pairs(data.raw[class]) do
-      -- TODO: Make it a setting whether to increase burner stats
-      local bias_to_use = 0.5
-      if prototype.type ~= "offshore-pump" and prototype.energy_source.type == "burner" then
-        bias_to_use = bias_to_use + 0.1
-      end
-      if prototype.type == "lab" then
-        bias_to_use = bias_to_use - 0.03
-      end
-      if prototype.type == "offshore-pump" then
-        bias_to_use = bias_to_use - 0.03
-      end
-
-      randomize_numerical_property{
-        prototype = prototype,
-        property = "crafting_speed",
-        inertia_function = inertia_function.crafting_speed,
-        property_info = property_info.machine_speed,
-        walk_params = {
-          bias = bias_to_use
-        }
-      }
-
-      -- TODO: Make burner mining drill swingier?
-      randomize_numerical_property{
-        prototype = prototype,
-        property = "mining_speed",
-        inertia_function = inertia_function.machine_mining_speed,
-        property_info = property_info.machine_speed,
-        walk_params = {
-          bias = bias_to_use
-        }
-      }
-
-      randomize_numerical_property{
-        prototype = prototype,
-        property = "pumping_speed",
-        inertia_function = inertia_function.offshore_pumping_speed,
-        property_info = property_info.offshore_pumping_speed,
-        walk_params = {
-          bias = bias_to_use
-        }
-      }
-
-      randomize_numerical_property{
-        prototype = prototype,
-        property = "researching_speed",
-        inertia_function = inertia_function.researching_speed,
-        property_info = property_info.researching_speed,
-        walk_params = {
-          bias = bias_to_use
-        }
-      }
     end
   end
 end
@@ -722,6 +710,29 @@ function randomize_mining_productivity ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_mining_speeds
+---------------------------------------------------------------------------------------------------
+
+function randomize_mining_speeds ()
+  for _, prototype in pairs(data.raw["mining-drill"]) do
+    local bias_to_use = 0.5
+    if prototype.energy_source.type == "burner" then
+      bias_to_use = bias_to_use + BURNER_MACHINE_BIAS_BONUS
+    end
+
+    randomize_numerical_property{
+      prototype = prototype,
+      property = "mining_speed",
+      inertia_function = inertia_function.machine_mining_speed,
+      property_info = property_info.machine_speed,
+      walk_params = {
+        bias = bias_to_use
+      }
+    }
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_module_slots
 ---------------------------------------------------------------------------------------------------
 
@@ -748,6 +759,22 @@ function randomize_module_slots ()
         end
       end
     end
+  end
+end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_offshore_pump_speed
+---------------------------------------------------------------------------------------------------
+
+function randomize_offshore_pump_speed ()
+  for _, prototype in pairs(data.raw["offshore-pump"]) do
+    randomize_numerical_property{
+      prototype = prototype,
+      property = "pumping_speed",
+      inertia_function = inertia_function.offshore_pumping_speed,
+      property_info = property_info.offshore_pumping_speed,
+      walk_params = walk_params.offshore_pumping_speed
+    }
   end
 end
 

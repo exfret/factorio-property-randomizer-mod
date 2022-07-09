@@ -49,6 +49,13 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
+    name = "propertyrandomizer-belt-speeds",
+    localised_name = "Randomize belt speeds",
+    default_value = true
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
     name = "propertyrandomizer-bots",
     localised_name = "Randomize bots",
     default_value = true
@@ -59,6 +66,14 @@ data:extend({
     name = "propertyrandomizer-capsules",
     localised_name = "Randomize capsules",
     localised_description = "Capsules are pretty much anything that you 'use' by clicking, for example grenades, fish, defender capsules, etc.",
+    default_value = true
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
+    name = "propertyrandomizer-crafting-machine-speed",
+    localised_name = "Randomize crafting machine speeds",
+    localised_description = "Randomize the speed of anything that crafts stuff, including furnaces, chemical plants, the rocket silo, etc.",
     default_value = true
   },
   {
@@ -86,6 +101,13 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
+    name = "propertyrandomizer-inserter-speed",
+    localised_name = "Randomize inserter rotation speed",
+    default_value = true
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
     name = "propertyrandomizer-inventory-properties",
     localised_name = "Randomize inventory properties",
     localised_description = "Randomize properties that have to do with inventories, such as inventory slots and stack sizes.",
@@ -94,10 +116,9 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
-    name = "propertyrandomizer-logistic-speed",
-    localised_name = "Randomize logistic building speed",
-    localised_description = "Randomize how fast most logistical buildings are, like belt speed and inserter rotation speed.",
-    default_value = true
+    name = "propertyrandomizer-lab-research-speed",
+    localised_name = "Randomize lab research speed",
+    default_value = false
   },
   {
     setting_type = "startup",
@@ -107,12 +128,12 @@ data:extend({
     localised_description = "Randomize how much pollution is produced by machines.",
     default_value = true
   },
-  { -- TODO: Add localised names and descriptions to these
+  {
     setting_type = "startup",
     type = "bool-setting",
-    name = "propertyrandomizer-machine-speed",
-    localised_name = "Randomize machine speed",
-    localised_description = "Randomize how fast machines work, such as the crafting speed of a chemical plant.",
+    name = "propertyrandomizer-mining-speeds",
+    localised_name = "Randomize mining speeds",
+    localised_description = "Randomize the speed of mining drills, pumpjacks, and any other entities that mine resources.",
     default_value = true
   },
   {
@@ -127,6 +148,13 @@ data:extend({
     type = "bool-setting",
     name = "propertyrandomizer-module-slots",
     localised_name = "Randomize number of module slots",
+    default_value = true
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
+    name = "propertyrandomizer-offshore-pump-speed",
+    localised_name = "Randomize offshore pumping speed",
     default_value = true
   },
   {
@@ -185,6 +213,7 @@ data:extend({
     type = "bool-setting",
     name = "propertyrandomizer-inserter-position",
     localised_name = "Randomize inserter positions",
+    localised_description = "Any given inserter has a small chance to become a long inserter, side inserter, or a variety of other cursed options.",
     default_value = false
   },
   {

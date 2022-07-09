@@ -23,7 +23,7 @@ Next releases:
   - Sample from gamma distribution for simpler properties
   - Use local functions instead of globals
   - Player chooses between different prototypes
-  - Randomize research
+  - Randomize research tree
   - Link inserters (specifically, filter inserters/fast inserters, for example, should be hard linked)
   - Account for efficiency when rounding energy_used for furnaces (and other such objects)
   - Round min consumption
@@ -40,16 +40,13 @@ Next releases:
   - Add option to only change some recipe times
   - Function for find_separation_bias
   - Documentation for randomization_algorithms
-  - Add offshoots for furnace speeds and such
-  - Max factor change setting
-  - Round health even in no rounding mode to prevent confusion over 78/79 health and such
-  - Link gate opening speed and approach distance to prevent train crashes through them
+  - Add offshoots for furnace speeds and such (just like with stack sizes)
+  - Max factor changeable with setting
   - Change color of lights/lamps/labs to disco/different colors
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call
   - Make a proper readme
-  - Get feedback on file system
   - Compare config file to other mods to see how it is
 
 Random maps
