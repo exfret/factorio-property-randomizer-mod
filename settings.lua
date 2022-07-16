@@ -27,6 +27,15 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
+    name = "propertyrandomizer-belt-sync",
+    localised_name = "Sync belt tiers",
+    localised_description = "Make belts of the same tier (i.e.- yellow belt/underground/splitter) have the same speed.",
+    default_value = "true",
+    order = "ac"
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
     name = "propertyrandomizer-ammo",
     localised_name = "Randomize ammo",
     default_value = true
@@ -230,6 +239,14 @@ data:extend({
     type = "bool-setting",
     name = "propertyrandomizer-entity-interaction-speed",
     localised_name = "Randomize interaction speeds",
+    default_value = false
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
+    name = "propertyrandomizer-fuel-inventory-slots",
+    localised_name = "Randomize fuel inventory slots",
+    localised_description = "Randomize the amount of inventory slots for fuel. For example, burner mining drills may now be able to hold two stacks of coal instead of just one.",
     default_value = false
   },
   {

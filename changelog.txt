@@ -1,6 +1,11 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.1.7
+Version: 0.1.8
 Date: ?
+  Features:
+    - Added "sync belt tiers" option to make all belts from the same tier the same speed
+---------------------------------------------------------------------------------------------------
+Version: 0.1.7
+Date: 2022.07.14
   Features:
     - Separated out some settings so that things can be customized more
     - Randomized some gun properties

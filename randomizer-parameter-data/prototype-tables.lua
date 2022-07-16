@@ -20,6 +20,21 @@ prototype_tables.crafting_machine_classes = {
   "furnace"
 }
 
+prototype_tables.energy_property_names = {
+  fluid = {"heat_capacity", "fuel_value"},
+  ["combat-robot"] = {"energy_per_move", "energy_per_tick"},
+  ["construction-robot"] = {"energy_per_move", "energy_per_tick"},
+  ["logistic-robot"] = {"energy_per_move", "energy_per_tick"},
+  inserter = {"energy_per_movement", "energy_per_rotation"},
+  lamp = {"energy_usage_per_tick"},
+  ["programmable-speaker"] = {"energy_usage_per_tick"},
+  ["energy-shield-equipment"] = {"energy_per_shield"}
+}
+-- Also anything extending Prototype/Item (fluid fuel values already randomized above)
+for item, _ in pairs(defines.prototypes["item"]) do
+  prototype_tables.energy_property_names[item] = {"fuel_value"}
+end
+
 prototype_tables.energy_source_names = {
   accumulator = {"energy_source"},
   beacon = {"energy_source"},
@@ -56,21 +71,6 @@ prototype_tables.energy_source_names = {
   ["roboport-equipment"] = {"burner", "energy_source"},
   ["solar-panel-equipment"] = {"energy_source"}
 }
-
-prototype_tables.energy_property_names = {
-  fluid = {"heat_capacity", "fuel_value"},
-  ["combat-robot"] = {"energy_per_move", "energy_per_tick"},
-  ["construction-robot"] = {"energy_per_move", "energy_per_tick"},
-  ["logistic-robot"] = {"energy_per_move", "energy_per_tick"},
-  inserter = {"energy_per_movement", "energy_per_rotation"},
-  lamp = {"energy_usage_per_tick"},
-  ["programmable-speaker"] = {"energy_usage_per_tick"},
-  ["energy-shield-equipment"] = {"energy_per_shield"}
-}
--- Also anything extending Prototype/Item (fluid fuel values already randomized above)
-for item, _ in pairs(defines.prototypes["item"]) do
-  prototype_tables.energy_property_names[item] = {"fuel_value"}
-end
 
 prototype_tables.entities_to_modify_mining_speed = {
   "character-corpse",

@@ -9,6 +9,8 @@ elseif settings.startup["propertyrandomizer-rounding-mode"].value == "leave 'em 
   rounding_mode = 1
 end
 
+sync_belt_tiers = settings.startup["propertyrandomizer-belt-sync"].value
+
 -- Basic randomizations
 
 rand_ammo = settings.startup["propertyrandomizer-ammo"].value
@@ -23,6 +25,7 @@ rand_energy_values = settings.startup["propertyrandomizer-energy-value"].value
 rand_equipment_grids = settings.startup["propertyrandomizer-armor-and-equipment"].value
 rand_equipment_properties = settings.startup["propertyrandomizer-armor-and-equipment"].value
 rand_equipment_shapes = settings.startup["propertyrandomizer-armor-and-equipment"].value
+rand_fuel_inventory_slots = settings.startup["propertyrandomizer-fuel-inventory-slots"].value
 rand_gun_damage_modifier = settings.startup["propertyrandomizer-gun-damage-modifier"].value
 rand_gun_range = settings.startup["propertyrandomizer-gun-range"].value
 rand_gun_speed = settings.startup["propertyrandomizer-gun-speed"].value
@@ -52,7 +55,6 @@ rand_inserter_position = settings.startup["propertyrandomizer-inserter-position"
 rand_mining_drill_productivity = settings.startup["propertyrandomizer-mining-drill-productivity"].value
 rand_mining_drill_dropoff = settings.startup["propertyrandomizer-mining-drill-dropoff"].value
 --rand_switch_projectiles = settings.startup["propertyrandomizer-switch-projectiles"].value
-
 rand_tools = settings.startup["propertyrandomizer-misc-properties"].value
 
 -- Silly randomizations

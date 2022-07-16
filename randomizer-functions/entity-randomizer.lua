@@ -44,7 +44,9 @@ function randomize_belt_speed ()
   local min_bias = 0.45
   local max_bias = 0.6
   local prototype_bias_dict = {}
+  local belt_tier_groups = {}
 
+  -- Calculate the biases to seperate the belts out
   for _, belt_class in pairs(prototype_tables.transport_belt_classes) do
     for _, prototype1 in pairs(data.raw[belt_class]) do
       local num_worse_speed = 0
@@ -65,6 +67,20 @@ function randomize_belt_speed ()
     end
   end
 
+  for transport_belt_prototype_name, transport_belt_prototype in pairs(data.raw["transport-belt"]) do
+    local belt_tier_prototypes = {}
+
+    for _, other_belt_class in pairs(prototype_tables.transport_belt_classes) do
+      for _, other_belt_prototype in pairs(data.raw[other_belt_class]) do
+        if other_belt_prototype.speed == transport_belt_prototype.speed then
+          table.insert(belt_tier_prototypes, other_belt_prototype)
+        end
+      end
+    end
+
+    belt_tier_groups[transport_belt_prototype_name] = belt_tier_prototypes
+  end
+
   for _, belt_class in pairs(prototype_tables.transport_belt_classes) do
     for _, prototype in pairs(data.raw[belt_class]) do
       randomize_numerical_property{
@@ -76,6 +92,12 @@ function randomize_belt_speed ()
           bias = prototype_bias_dict[prototype.name]
         }
       }
+    end
+  end
+
+  for belt_tier_group_base_belt, belt_tier_group in pairs(belt_tier_groups) do
+    for _, other_belt in pairs(belt_tier_group) do
+      other_belt.speed = data.raw["transport-belt"][belt_tier_group_base_belt].speed
     end
   end
 end
@@ -167,7 +189,7 @@ function randomize_crafting_machine_speeds ()
 
       randomize_numerical_property{
         prototype = prototype,
-        property = "crafting_speed",
+        property = "crafting_a",
         inertia_function = inertia_function.crafting_speed,
         property_info = property_info.machine_speed,
         walk_params = {
@@ -384,6 +406,28 @@ function randomize_entity_triggers ()
 end]]
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_fuel_inventory_slots
+---------------------------------------------------------------------------------------------------
+
+function randomize_fuel_inventory_slots ()
+  for class_name, energy_source_property_list in pairs(prototype_tables.energy_source_names) do
+    for _, prototype in pairs(data.raw[class_name]) do
+      for _, property_name in pairs(energy_source_property_list) do
+        if prototype[property_name] then
+          randomize_numerical_property{
+            prototype = prototype,
+            tbl = prototype[property_name],
+            property = "fuel_inventory_size",
+            inertia_function = inertia_function.energy_source_inventory_sizes,
+            property_info = property_info.small_nonempty_inventory
+          }
+        end
+      end
+    end
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_gate_opening_speed
 ---------------------------------------------------------------------------------------------------
 
@@ -551,30 +595,6 @@ function randomize_inventory_sizes ()
             property = property_name,
             inertia_function = inertia_function.inventory_size,
             property_info = property_info_to_use
-          }
-        end
-      end
-    end
-  end
-
-  for class_name, energy_source_property_list in pairs(prototype_tables.energy_source_names) do
-    for _, prototype in pairs(data.raw[class_name]) do
-      for _, property_name in pairs(energy_source_property_list) do
-        if prototype[property_name] then
-          randomize_numerical_property{
-            prototype = prototype,
-            tbl = prototype[property_name],
-            property = "fuel_inventory_size",
-            inertia_function = inertia_function.energy_source_inventory_sizes,
-            property_info = property_info.small_nonempty_inventory
-          }
-
-          randomize_numerical_property{
-            prototype = prototype,
-            tbl = prototype[property_name],
-            property = "burnt_inventory_size",
-            inertia_function = inertia_function.energy_source_inventory_sizes,
-            property_info = property_info.small_inventory
           }
         end
       end

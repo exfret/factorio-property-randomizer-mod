@@ -6,6 +6,10 @@ walk_params.electric_pole_supply_area = {
   bias = 0.565
 }
 
+walk_params.gun_damage_modifier = {
+  bias = 0.53
+}
+
 walk_params.magazine_size = {
   bias = 0.475 -- Make the bias towards smaller magazines to make up for the boost from having the minimum at 1
 }

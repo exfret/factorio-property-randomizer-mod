@@ -99,6 +99,16 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function randomize_gun_damage_modifier ()
+  for _, prototype in pairs(data.raw.gun) do
+    prototype.attack_parameters.damage_modifier = prototype.attack_parameters.damage_modifier or 1
+
+    randomize_numerical_property{
+      prototype = prototype,
+      tbl = prototype.attack_parameters,
+      property = "damage_modifier",
+      walk_params = walk_params.gun_damage_modifier
+    }
+  end
 end
 
 ---------------------------------------------------------------------------------------------------

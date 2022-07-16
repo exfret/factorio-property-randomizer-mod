@@ -3,8 +3,8 @@ Goals for 0.2.0:
   2. Distance group randomization started up
 
 Next releases:
-  1. Implement auto-testing (to whatever limited extent I can)
-  2. Distance-related group randomization
+  1. Randomize some more things
+  2. Sync belt tiers option
 
   - Investigate which entities take pollution and how
   - Test mod compatibility
@@ -44,6 +44,8 @@ Next releases:
   - Max factor changeable with setting
   - Change color of lights/lamps/labs to disco/different colors
   - Make prg_key for entities depend on properties being randomized too
+  - Make grenade range circle correct
+  - Make miniloaders display correct speed
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call

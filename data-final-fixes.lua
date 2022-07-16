@@ -171,6 +171,10 @@ if rand_entity_interaction_speed then
   table.insert(randomizing_functions_to_call, randomize_entity_interaction_speed)
 end
 
+if rand_fuel_inventory_slots then
+  table.insert(randomizing_functions_to_call, randomize_fuel_inventory_slots)
+end
+
 if rand_gate_opening_speed then
   table.insert(randomizing_functions_to_call, randomize_gate_opening_speed)
 end
