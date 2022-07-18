@@ -200,6 +200,13 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
+    name = "propertyrandomizer-storage-tank-capacity",
+    localised_name = "Randomize storage tank capacity",
+    default_value = true
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
     name = "propertyrandomizer-tech-costs",
     localised_name = "Randomize technology costs",
     default_value = true

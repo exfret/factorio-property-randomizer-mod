@@ -3,6 +3,7 @@ Version: 0.1.8
 Date: ?
   Features:
     - Added "sync belt tiers" option to make all belts from the same tier the same speed
+    - Ability to randomize storage tank capacity and pump speed
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.7
 Date: 2022.07.14

@@ -39,8 +39,9 @@ rand_module_effects = settings.startup["propertyrandomizer-module-effects"].valu
 rand_module_slots = settings.startup["propertyrandomizer-module-slots"].value
 rand_offshore_pump_speed = settings.startup["propertyrandomizer-offshore-pump-speed"].value
 rand_pump_pumping_speed = settings.startup["propertyrandomizer-pump-pumping-speed"].value
-rand_underground_distance = settings.startup["propertyrandomizer-underground-distance"].value
+rand_storage_tank_capacity = settings.startup["propertyrandomizer-storage-tank-capacity"].value
 rand_tech_costs = settings.startup["propertyrandomizer-tech-costs"].value
+rand_underground_distance = settings.startup["propertyrandomizer-underground-distance"].value
 rand_vehicles = settings.startup["propertyrandomizer-vehicles"].value
 
 -- Advanced randomizations

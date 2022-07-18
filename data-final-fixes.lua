@@ -136,6 +136,10 @@ if rand_pump_pumping_speed then
   table.insert(randomizing_functions_to_call, randomize_pump_speed)
 end
 
+if rand_storage_tank_capacity then
+  table.insert(randomizing_functions_to_call, randomize_storage_tank_capacity)
+end
+
 if rand_tech_costs then
   table.insert(randomizing_functions_to_call, randomize_technology_science_cost)
   table.insert(randomizing_functions_to_call, randomize_technology_time_cost)

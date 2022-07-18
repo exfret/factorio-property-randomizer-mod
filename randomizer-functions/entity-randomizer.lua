@@ -925,6 +925,21 @@ function randomize_roboports ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_storage_tank_capacity
+---------------------------------------------------------------------------------------------------
+
+function randomize_storage_tank_capacity ()
+  for _, prototype in pairs(data.raw["storage-tank"]) do
+    randomize_numerical_property{
+      prototype = prototype,
+      tbl = prototype.fluid_box,
+      property = "base_area"
+      -- Let's not set rounding info since it can be messed up by the height anyways
+    }
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_underground_belt_distance
 ---------------------------------------------------------------------------------------------------
 
