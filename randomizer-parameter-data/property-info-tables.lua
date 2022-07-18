@@ -317,10 +317,10 @@ property_info.productivity_effect = {
 }
 
 property_info.pump_pumping_speed = {
-  min = 1,
+  min = 1 / 60,
   round = {
     [2] = {
-      modulus = 10,
+      modulus = 10 / 60,
       left_digits_to_keep = 3
     }
   }

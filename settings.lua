@@ -194,7 +194,7 @@ data:extend({
     setting_type = "startup",
     type = "bool-setting",
     name = "propertyrandomizer-pump-pumping-speed",
-    localised_name = "Randomize the pump's speed",
+    localised_name = "Randomize (normal) pump speeds",
     default_value = true
   },
   {

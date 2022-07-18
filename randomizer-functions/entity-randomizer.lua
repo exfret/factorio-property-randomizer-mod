@@ -819,7 +819,7 @@ function randomize_pump_speed ()
       group_params = {
         {
           prototype = prototype,
-          property_name = "pumping_speed",
+          property = "pumping_speed",
           property_info = property_info.pump_pumping_speed
         },
         {
@@ -830,10 +830,10 @@ function randomize_pump_speed ()
       }
     }
 
-    if prototype.fluid_box.base_level == nil then
-      prototype.fluid_box.base_level = 1
+    if prototype.fluid_box.base_area == nil then
+      prototype.fluid_box.base_area = 1
     end
-    prototype.fluid_box.base_level = prototype.fluid_box.base_level * old_fluid_box_height / prototype.fluid_box.height
+    prototype.fluid_box.base_area = prototype.fluid_box.base_area * old_fluid_box_height / prototype.fluid_box.height
   end
 end
 
