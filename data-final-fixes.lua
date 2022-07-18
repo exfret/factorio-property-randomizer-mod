@@ -145,6 +145,10 @@ if rand_tech_costs then
   table.insert(randomizing_functions_to_call, randomize_technology_time_cost)
 end
 
+if rand_tile_walking_speed_modifier then
+  table.insert(randomizing_functions_to_call, randomize_tile_walking_speed_modifier)
+end
+
 if rand_underground_distance then
   table.insert(randomizing_functions_to_call, randomize_underground_belt_distance)
   -- randomize_underground_pipe_distance() TODO

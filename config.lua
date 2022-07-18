@@ -41,6 +41,7 @@ rand_offshore_pump_speed = settings.startup["propertyrandomizer-offshore-pump-sp
 rand_pump_pumping_speed = settings.startup["propertyrandomizer-pump-pumping-speed"].value
 rand_storage_tank_capacity = settings.startup["propertyrandomizer-storage-tank-capacity"].value
 rand_tech_costs = settings.startup["propertyrandomizer-tech-costs"].value
+rand_tile_walking_speed_modifier = settings.startup["propertyrandomizer-tile-walking-speed-modifier"].value
 rand_underground_distance = settings.startup["propertyrandomizer-underground-distance"].value
 rand_vehicles = settings.startup["propertyrandomizer-vehicles"].value
 

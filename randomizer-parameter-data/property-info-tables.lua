@@ -472,6 +472,18 @@ property_info.temperature = {
   }
 }
 
+property_info.tile_walking_speed_modifier = {
+  min = 0.01,
+  round = {
+    [2] = {
+      modulus = 0.01
+    },
+    [3] = {
+      modulus = 0.1
+    }
+  }
+}
+
 property_info.tool_durability = {
   min = 1,
   round = {

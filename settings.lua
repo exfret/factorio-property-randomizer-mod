@@ -287,7 +287,15 @@ data:extend({
     localised_name = "(Almost) everything else",
     localised_description = "Yo dawg, I see you got some extra properties to randomize there. Wanna fix that?",
     default_value = false
-  }
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
+    name = "propertyrandomizer-tile-walking-speed-modifier",
+    localised_name = "Randomize how fast you travel on ALL tiles",
+    localised_description = "Note: since different rotations of hazard concrete are counted as different tiles in-game, they will have different walking speed bonuses.",
+    default_value = false
+  },
   --[[, TODO
   {
     setting_type = "startup",

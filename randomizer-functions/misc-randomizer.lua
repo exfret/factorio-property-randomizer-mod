@@ -176,3 +176,21 @@ function randomize_utility_constants_properties ()
     prototype.inventory_width = 11
   end
 end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_tile_walking_speed_modifier
+---------------------------------------------------------------------------------------------------
+
+function randomize_tile_walking_speed_modifier ()
+  for _, prototype in pairs(data.raw.tile) do
+    if prototype.walking_speed_modifier == nil then
+      prototype.walking_speed_modifier = 1
+    end
+
+    randomize_numerical_property{
+      prototype = prototype,
+      property = "walking_speed_modifier",
+      property_info = property_info.tile_walking_speed_modifier
+    }
+  end
+end

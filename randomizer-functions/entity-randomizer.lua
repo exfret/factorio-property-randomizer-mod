@@ -766,8 +766,11 @@ function randomize_module_slots ()
   for _, class_name in pairs(prototype_tables.machines_with_module_slots) do
     for _, prototype in pairs(data.raw[class_name]) do
       if prototype["module_specification"] then
+        local property_info_to_use = property_info.small_inventory
         if prototype["module_specification"].module_slots == nil then
           prototype["module_specification"].module_slots = 0
+        elseif prototype["module_specification"].module_slots > 0 then
+          property_info_to_use = property_info.small_nonempty_inventory
         end
 
         randomize_numerical_property{
@@ -775,7 +778,7 @@ function randomize_module_slots ()
           tbl = prototype["module_specification"],
           property = "module_slots",
           inertia_function = inertia_function.module_specification,
-          property_info = property_info.small_inventory
+          property_info = property_info_to_use
         }
 
         -- If no effects are allowed, turn the number of modules back to 0
