@@ -193,6 +193,13 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
+    name = "propertyrandomizer-pump-pumping-speed",
+    localised_name = "Randomize the pump's speed",
+    default_value = true
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
     name = "propertyrandomizer-tech-costs",
     localised_name = "Randomize technology costs",
     default_value = true
@@ -225,13 +232,6 @@ data:extend({
     type = "bool-setting",
     name = "propertyrandomizer-crafting-times",
     localised_name = "Randomize crafting times",
-    default_value = false
-  },
-  {
-    setting_type = "startup",
-    type = "bool-setting",
-    name = "propertyrandomizer-enemy-spawning",
-    localised_name = "Randomize enemy spawning",
     default_value = false
   },
   {
@@ -289,4 +289,11 @@ data:extend({
     localised_name = "Switch projectiles",
     default_value = false
   }]]
+  --[[{
+    setting_type = "startup",
+    type = "bool-setting",
+    name = "propertyrandomizer-enemy-spawning",
+    localised_name = "Randomize enemy spawning",
+    default_value = false
+  },]]
 })

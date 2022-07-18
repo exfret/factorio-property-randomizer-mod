@@ -316,6 +316,16 @@ property_info.productivity_effect = {
   }
 }
 
+property_info.pump_pumping_speed = {
+  min = 1,
+  round = {
+    [2] = {
+      modulus = 10,
+      left_digits_to_keep = 3
+    }
+  }
+}
+
 property_info.recipe_crafting_time = {
   min = 0.01,
   round = {

@@ -83,6 +83,12 @@ function randomize_belt_speed ()
 
   for _, belt_class in pairs(prototype_tables.transport_belt_classes) do
     for _, prototype in pairs(data.raw[belt_class]) do
+      local bias_to_use = prototype_bias_dict[prototype.name]
+      -- Make bias higher without syncing belt tiers to account for fact that lowest belt speed slows down everything else
+      if not sync_belt_tiers then
+        bias_to_use = bias_to_use + 0.03
+      end
+
       randomize_numerical_property{
         prototype = prototype,
         property = "speed",
@@ -804,7 +810,30 @@ end
 
 function randomize_pump_speed ()
   for _, prototype in pairs(data.raw.pump) do
-    -- TODO
+    if prototype.fluid_box.height == nil then
+      prototype.fluid_box.height = 1
+    end
+    local old_fluid_box_height = prototype.fluid_box.height
+
+    randomize_numerical_property{
+      group_params = {
+        {
+          prototype = prototype,
+          property_name = "pumping_speed",
+          property_info = property_info.pump_pumping_speed
+        },
+        {
+          prototype = prototype,
+          tbl = prototype.fluid_box,
+          property = "height"
+        }
+      }
+    }
+
+    if prototype.fluid_box.base_level == nil then
+      prototype.fluid_box.base_level = 1
+    end
+    prototype.fluid_box.base_level = prototype.fluid_box.base_level * old_fluid_box_height / prototype.fluid_box.height
   end
 end
 
@@ -817,6 +846,7 @@ function randomize_reactor_neighbour_bonus ()
     if prototype.neighbour_bonus == nil then
       prototype.neighbour_bonus = 1
     end
+    
     randomize_numerical_property{
       prototype = prototype,
       property = "neighbour_bonus",

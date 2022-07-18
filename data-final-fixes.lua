@@ -89,6 +89,10 @@ if rand_health_properties then
   table.insert(randomizing_functions_to_call, randomize_health_properties)
 end
 
+if rand_inserter_speed then
+  table.insert(randomizing_functions_to_call, randomize_inserter_speed)
+end
+
 if rand_inserter_rotation_speed then
   table.insert(randomizing_functions_to_call, randomize_inserter_speed)
 end
@@ -101,13 +105,6 @@ end
 
 if rand_lab_speed then
   table.insert(randomizing_functions_to_call, randomize_lab_research_speed)
-end
-
--- TODO: Randomize pump (normal pump, not offshore pump) speed
-if rand_logistic_speed then
-  table.insert(randomizing_functions_to_call, randomize_belt_speed)
-  table.insert(randomizing_functions_to_call, randomize_inserter_speed)
-  table.insert(randomizing_functions_to_call, randomize_pump_speed) -- TODO once I learn about fluidboxes
 end
 
 -- TODO: Figure out what extra things support pollution
@@ -133,6 +130,10 @@ end
 
 if rand_offshore_pump_speed then
   table.insert(randomizing_functions_to_call, randomize_offshore_pump_speed)
+end
+
+if rand_pump_pumping_speed then
+  table.insert(randomizing_functions_to_call, randomize_pump_speed)
 end
 
 if rand_tech_costs then
@@ -161,10 +162,6 @@ end
 
 if rand_character_respawn_time then
   table.insert(randomizing_functions_to_call, randomize_character_respawn_time)
-end
-
-if rand_enemy_spawning then
-  table.insert(randomizing_functions_to_call, randomize_enemy_spawning)
 end
 
 if rand_entity_interaction_speed then

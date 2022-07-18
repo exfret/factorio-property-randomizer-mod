@@ -6,7 +6,6 @@ Next releases:
   1. Randomize some more things
   2. Sync belt tiers option
 
-  - Investigate which entities take pollution and how
   - Test mod compatibility
   - Do special evaluation of the "importance" of items to randomize their crafting times more effectively
   - In-game tutorial/tooltips for more obscure randomizations
@@ -14,7 +13,6 @@ Next releases:
   - Randomly randomized mode where which settings are randomized is randomized
   - Add "separation function"
 
-  - Randomize biter spawner in a smarter fashion
   - Learn about fluid boxes and randomize those
   - Randomize collision boxes (do more carefully than before, like also changing graphics)
   - Shuffle damage types (advanced randomization)
@@ -46,6 +44,7 @@ Next releases:
   - Make prg_key for entities depend on properties being randomized too
   - Make grenade range circle correct
   - Make miniloaders display correct speed
+  - Seperate out energy property names
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call
