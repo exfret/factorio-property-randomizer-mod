@@ -195,7 +195,7 @@ function randomize_crafting_machine_speeds ()
 
       randomize_numerical_property{
         prototype = prototype,
-        property = "crafting_a",
+        property = "crafting_speed",
         inertia_function = inertia_function.crafting_speed,
         property_info = property_info.machine_speed,
         walk_params = {

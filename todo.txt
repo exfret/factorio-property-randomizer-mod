@@ -29,8 +29,7 @@ Next releases:
   - Make mid-game changing of character values work for existing saves
   - Optional mod dependencies with "extra thing" mods in mind
   - Add recommended mods (increased inventory)
-  - Add special "compaitibilities" for vanilla (and for other mods?)
-  - Add thumbnail
+  - Add special "compatibilities" for vanilla (and for other mods?)
   - prg_key for group randomizations
   - Hard link logistics chest inventory sizes
   - Option for resistances outside of 0-100
