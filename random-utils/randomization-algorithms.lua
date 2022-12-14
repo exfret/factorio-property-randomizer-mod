@@ -78,7 +78,7 @@ local function set_randomization_param_values(params, defaults)
   if params.walk_params.num_steps ~= nil then
     num_steps = params.walk_params.num_steps
   else
-    num_steps = DEFUALT_WALK_PARAMS_NUM_STEPS
+    num_steps = DEFAULT_WALK_PARAMS_NUM_STEPS
   end
 
   params.prototype = prototype
@@ -228,27 +228,34 @@ end
 
 -- params = {points, dimension_information, prg_key, walk_params}
 -- dimension_information = list of {inertia_function, property_info}
---[[function randomize_points_in_space (params)
+function randomize_points_in_space (params)
   if params.walk_params == nil then
     params.walk_params = {}
   end
   if params.walk_params.bias == nil then
-    params.walk_params.bais = 1 / 2
+    params.walk_params.bias = 1 / 2
   end
   if params.walk_params.num_steps == nil then
-    params.walk_params.num_steps = DEFUALT_WALK_PARAMS_NUM_STEPS
+    params.walk_params.num_steps = DEFAULT_WALK_PARAMS_NUM_STEPS
   end
 
   -- TODO: Logic for deciding prg_key?
 
   for i = 1,params.walk_params.num_steps do
-    for _, point in pairs(params.points) do
-      local force_vector
+    local forces = param_table_utils.calculate_forces(params.dimension_information, params.points)
 
-      -- Calculate the forces on point
-      for _, other_point in pairs(params.points) do
-        
+    for j, point in pairs(params.points) do
+      for k=1,#point do
+        local sign
+        if prg.value(params.prg_key) < params.walk_params.bias then
+          sign = 1
+        else
+          sign = -1
+        end
+
+        -- The arctan is to clamp large forces from causing huge changes
+        point[k] = point[k] + math.atan(sign + FORCES_WEIGHT * forces[j][k]) * (1 / params.walk_params.num_steps) * param_table_utils.find_inertia_function_value(params.dimension_information[k].inertia_function, point[k])
       end
     end
   end
-end]]
+end

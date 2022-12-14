@@ -6,9 +6,9 @@ local INFINITE_DISTANCE_NUMBER = 1000000000
 -- inertia_function must be sorted
 function param_table_utils.find_inertia_function_value (inertia_function, input)
   -- First check if min/max is specified and input is outside this
-  if inertia_function.min and input <= inertia_function.min then
+  if inertia_function.min ~= nil and input <= inertia_function.min then
     return 0
-  elseif inertia_function.max and input >= inertia_function.max then
+  elseif inertia_function.max ~= nil and input >= inertia_function.max then
     return 0
   end
 
@@ -114,6 +114,50 @@ function param_table_utils.find_inertia_function_distance (inertia_function, x1,
   end
 
   return dist_acc
+end
+
+function param_table_utils.calculate_forces (dimension_information, points)
+  local forces = {}
+  for i, point in pairs(points) do
+    local force_vector = {}
+    for k=1,#point do
+      force_vector[k] = 0
+    end
+
+    -- Calculate the forces on point
+    for j, other_point in pairs(points) do
+      if i ~= j then
+        local dist_vect = {}
+        local total_dist = 0
+        for k=1,#point do
+          dist_vect[k] = param_table_utils.find_inertia_function_distance(dimension_information[k].inertia_function, point[k], other_point[k])
+          total_dist = total_dist + dist_vect[k] * dist_vect[k]
+        end
+
+        for k=1,#point do
+          force_vector[k] = force_vector[k] + dist_vect[k] * dist_vect[k] / total_dist
+        end
+      end
+    end
+
+    -- Normalize by number of points and dimensions
+    for k=1,#point do
+      force_vector[k] = force_vector[k] / (math.sqrt(#point) * (#points) * (#points))
+    end
+
+    -- Zero out NaN components
+    for k=1,#point do
+      if type(force_vector[k]) == "number" and force_vector[k] ~= force_vector[k] then
+        force_vector[k] = 0
+      end
+    end
+
+    -- TODO: Add in forces toward original power level
+
+    forces[i] = force_vector
+  end
+
+  return forces
 end
 
 return param_table_utils

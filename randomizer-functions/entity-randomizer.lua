@@ -212,9 +212,37 @@ end
 
 -- TODO: Also soft link to make electric pole reach usually larger than supply area anyways
 function randomize_electric_poles ()
+  local points = {}
+  for point_label, prototype in pairs(data.raw["electric-pole"]) do
+    local point = {}
+    point[1] = prototype.supply_area_distance
+    point[2] = prototype.maximum_wire_distance
+    table.insert(points, point)
+  end
+
+  randomize_points_in_space{
+    points = points,
+    dimension_information = {
+      {
+        inertia_function = inertia_function.electric_pole_supply_area
+      },
+      {
+        inertia_function = inertia_function.electric_pole_wire_reach
+      }
+    },
+    prg_key = prg.get_key("electric-pole", "class")
+  }
+
+  local index = 1
+  for _, prototype in pairs(data.raw["electric-pole"]) do
+    prototype.supply_area_distance = points[index][1]
+    prototype.maximum_wire_distance = points[index][2]
+    index = index + 1
+  end
+
   -- TODO: Working on group randomization here... under progress
 
-  local too_lazy_to_do_this_right = util.table.deepcopy(data.raw["electric-pole"])
+  --[[local too_lazy_to_do_this_right = util.table.deepcopy(data.raw["electric-pole"])
 
   repeat
 
@@ -289,7 +317,7 @@ function randomize_electric_poles ()
     end
   until is_good_randomization
 
-  data.raw["electric-pole"] = too_lazy_to_do_this_right
+  data.raw["electric-pole"] = too_lazy_to_do_this_right]]
 end
 
 ---------------------------------------------------------------------------------------------------

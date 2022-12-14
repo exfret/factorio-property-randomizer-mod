@@ -2,6 +2,10 @@ Goals for 0.2.0:
   1. Rounding pretty much completely implemented
   2. Distance group randomization started up
 
+Get distance based randomization up
+Add crafting cost to randomization
+Add power level normalizer to keep power levels similar to what they were at start
+
 Next releases:
   1. Randomize some more things
   2. Sync belt tiers option
@@ -57,6 +61,9 @@ Random maps
 Configuration options
   - Sync belt tiers option
   - Add option for variance
+
+Support
+  - Add expensive mode support
 
 Properties:
   - Gun shooting speed and range
