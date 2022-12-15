@@ -2,6 +2,7 @@ local prototype_tables = require("randomizer-parameter-data/prototype-tables")
 
 local inertia_function = require("randomizer-parameter-data/inertia-function-tables")
 local property_info = require("randomizer-parameter-data/property-info-tables")
+local walk_params = require("randomizer-parameter-data.walk-params-tables")
 
 require("random-utils/randomization-algorithms")
 
@@ -181,8 +182,54 @@ end
 -- randomize_tile_walking_speed_modifier
 ---------------------------------------------------------------------------------------------------
 
+-- Fails if next_direction does not have cyclical relationships with the tiles
 function randomize_tile_walking_speed_modifier ()
+  local tile_sets = {}
+
+  local tiles_to_evaluate = {}
   for _, prototype in pairs(data.raw.tile) do
+    tiles_to_evaluate[prototype.name] = true
+  end
+
+  for _, prototype in pairs(data.raw.tile) do
+    if tiles_to_evaluate[prototype.name] then
+      local curr_tile = prototype
+      local curr_tile_set = {}
+      table.insert(curr_tile_set, curr_tile)
+      tiles_to_evaluate[curr_tile.name] = false
+
+      while (curr_tile.next_direction and curr_tile.next_direction ~= prototype.name) do
+        curr_tile = data.raw.tile[curr_tile.next_direction]
+        table.insert(curr_tile_set, curr_tile)
+        tiles_to_evaluate[prototype.name] = false
+      end
+
+      table.insert(tile_sets, curr_tile_set)
+    end
+  end
+
+  for _, tile_set in pairs(tile_sets) do
+    local group_params = {}
+
+    for _, tile in pairs(tile_set) do
+      if tile.walking_speed_modifier == nil then
+        tile.walking_speed_modifier = 1
+      end
+      table.insert(group_params, {
+        prototype = tile,
+        property = "walking_speed_modifier",
+        inertia_function = inertia_function.tile_walking_speed_modifier,
+        property_info = property_info.tile_walking_speed_modifier
+      })
+    end
+
+    randomize_numerical_property{
+      group_params = group_params,
+      walk_params = walk_params.tile_walking_speed_modifier
+    }
+  end
+
+  --[[for _, prototype in pairs(data.raw.tile) do
     if prototype.walking_speed_modifier == nil then
       prototype.walking_speed_modifier = 1
     end
@@ -192,5 +239,7 @@ function randomize_tile_walking_speed_modifier ()
       property = "walking_speed_modifier",
       property_info = property_info.tile_walking_speed_modifier
     }
-  end
+  end]]
 end
+
+-- Link together tiles with the same next_direction

@@ -7,6 +7,8 @@ require("randomizer-functions/misc-randomizer")
 require("randomizer-functions/recipe-randomizer")
 require("randomizer-functions/technology-randomizer")
 
+local dependency_utils = require("dependency-utils")
+
 local randomizing_functions_to_call = {}
 
 ---------------------------------------------------------------------------------------------------

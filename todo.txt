@@ -21,7 +21,7 @@ Next releases:
   - Randomize collision boxes (do more carefully than before, like also changing graphics)
   - Shuffle damage types (advanced randomization)
   - Recipes randomly require water
-  - Crafting times less variance for items need for science
+  - Crafting times less variance for items needed for science
   - Sample from gamma distribution for simpler properties
   - Use local functions instead of globals
   - Player chooses between different prototypes
@@ -48,6 +48,7 @@ Next releases:
   - Make grenade range circle correct
   - Make miniloaders display correct speed
   - Seperate out energy property names
+  - Re-round electric pole numbers
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call
@@ -59,7 +60,6 @@ Random maps
   - Randomize pollution parameters
 
 Configuration options
-  - Sync belt tiers option
   - Add option for variance
 
 Support

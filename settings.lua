@@ -293,7 +293,6 @@ data:extend({
     type = "bool-setting",
     name = "propertyrandomizer-tile-walking-speed-modifier",
     localised_name = "Randomize how fast you travel on ALL tiles",
-    localised_description = "Note: since different rotations of hazard concrete are counted as different tiles in-game, they will have different walking speed bonuses.",
     default_value = false
   },
   --[[, TODO

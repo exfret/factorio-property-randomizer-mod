@@ -185,6 +185,11 @@ inertia_function.tech_time = {
   slope = 5
 }
 
+inertia_function.tile_walking_speed_modifier = {
+  type = "proportional",
+  slope = 1
+}
+
 inertia_function.underground_belt_length = {
   {-4, 30},
   {4, 30},

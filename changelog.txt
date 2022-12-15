@@ -4,6 +4,11 @@ Date: ?
   Features:
     - Added "sync belt tiers" option to make all belts from the same tier the same speed
     - Ability to randomize storage tank capacity and pump speed
+    - Randomized tile walking speeds in a better manner
+  Minor Features:
+    - Electric poles now use the new distance-based randomization
+  Organization:
+    - Started the groundwork for recipe randomization
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.7
 Date: 2022.07.14

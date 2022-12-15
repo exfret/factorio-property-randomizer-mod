@@ -22,6 +22,10 @@ walk_params.stack_size = {
   bias = 0.56 -- It's better to give the player enormously large stack sizes than to have enormously small ones, so skew to larger ones
 }
 
+walk_params.tile_walking_speed_modifier = {
+  bias = 0.52
+}
+
 walk_params.underground_belt_length = {
   bias = 0.525, -- Make bias towards a little higher to fight against the offshoot to the left I was having
 }
