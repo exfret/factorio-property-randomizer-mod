@@ -49,6 +49,7 @@ Next releases:
   - Make miniloaders display correct speed
   - Seperate out energy property names
   - Re-round electric pole numbers
+  - Extract building the dependency graph out into a separate file
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call
@@ -73,6 +74,7 @@ Properties:
   - fuel_acceleration/top-speed multiplier (randomize with vehicles)
   - braking_power/braking_force
   - electric pole wire connection points (so it's possible electric poles connect to fewer electrical poles than before)
+  - Localizations
 
 Silly additions
   - Figure out a way to randomize sounds or graphics?
