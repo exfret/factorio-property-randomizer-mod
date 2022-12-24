@@ -52,6 +52,7 @@ rand_character_properties_midgame = settings.startup["propertyrandomizer-charact
 rand_character_respawn_time = settings.startup["propertyrandomizer-misc-properties"].value
 rand_crafting_times = settings.startup["propertyrandomizer-crafting-times"].value
 rand_entity_interaction_speed = settings.startup["propertyrandomizer-entity-interaction-speed"].value
+rand_entity_sizes = settings.startup["propertyrandomizer-entity-sizes"].value
 rand_gate_opening_speed = settings.startup["propertyrandomizer-misc-properties"].value
 rand_inserter_position = settings.startup["propertyrandomizer-inserter-position"].value
 rand_mining_drill_productivity = settings.startup["propertyrandomizer-mining-drill-productivity"].value

@@ -246,6 +246,15 @@ data:extend({
     type = "bool-setting",
     name = "propertyrandomizer-entity-interaction-speed",
     localised_name = "Randomize interaction speeds",
+    localised_description = "Randomize the speed at which the character interacts with various things, like repair speed",
+    default_value = false
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
+    name = "propertyrandomizer-entity-sizes",
+    localised_name = "Randomize entity sizes",
+    localised_description = "Currently only works on some entities.",
     default_value = false
   },
   {

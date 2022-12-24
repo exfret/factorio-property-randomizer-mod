@@ -393,6 +393,60 @@ function randomize_entity_interaction_speed ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_entity_sizes
+---------------------------------------------------------------------------------------------------
+
+--[[
+local curr_prototype = data.raw.container["wooden-chest"]
+for _, layer in pairs(curr_prototype.picture.layers) do
+  layer.scale = 2
+end ]]
+
+-- Accumulator
+-- Artillery turret?
+-- Beacon
+-- ...
+-- Container stuffs
+-- Electric pole?
+-- Lab
+-- Turret
+
+function randomize_entity_sizes ()
+  local function double_scale (picture)
+    if picture.hr_version ~= nil then
+      double_scale(picture.hr_version)
+    end
+
+    if picture.scale == nil then
+      picture.scale = 1
+    end
+
+    picture.scale = picture.scale * 10
+  end
+
+  -- Cliffs
+  for _, cliff in pairs(data.raw.cliff) do
+    for _, orientation in pairs(cliff.orientations) do
+      for _, vector in pairs(orientation.collision_bounding_box) do
+        -- Just ignore the orientation number, wiki says it seems to be unused
+        if type(vector) ~= "number" then
+          vector[1] = vector[1] * 10
+          vector[2] = vector[2] * 10
+        end
+      end
+
+      for _, picture in pairs(orientation.pictures) do
+        for _, layers in pairs(picture) do
+          for _, layer in pairs(layers) do
+            double_scale(layer)
+          end
+        end
+      end
+    end
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_entity_triggers
 ---------------------------------------------------------------------------------------------------
 
