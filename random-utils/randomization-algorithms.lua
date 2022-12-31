@@ -3,12 +3,7 @@ require("random")
 require("globals")
 local param_table_utils = require("param-table-utils")
 
--- defaults = {inertia_function = {?}}
-local function set_randomization_param_values(params, defaults)
-  if defaults == nil then
-    defaults = {}
-  end
-
+local function initialize_param_tbl_property_values(params)
   local prototype, tbl, property, prg_key
   tbl = {dummy = 1}
   property = "dummy"
@@ -32,6 +27,17 @@ local function set_randomization_param_values(params, defaults)
     prg_key = params.prg_key
   end
 
+  params.prototype = prototype
+  params.tbl = tbl
+  params.property = property
+  params.prg_key = prg_key
+end
+
+local function initialize_param_inertia_function_values(params, defaults)
+  if defaults == nil then
+    defaults = {}
+  end
+
   if params.inertia_function == nil then
     if defaults.inertia_function ~= nil then
       params.inertia_function = defaults.inertia_function
@@ -42,7 +48,9 @@ local function set_randomization_param_values(params, defaults)
       }
     end
   end
+end
 
+local function initialize_param_property_info_values(params)
   if params.property_info == nil then
     params.property_info = {}
   end
@@ -64,7 +72,9 @@ local function set_randomization_param_values(params, defaults)
       params.property_info.round[3].left_digits_to_keep = 2
     end
   end
+end
 
+local function initialize_param_walk_params_values(params)
   if params.walk_params == nil then
     params.walk_params = {}
   end
@@ -80,13 +90,17 @@ local function set_randomization_param_values(params, defaults)
   else
     num_steps = DEFAULT_WALK_PARAMS_NUM_STEPS
   end
-
-  params.prototype = prototype
-  params.tbl = tbl
-  params.property = property
-  params.prg_key = prg_key
+  
   params.walk_params.bias = bias
   params.walk_params.num_steps = num_steps
+end
+
+-- defaults = {inertia_function = {?}}
+local function set_randomization_param_values(params, defaults)
+  initialize_param_tbl_property_values(params)
+  initialize_param_inertia_function_values(params, defaults)
+  initialize_param_property_info_values(params)
+  initialize_param_walk_params_values(params)
 end
 
 function find_sign (roll, property_params)
@@ -125,43 +139,43 @@ local function nudge_properties (params, roll)
   end
 end
 
-local function complete_final_randomization_fixes (params)
-  local function fix_individual_property(tbl, property, property_info, old_value)
-    if tbl[property] == nil then
-      return
-    end
+local function apply_property_info_changes(tbl, property, property_info, old_value)
+  if tbl[property] == nil then
+    return
+  end
 
-    -- Rounding
-    if property_info.round ~= nil then
-      local left_digits_to_keep = property_info.round[rounding_mode].left_digits_to_keep
-      if left_digits_to_keep ~= nil and left_digits_to_keep ~= 0 and tbl[property] ~= 0 then
-        local digits_modulus = math.pow(10, math.floor(math.log(math.abs(tbl[property]), 10) - left_digits_to_keep + 1))
-        tbl[property] = math.floor((tbl[property] + digits_modulus / 2) / digits_modulus) * digits_modulus
-      end
-      local modulus = property_info.round[rounding_mode].modulus
-      if modulus ~= nil and modulus ~= 0 then
-        tbl[property] = math.floor((tbl[property] + modulus / 2) / modulus) * modulus
-      end
+  -- Rounding
+  if property_info.round ~= nil then
+    local left_digits_to_keep = property_info.round[rounding_mode].left_digits_to_keep
+    if left_digits_to_keep ~= nil and left_digits_to_keep ~= 0 and tbl[property] ~= 0 then
+      local digits_modulus = math.pow(10, math.floor(math.log(math.abs(tbl[property]), 10) - left_digits_to_keep + 1))
+      tbl[property] = math.floor((tbl[property] + digits_modulus / 2) / digits_modulus) * digits_modulus
     end
-  
-    -- Min/max it
-    if property_info.min ~= nil then
-      tbl[property] = math.max(tbl[property], property_info.min)
-    end
-    if property_info.max ~= nil then
-      tbl[property] = math.min(tbl[property], property_info.max)
-    end
-    if property_info.min_factor ~= nil then
-      tbl[property] = math.max(tbl[property], property_info.min_factor * old_value)
-    end
-    if property_info.max_factor ~= nil then
-      tbl[property] = math.min(tbl[property], property_info.max_factor * old_value)
+    local modulus = property_info.round[rounding_mode].modulus
+    if modulus ~= nil and modulus ~= 0 then
+      tbl[property] = math.floor((tbl[property] + modulus / 2) / modulus) * modulus
     end
   end
 
-  fix_individual_property(params.tbl, params.property, params.property_info, params.old_value)
+  -- Min/max it
+  if property_info.min ~= nil then
+    tbl[property] = math.max(tbl[property], property_info.min)
+  end
+  if property_info.max ~= nil then
+    tbl[property] = math.min(tbl[property], property_info.max)
+  end
+  if property_info.min_factor ~= nil then
+    tbl[property] = math.max(tbl[property], property_info.min_factor * old_value)
+  end
+  if property_info.max_factor ~= nil then
+    tbl[property] = math.min(tbl[property], property_info.max_factor * old_value)
+  end
+end
+
+local function complete_final_randomization_fixes (params)
+  apply_property_info_changes(params.tbl, params.property, params.property_info, params.old_value)
   for _, param_table in pairs(params.group_params) do
-    fix_individual_property(param_table.tbl, param_table.property, param_table.property_info, param_table.old_value)
+    apply_property_info_changes(param_table.tbl, param_table.property, param_table.property_info, param_table.old_value)
   end
 end
 
@@ -228,16 +242,18 @@ end
 
 -- params = {points, dimension_information, prg_key, walk_params}
 -- dimension_information = list of {inertia_function, property_info}
-function randomize_points_in_space (params)
-  if params.walk_params == nil then
-    params.walk_params = {}
+function randomize_points_in_space (passed_params)
+  local params = table.deepcopy(passed_params)
+  params.points = passed_params.points
+
+  params.old_values = table.deepcopy(params.points)
+
+  for _, dimension_info in pairs(params.dimension_information) do
+    initialize_param_inertia_function_values(dimension_info)
+    initialize_param_property_info_values(dimension_info)
   end
-  if params.walk_params.bias == nil then
-    params.walk_params.bias = 1 / 2
-  end
-  if params.walk_params.num_steps == nil then
-    params.walk_params.num_steps = DEFAULT_WALK_PARAMS_NUM_STEPS
-  end
+
+  initialize_param_walk_params_values(params)
 
   -- TODO: Logic for deciding prg_key?
 
@@ -256,6 +272,13 @@ function randomize_points_in_space (params)
         -- The arctan is to clamp large forces from causing huge changes
         point[k] = point[k] + math.atan(sign + FORCES_WEIGHT * forces[j][k]) * (1 / params.walk_params.num_steps) * param_table_utils.find_inertia_function_value(params.dimension_information[k].inertia_function, point[k])
       end
+    end
+  end
+
+  -- Apply property_info fixes
+  for point_index, point in pairs(params.points) do
+    for k=1,#point do
+      apply_property_info_changes(point, k, params.dimension_information[k].property_info, params.points[point_index])
     end
   end
 end

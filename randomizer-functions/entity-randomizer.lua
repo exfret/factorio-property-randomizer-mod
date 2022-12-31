@@ -224,10 +224,12 @@ function randomize_electric_poles ()
     points = points,
     dimension_information = {
       {
-        inertia_function = inertia_function.electric_pole_supply_area
+        inertia_function = inertia_function.electric_pole_supply_area,
+        property_info = property_info.supply_area
       },
       {
-        inertia_function = inertia_function.electric_pole_wire_reach
+        inertia_function = inertia_function.electric_pole_wire_reach,
+        property_info = property_info.wire_distance
       }
     },
     prg_key = prg.get_key("electric-pole", "class")

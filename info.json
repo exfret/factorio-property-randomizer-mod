@@ -5,5 +5,5 @@
 	"author": "exfret",	
 	"factorio_version": "1.1",
 	"description": "Randomizes most prototype properties.",
-	"dependencies": ["base", "stdlib >= 1.4.8", "? even-distribution", "? space-exploration-postprocess", "? ZRecipeRandomizer"]
+	"dependencies": ["base", "? even-distribution", "? space-exploration-postprocess", "? ZRecipeRandomizer"]
 }
