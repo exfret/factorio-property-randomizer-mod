@@ -1,6 +1,11 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.1.8
+Version: 0.1.9
 Date: ?
+  Minor Features:
+    - Distance-based randomization now uses rounding/property info fixes (so electric pole wire reach is rounded again)
+---------------------------------------------------------------------------------------------------
+Version: 0.1.8
+Date: 2022.12.15
   Features:
     - Added "sync belt tiers" option to make all belts from the same tier the same speed
     - Ability to randomize storage tank capacity and pump speed

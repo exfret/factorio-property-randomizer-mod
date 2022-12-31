@@ -1,7 +1,9 @@
 require("globals")
 
+local inertia_function = require("randomizer-parameter-data/inertia-function-tables")
 local property_info = require("randomizer-parameter-data/property-info-tables")
 local prototype_tables = require("randomizer-parameter-data/prototype-tables")
+local walk_params = require("randomizer-parameter-data/walk-params-tables")
 
 require("random-utils/randomization-algorithms")
 
@@ -16,7 +18,9 @@ function randomize_trigger_effect (prototype, trigger)
       prototype = prototype,
       tbl = trigger.damage,
       property = "amount",
-      property_info = property_info.trigger_damage
+      inertia_function = inertia_function.trigger_damage,
+      property_info = property_info.trigger_damage,
+      walk_params = walk_params.trigger_damage
     }
   elseif trigger.type == "create-entity" then
     -- TODO
@@ -204,7 +208,8 @@ function randomize_attack_parameters (prototype, attack_parameters)
   randomize_numerical_property{
     prototype = prototype,
     tbl = attack_parameters,
-    property = "damage_modifier"
+    property = "damage_modifier",
+    inertia_function = inertia_function.turret_damage_modifier
   }
   randomize_numerical_property{
     prototype = prototype,

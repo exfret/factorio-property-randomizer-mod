@@ -18,12 +18,20 @@ walk_params.offshore_pumping_speed = {
   bias = 0.47
 }
 
+walk_params.projectile_damage = {
+  bias = 0.54
+}
+
 walk_params.stack_size = {
   bias = 0.56 -- It's better to give the player enormously large stack sizes than to have enormously small ones, so skew to larger ones
 }
 
 walk_params.tile_walking_speed_modifier = {
   bias = 0.52
+}
+
+walk_params.trigger_damage = {
+  bias = 0.53
 }
 
 walk_params.underground_belt_length = {

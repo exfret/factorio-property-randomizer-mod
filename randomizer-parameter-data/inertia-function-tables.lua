@@ -1,4 +1,11 @@
+require("globals")
+
 local inertia_function = {}
+
+inertia_function.turret_damage_modifier = {
+  type = "proportional",
+  slope = 1
+}
 
 inertia_function.beacon_distribution_effectivity = {
   ["type"] = "proportional",
@@ -168,6 +175,13 @@ inertia_function.offshore_pumping_speed = {
   slope = 7
 }
 
+inertia_function.projectile_damage = {
+  {2, 0},
+  {4, 2},
+  {10, 30},
+  {REALLY_BIG_FLOAT_NUM, 3 * REALLY_BIG_FLOAT_NUM}
+}
+
 inertia_function.researching_speed = {
   ["type"] = "proportional",
   slope = 6
@@ -188,6 +202,14 @@ inertia_function.tech_time = {
 inertia_function.tile_walking_speed_modifier = {
   type = "proportional",
   slope = 1
+}
+
+inertia_function.trigger_damage = {
+  {3, 0},
+  {4, 2},
+  {20, 20},
+  {60, 180},
+  {REALLY_BIG_FLOAT_NUM, 3 * REALLY_BIG_FLOAT_NUM}
 }
 
 inertia_function.underground_belt_length = {

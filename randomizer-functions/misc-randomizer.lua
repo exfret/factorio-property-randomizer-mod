@@ -167,6 +167,67 @@ function randomize_fluid_properties ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_projectile_damage
+---------------------------------------------------------------------------------------------------
+
+function randomize_projectile_damage()
+  for _, projectile in pairs(data.raw.projectile) do
+    local function randomize_action(action)
+      if action ~= nil then
+        local action_delivery_table = action.action_delivery
+
+        if action_delivery_table ~= nil then
+          local function randomize_action_delivery_damage(action_delivery)
+            if action_delivery.target_effects ~= nil then
+              local target_effects_table = action_delivery.target_effects
+
+              local function randomize_target_effects_damage(target_effect)
+                if target_effect.type == "damage" then
+                  randomize_numerical_property{
+                    tbl = target_effect.damage,
+                    property = "amount",
+                    inertia_function = inertia_function.projectile_damage,
+                    walk_params = walk_params.projectile_damage
+                  }
+                end
+              end
+
+              if target_effects_table.type ~= nil then
+                randomize_target_effects_damage(target_effects_table)
+              else
+                for _, target_effect in pairs(target_effects_table) do
+                  randomize_target_effects_damage(target_effect)
+                end
+              end
+            end
+          end
+
+          if action_delivery_table.type ~= nil then
+            randomize_action_delivery_damage(action_delivery_table)
+          else
+            for _, action_delivery in pairs(action_delivery_table) do
+              randomize_action_delivery_damage(action_delivery)
+            end
+          end
+        end
+      end
+    end
+
+    local action_table = projectile.action
+
+    if action_table ~= nil then
+      if action_table.type ~= nil then
+        randomize_action(action_table)
+      else
+        for _, action in pairs(action_table) do
+          randomize_action(action)
+        end
+      end
+    end
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_utility_constants_properties
 ---------------------------------------------------------------------------------------------------
 

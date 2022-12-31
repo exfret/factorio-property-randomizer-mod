@@ -17,6 +17,7 @@ local randomizing_functions_to_call = {}
 
 if rand_ammo then
   table.insert(randomizing_functions_to_call, randomize_ammo)
+  table.insert(randomizing_functions_to_call, randomize_projectile_damage)
 end
 
 if rand_armor_resistances then
