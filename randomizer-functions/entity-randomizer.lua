@@ -181,6 +181,25 @@ function randomize_character_respawn_time ()
   end
 end
 
+function randomize_crafting_machine_productivity()
+  for _, class in pairs(prototype_tables.crafting_machine_classes) do
+    for _, prototype in pairs(data.raw[class]) do
+      require("randomizer-function-utils/counterproductive")
+
+      if prototype.base_productivity == nil then
+        prototype.base_productivity = 1 / COUNTERPRODUCTIVE_SUCCESS_CHANCE - 1
+      else
+        prototype.base_productivity = prototype.base_productivity / COUNTERPRODUCTIVE_SUCCESS_CHANCE
+      end
+
+      randomize_numerical_property{
+        prototype = prototype,
+        property = "base_productivity"
+      }
+    end
+  end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- randomize_crafting_machine_speeds
 ---------------------------------------------------------------------------------------------------
@@ -414,33 +433,38 @@ end ]]
 -- Turret
 
 function randomize_entity_sizes ()
-  local function double_scale (picture)
+  local function change_image_size(picture, factor)
     if picture.hr_version ~= nil then
-      double_scale(picture.hr_version)
+      change_image_size(picture.hr_version, factor)
     end
 
     if picture.scale == nil then
       picture.scale = 1
     end
 
-    picture.scale = picture.scale * 10
+    picture.scale = picture.scale * factor
   end
 
   -- Cliffs
   for _, cliff in pairs(data.raw.cliff) do
     for _, orientation in pairs(cliff.orientations) do
+      local factor = randomize_numerical_property{
+        inertia_function = inertia_function.cliff_size,
+        prg_key = prg.get_key(cliff)
+      }
+
       for _, vector in pairs(orientation.collision_bounding_box) do
         -- Just ignore the orientation number, wiki says it seems to be unused
         if type(vector) ~= "number" then
-          vector[1] = vector[1] * 10
-          vector[2] = vector[2] * 10
+          vector[1] = vector[1] * factor
+          vector[2] = vector[2] * factor
         end
       end
 
       for _, picture in pairs(orientation.pictures) do
         for _, layers in pairs(picture) do
           for _, layer in pairs(layers) do
-            double_scale(layer)
+            change_image_size(layer, factor)
           end
         end
       end

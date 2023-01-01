@@ -45,6 +45,11 @@ inertia_function.charging_station_count = {
   value = 40
 }
 
+inertia_function.cliff_size = {
+  type = "proportional",
+  slope = 10
+}
+
 inertia_function.consumption_effect = {
   {-0.8, 0},
   {-0.4, 1},

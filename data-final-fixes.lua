@@ -175,6 +175,10 @@ if rand_character_respawn_time then
   table.insert(randomizing_functions_to_call, randomize_character_respawn_time)
 end
 
+if rand_crafting_machine_productivity then
+  table.insert(randomizing_functions_to_call, randomize_crafting_machine_productivity)
+end
+
 if rand_entity_interaction_speed then
   table.insert(randomizing_functions_to_call, randomize_entity_interaction_speed)
 end

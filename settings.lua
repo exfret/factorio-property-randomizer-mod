@@ -237,6 +237,14 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
+    name = "propertyrandomizer-crafting-machine-productivity",
+    localised_name = "Randomize crafting machine productivity",
+    localised_description = "This also introduces a probability for recipes to fail to balance out increased productivity on some machines.",
+    default_value = false
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
     name = "propertyrandomizer-crafting-times",
     localised_name = "Randomize crafting times",
     default_value = false

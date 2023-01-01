@@ -1,8 +1,13 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.9
 Date: ?
+  Features:
+    - Added bullet damage randomization properly
+    - Randomized map feature should now be completed (cliff and moisture randomization added)
   Minor Features:
     - Distance-based randomization now uses rounding/property info fixes (so electric pole wire reach is rounded again)
+  Bugfixes:
+    - Fixed evolution parameters on the random map setting
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.8
 Date: 2022.12.15

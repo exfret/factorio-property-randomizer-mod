@@ -50,6 +50,7 @@ Next releases:
   - Seperate out energy property names
   - Re-round electric pole numbers
   - Extract building the dependency graph out into a separate file
+  - Add smart collision box logic to power poles again
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call

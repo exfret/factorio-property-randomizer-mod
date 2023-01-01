@@ -9,6 +9,7 @@ local tree_pollution_modifier = randomize_numerical_property()
 local expansion_modifier = randomize_numerical_property()
 
 -- TODO: work on modded ores, or just autoplace controls of any type
+-- TODO: Add correct prg_keys
 data.raw["map-gen-presets"]["default"]["random"] = {
   order = "b",
   basic_settings = {
@@ -20,9 +21,19 @@ data.raw["map-gen-presets"]["default"]["random"] = {
       ["coal"] = { richness = randomize_numerical_property(), size = randomize_numerical_property(), frequency = randomize_numerical_property() },
       ["crude-oil"] = { richness = randomize_numerical_property(), size = randomize_numerical_property(), frequency = randomize_numerical_property() },
       ["enemy-base"] = { size = randomize_numerical_property(), frequency = randomize_numerical_property() },
-      ["stone"] = { size = randomize_numerical_property(), frequency = randomize_numerical_property() },
+      ["stone"] = { richness = randomize_numerical_property(), size = randomize_numerical_property(), frequency = randomize_numerical_property() },
       ["trees"] = { size = randomize_numerical_property(), frequency = randomize_numerical_property() },
       ["uranium-ore"] = { richness = randomize_numerical_property(), size = randomize_numerical_property(), frequency = randomize_numerical_property() }
+    },
+    cliff_settings = {
+      cliff_elevation_interval = 40 / randomize_numerical_property(),
+      richness = 0.5 * randomize_numerical_property()
+    },
+    property_expression_names = {
+      ["control-setting:aux:frequency:multiplier"] = 0.5 * randomize_numerical_property(),
+      ["control-setting:moisture:bias"] = -0.5 + 0.5 * randomize_numerical_property(),
+      ["control-setting:moisture:frequency:multiplier"] = 0.5 * randomize_numerical_property(),
+      ["control-setting:aux:bias"] = -0.5 + 0.5 * randomize_numerical_property()
     }
   },
   advanced_settings = {
@@ -33,9 +44,9 @@ data.raw["map-gen-presets"]["default"]["random"] = {
       pollution_restored_per_tree_damage = 10 * randomize_numerical_property()
     },
     enemy_evolution = {
-      time_factor = 0.00002 * randomize_numerical_property(), -- TODO: Check that these parameters are correct
-      destroy_factor = 0.0002 * randomize_numerical_property(),
-      pollution_factor = 0.0000012 * randomize_numerical_property()
+      time_factor = 0.000004 * randomize_numerical_property(),
+      destroy_factor = 0.002 * randomize_numerical_property(),
+      pollution_factor = 0.0000009 * randomize_numerical_property()
     },
     enemy_expansion = {
       max_expansion_distance = 7 * randomize_numerical_property(),

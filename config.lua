@@ -51,6 +51,7 @@ rand_character_corpse_time_to_live = settings.startup["propertyrandomizer-misc-p
 rand_character_properties_midgame = settings.startup["propertyrandomizer-character-values-midgame"].value
 rand_character_respawn_time = settings.startup["propertyrandomizer-misc-properties"].value
 rand_crafting_times = settings.startup["propertyrandomizer-crafting-times"].value
+rand_crafting_machine_productivity = settings.startup["propertyrandomizer-crafting-machine-productivity"].value
 rand_entity_interaction_speed = settings.startup["propertyrandomizer-entity-interaction-speed"].value
 rand_entity_sizes = settings.startup["propertyrandomizer-entity-sizes"].value
 rand_gate_opening_speed = settings.startup["propertyrandomizer-misc-properties"].value
