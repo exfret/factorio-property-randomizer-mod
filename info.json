@@ -1,9 +1,9 @@
 {
 	"name": "propertyrandomizer",
-	"version": "0.1.8",
+	"version": "0.1.10",
 	"title": "exfret's property randomizer (beta version)",
 	"author": "exfret",	
 	"factorio_version": "1.1",
 	"description": "Randomizes most prototype properties.",
-	"dependencies": ["base", "? even-distribution", "? space-exploration-postprocess", "? ZRecipeRandomizer"]
+	"dependencies": ["base", "? even-distribution", "? space-exploration-postprocess", "? ZRecipeRandomizer", "? pypostprocessing"]
 }

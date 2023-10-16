@@ -10,7 +10,7 @@ local expansion_modifier = randomize_numerical_property()
 
 -- TODO: work on modded ores, or just autoplace controls of any type
 -- TODO: Add correct prg_keys
-data.raw["map-gen-presets"]["default"]["random"] = {
+--[[data.raw["map-gen-presets"]["default"]["random"] = {
   order = "b",
   basic_settings = {
     terrain_segmentation = randomize_numerical_property(),

@@ -181,6 +181,7 @@ function randomize_character_respawn_time ()
   end
 end
 
+-- TODO: Guarantee this comes after all other recipe randomization
 function randomize_crafting_machine_productivity()
   for _, class in pairs(prototype_tables.crafting_machine_classes) do
     for _, prototype in pairs(data.raw[class]) do

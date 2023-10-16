@@ -51,6 +51,13 @@ Next releases:
   - Re-round electric pole numbers
   - Extract building the dependency graph out into a separate file
   - Add smart collision box logic to power poles again
+  - Modify inserter rotation speed based on the new randomized position
+  - Inerter power requirements higher variance?
+  - In compatibilities, make sure burner or regular inserters aren't cursed (or maybe at least not all those and long inserters)
+  - Make setting to make things biased toward the player
+  - Check that I make sure inserters aren't too slow for belts
+  - Randomize technology bonus amounts (like bullet damage increase)
+  - Randomize reach distance mid-game
 
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call

@@ -1,9 +1,13 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.1.9
+Version: 0.1.10
 Date: ?
+---------------------------------------------------------------------------------------------------
+Version: 0.1.9
+Date: 2023.01.01
   Features:
     - Added bullet damage randomization properly
     - Randomized map feature should now be completed (cliff and moisture randomization added)
+    - Added crafting machine productivity
   Minor Features:
     - Distance-based randomization now uses rounding/property info fixes (so electric pole wire reach is rounded again)
   Bugfixes:
