@@ -1,12 +1,25 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.11
+Date: 2023.11.02
+  Features:
+    - Ability to randomize icons
+    - More work on recipe randomization, stay tuned :)
+    - Finally added a setting allowing the randomization of sounds (it was a secret feature before)
+  Bugfixes:
+    - Set minimum boiler temperatures to 110 (may create mod incompatibilities)
+---------------------------------------------------------------------------------------------------
 Version: 0.1.10
-Date: ?
+Date: 2023.06.01
+  Features:
+    - Lots of work on recipe randomization, will be released in quite a while though! :)
+  Minor Features:
+    - Cliff sizes are now randomized
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.9
 Date: 2023.01.01
   Features:
     - Added bullet damage randomization properly
-    - Randomized map feature should now be completed (cliff and moisture randomization added)
+    - Randomized map feature should now be completed (cliff autoplace and moisture randomization added)
     - Added crafting machine productivity
   Minor Features:
     - Distance-based randomization now uses rounding/property info fixes (so electric pole wire reach is rounded again)

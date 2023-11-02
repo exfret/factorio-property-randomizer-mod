@@ -56,7 +56,7 @@ function randomize_all_game_sounds ()
     for _, prototype in pairs(class) do
       for property_key, property in pairs(prototype) do
         if is_sound_property(property) then
-          prototype[property_key] = sounds[prg.range(1,#sounds)]
+          prototype[property_key] = sounds[prg.range(prg.get_key(nil, "dummy"), 1, #sounds)]
         end
       end
     end
@@ -138,7 +138,7 @@ function randomize_equipment_properties ()
 end
 
 ---------------------------------------------------------------------------------------------------
--- randomize_fluid_properties
+-- randomize_equipment_shapes
 ---------------------------------------------------------------------------------------------------
 
 -- TODO

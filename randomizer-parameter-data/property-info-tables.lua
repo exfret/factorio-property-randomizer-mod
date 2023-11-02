@@ -465,6 +465,7 @@ property_info.tech_time = {
 }
 
 property_info.temperature = {
+  min = 110,
   round = {
     [2] = {
       modulus = 1

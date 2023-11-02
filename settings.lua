@@ -18,9 +18,9 @@ data:extend({
     localised_description = "How round would you like your numbers?",
     default_value = "round-ish",
     allowed_values = {
-      "murder the rightmost digits mercilessly",
+      "round-est",
       "round-ish",
-      "leave 'em raw and unrounded"
+      "raw and unrounded"
     },
     order = "ab"
   },
@@ -130,6 +130,13 @@ data:extend({
     name = "propertyrandomizer-health-properties",
     localised_name = "Randomize health properties",
     default_value = true
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
+    name = "propertyrandomizer-icons",
+    localised_name = "Randomize icons",
+    default_value = false
   },
   {
     setting_type = "startup",
@@ -308,11 +315,18 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
+    name = "propertyrandomizer-sounds",
+    localised_name = "Randomize all the sounds... Good luck",
+    default_value = false
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
     name = "propertyrandomizer-tile-walking-speed-modifier",
     localised_name = "Randomize how fast you travel on ALL tiles",
     default_value = false
   },
-  --[[, TODO
+  --[[TODO:
   {
     setting_type = "startup",
     type = "bool-setting",

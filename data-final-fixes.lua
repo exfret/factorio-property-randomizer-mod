@@ -3,13 +3,16 @@ require("config")
 require("randomizer-functions/energy-randomizer")
 require("randomizer-functions/entity-randomizer")
 require("randomizer-functions/item-randomizer")
+local locale_randomizer = require("randomizer-functions/locale-randomizer")
 require("randomizer-functions/misc-randomizer")
 require("randomizer-functions/recipe-randomizer")
 require("randomizer-functions/technology-randomizer")
 
---local dependency_utils = require("dependency-graph/dependency-utils")
+local dependency_utils = require("dependency-graph/dependency-utils")
 
 local randomizing_functions_to_call = {}
+
+log("Adding randomizations...")
 
 ---------------------------------------------------------------------------------------------------
 -- Basic randomizations
@@ -93,10 +96,6 @@ if rand_health_properties then
 end
 
 if rand_inserter_speed then
-  table.insert(randomizing_functions_to_call, randomize_inserter_speed)
-end
-
-if rand_inserter_rotation_speed then
   table.insert(randomizing_functions_to_call, randomize_inserter_speed)
 end
 
@@ -218,6 +217,19 @@ end
 -- Perform the randomizations
 ---------------------------------------------------------------------------------------------------
 
+log("Performing randomizations...")
 for _, randomizing_function in pairs(randomizing_functions_to_call) do
   randomizing_function()
 end
+
+log("Performing test randomizations...")
+
+if settings.startup["propertyrandomizer-icons"].value then
+  require("randomizer-functions/icon-randomizer")
+end
+
+if settings.startup["propertyrandomizer-sounds"].value then
+  randomize_all_game_sounds()
+end
+
+-- TODO: Locale

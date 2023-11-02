@@ -7,8 +7,6 @@ Add crafting cost to randomization
 Add power level normalizer to keep power levels similar to what they were at start
 
 Next releases:
-  1. Randomize some more things
-  2. Sync belt tiers option
 
   - Test mod compatibility
   - Do special evaluation of the "importance" of items to randomize their crafting times more effectively
@@ -17,6 +15,7 @@ Next releases:
   - Randomly randomized mode where which settings are randomized is randomized
   - Add "separation function"
 
+  - Randomize collision masks
   - Learn about fluid boxes and randomize those
   - Randomize collision boxes (do more carefully than before, like also changing graphics)
   - Shuffle damage types (advanced randomization)
@@ -24,7 +23,6 @@ Next releases:
   - Crafting times less variance for items needed for science
   - Sample from gamma distribution for simpler properties
   - Use local functions instead of globals
-  - Player chooses between different prototypes
   - Randomize research tree
   - Link inserters (specifically, filter inserters/fast inserters, for example, should be hard linked)
   - Account for efficiency when rounding energy_used for furnaces (and other such objects)

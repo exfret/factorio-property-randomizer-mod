@@ -743,7 +743,7 @@ for _, node1 in pairs(dependency_graph) do
     end
     
     -- Goal node
-    if node1.name == "chemical-science-pack" then
+    if node1.name == "utility-science-pack" then
       matrix[index_1][#matrix[index_1] + 1] = -1
     else
       matrix[index_1][#matrix[index_1] + 1] = 0
