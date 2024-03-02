@@ -187,6 +187,11 @@ inertia_function.projectile_damage = {
   {REALLY_BIG_FLOAT_NUM, 3 * REALLY_BIG_FLOAT_NUM}
 }
 
+inertia_function.radar = {
+  type = "proportional",
+  slope = 10
+}
+
 inertia_function.researching_speed = {
   ["type"] = "proportional",
   slope = 6

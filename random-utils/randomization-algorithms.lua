@@ -1,5 +1,6 @@
-require("random")
+require("random-utils/random")
 
+local karma = require("analysis/karma")
 require("globals")
 local param_table_utils = require("param-table-utils")
 
@@ -83,7 +84,7 @@ local function initialize_param_walk_params_values(params)
   if params.walk_params.bias ~= nil then
     bias = params.walk_params.bias
   else
-    bias = 1/2
+    bias = settings.startup["propertyrandomizer-bias"].value
   end
   if params.walk_params.num_steps ~= nil then
     num_steps = params.walk_params.num_steps
@@ -130,7 +131,7 @@ local function nudge_properties (params, roll)
       return
     end
 
-    tbl[property] = tbl[property] + sign * (1 / num_steps) * param_table_utils.find_inertia_function_value(inertia_function, tbl[property])
+    tbl[property] = tbl[property] + sign * settings.startup["propertyrandomizer-chaos"].value * (1 / num_steps) * param_table_utils.find_inertia_function_value(inertia_function, tbl[property])
   end
 
   nudge_individual_property(params.tbl, params.property, find_sign(roll, params), params.walk_params.num_steps, params.inertia_function)
@@ -224,14 +225,23 @@ function randomize_numerical_property (passed_params)
     set_randomization_param_values(param_table, {inertia_function = params.inertia_function})
   end
 
+  -- Randomly increase or decrease bias to make a distribution that's less likely to sample from the middle (i.e.- make it so things change more often than not)
+  if prg.int(params.prg_key, 2) == 1 then
+    params.walk_params.bias = params.walk_params.bias - SPLIT_BIAS_MODIFIER
+  else
+    params.walk_params.bias = params.walk_params.bias + SPLIT_BIAS_MODIFIER
+  end
+
   params.old_value = params.tbl[params.property]
 
   local luckiness_of_this_randomization = 0
   for i = 1,params.walk_params.num_steps do
     if prg.value(params.prg_key) < params.walk_params.bias then -- "better" option
       nudge_properties(params, "make_property_better")
+      karma.update_values("make_property_better", params.prototype, params.property)
     else
       nudge_properties(params, "make_property_worse")
+      karma.update_values("make_property_worse", params.prototype, params.property)
     end
   end
 

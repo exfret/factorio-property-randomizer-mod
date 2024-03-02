@@ -1,0 +1,6 @@
+Here are some ways to randomize the "factorio dependency graph"...
+
+1. The Scan Method
+
+The process is to look at what can be reached in the old dependency graph using things in the new one, and then choose something in the old one that can be reached and add that in some way with dependencies in the old. This way, the structure of "this comes before that" is somewhat kept.
+

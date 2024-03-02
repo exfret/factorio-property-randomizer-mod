@@ -1,18 +1,29 @@
 require("config")
+--require("gather-randomizations")
 
-require("randomizer-functions/energy-randomizer")
-require("randomizer-functions/entity-randomizer")
-require("randomizer-functions/item-randomizer")
-local locale_randomizer = require("randomizer-functions/locale-randomizer")
-require("randomizer-functions/misc-randomizer")
-require("randomizer-functions/recipe-randomizer")
-require("randomizer-functions/technology-randomizer")
+local karma = require("analysis/karma")
 
-local dependency_utils = require("dependency-graph/dependency-utils")
+local reformat = require("utilities/reformat")
+
+--local dependency_utils = require("dependency-graph/dependency-utils")
+
+log("Reformatting prototypes...")
+
+--reformat.prototypes()
+
+log("Gathering things to randomize...")
 
 local randomizing_functions_to_call = {}
 
-log("Adding randomizations...")
+log("Performing randomizations...")
+
+--[[for _, class in pairs(data.raw) do
+  for _, prototype in pairs(class) do
+
+  end
+end]]
+
+--blop.blop = nil
 
 ---------------------------------------------------------------------------------------------------
 -- Basic randomizations
@@ -138,6 +149,10 @@ if rand_pump_pumping_speed then
   table.insert(randomizing_functions_to_call, randomize_pump_speed)
 end
 
+if rand_radar then
+  table.insert(randomizing_functions_to_call, randomize_radar)
+end
+
 if rand_storage_tank_capacity then
   table.insert(randomizing_functions_to_call, randomize_storage_tank_capacity)
 end
@@ -231,5 +246,15 @@ end
 if settings.startup["propertyrandomizer-sounds"].value then
   randomize_all_game_sounds()
 end
+
+if settings.startup["propertyrandomizer-misc-properties"].value then
+  randomize_map_colors()
+end
+
+--log(serpent.dump(karma.values))
+
+--[[for _, character in pairs(data.raw.character) do
+  character.reach
+end]]
 
 -- TODO: Locale

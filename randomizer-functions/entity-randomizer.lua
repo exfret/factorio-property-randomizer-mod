@@ -5,6 +5,8 @@ require("globals")
 require("linking-utils")
 local param_table_utils = require("param-table-utils")
 
+local blacklist = require("compatibility/blacklist-tables")
+
 local inertia_function = require("randomizer-parameter-data/inertia-function-tables")
 local property_info = require("randomizer-parameter-data/property-info-tables")
 local prototype_tables = require("randomizer-parameter-data/prototype-tables")
@@ -262,84 +264,40 @@ function randomize_electric_poles ()
     index = index + 1
   end
 
-  -- TODO: Working on group randomization here... under progress
-
-  --[[local too_lazy_to_do_this_right = util.table.deepcopy(data.raw["electric-pole"])
-
-  repeat
-
-    for _, prototype in pairs(too_lazy_to_do_this_right) do
-      -- Use tile_width and collision_box to determine whether this is odd or even
-      -- Simultaneously randomize supply distance and wire distance?..
-      local odd_placement = false
-      local even_placement = false
-      if prototype.tile_width ~= nil and prototype.tile_width % 2 == 0 then
+  -- Add back in parity/centering supply squares on poles
+  for _, prototype in pairs(data.raw["electric-pole"]) do
+    local odd_placement = false
+    local even_placement = false
+    if prototype.tile_width ~= nil and prototype.tile_width % 2 == 0 then
+      even_placement = true
+    elseif prototype.tile_width ~= nil and prototype.tile_width % 2 == 1 then
+      odd_placement = true
+    end
+    if prototype.tile_height ~= nil and prototype.tile_height % 2 == 0 then
+      even_placement = true
+    elseif prototype.tile_height ~= nil and prototype.tile_height % 1 then
+      odd_placement = true
+    end
+  
+    if prototype.collision_box ~= nil then
+      local collision_box_width_parity = math.floor(prototype.collision_box[2][1] - prototype.collision_box[1][1] + 0.5) % 2
+      local collision_box_height_parity = math.floor(prototype.collision_box[2][2] - prototype.collision_box[1][2] + 0.5) % 2
+      if prototype.tile_width == nil and collision_box_width_parity == 0 then
         even_placement = true
-      elseif prototype.tile_width ~= nil and prototype.tile_width % 2 == 1 then
+      elseif prototype.tile_height == nil and collision_box_height_parity == 1 then
         odd_placement = true
       end
-      if prototype.tile_height ~= nil and prototype.tile_height % 2 == 0 then
-        even_placement = true
-      elseif prototype.tile_height ~= nil and prototype.tile_height % 1 then
-        odd_placement = true
-      end
-
-      if prototype.collision_box ~= nil then
-        local collision_box_width_parity = math.floor(prototype.collision_box[2][1] - prototype.collision_box[1][1] + 0.5) % 2
-        local collision_box_height_parity = math.floor(prototype.collision_box[2][2] - prototype.collision_box[1][2] + 0.5) % 2
-        if prototype.tile_width == nil and collision_box_width_parity == 0 then
-          even_placement = true
-        elseif prototype.tile_height == nil and collision_box_height_parity == 1 then
-          odd_placement = true
-        end
-      else
-        even_placement = true
-        odd_placement = true
-      end
-
-      randomize_numerical_property{
-        prototype = prototype,
-        property = "supply_area_distance",
-        inertia_function = inertia_function.electric_pole_supply_area,
-        property_info = property_info.supply_area,
-        walk_params = walk_params.electric_pole_supply_area
-      }
-
-      if odd_placement == false then
-        prototype.supply_area_distance = math.min(64, math.floor(prototype.supply_area_distance + 1) - 0.5)
-      elseif even_placement == false then
-        prototype.supply_area_distance = math.min(64, math.floor(prototype.supply_area_distance + 0.5))
-      end
-
-      new_wire_distance_property_info = util.table.deepcopy(property_info.wire_distance)
-      new_wire_distance_property_info.min = math.max(new_wire_distance_property_info.min, 2 * prototype.supply_area_distance)
-
-      randomize_numerical_property{
-        prototype = prototype,
-        property = "maximum_wire_distance",
-        inertia_function = inertia_function.electric_pole_wire_reach,
-        property_info = new_wire_distance_property_info
-      }
+    else
+      even_placement = true
+      odd_placement = true
     end
 
-    local is_good_randomization = true
-
-    local min_distance_apart = 0.0000
-    for _, prototype1 in pairs(too_lazy_to_do_this_right) do
-      for _, prototype2 in pairs(too_lazy_to_do_this_right) do
-        if prototype1 ~= prototype2 then
-          local x_dist = param_table_utils.find_inertia_function_distance(inertia_function.electric_pole_supply_area, prototype1.supply_area_distance, prototype2.supply_area_distance)
-          local y_dist = param_table_utils.find_inertia_function_distance(inertia_function.electric_pole_wire_reach, prototype1.maximum_wire_distance, prototype2.maximum_wire_distance)
-
-          if x_dist * x_dist + y_dist * y_dist < min_distance_apart then
-            is_good_randomization = false
-          end
-        end
-      end
+    if odd_placement == false then
+      prototype.supply_area_distance = math.min(64, math.floor(prototype.supply_area_distance + 1) - 0.5)
+    elseif even_placement == false then
+      prototype.supply_area_distance = math.min(64, math.floor(prototype.supply_area_distance + 0.5))
     end
-  until is_good_randomization
-
-  data.raw["electric-pole"] = too_lazy_to_do_this_right]]
+  end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -435,15 +393,21 @@ end ]]
 
 function randomize_entity_sizes ()
   local function change_image_size(picture, factor)
-    if picture.hr_version ~= nil then
-      change_image_size(picture.hr_version, factor)
+    if picture.layers ~= nil then
+      for _, layer in pairs(picture.layers) do
+        change_image_size(layer, factor)
+      end
+    else
+      if picture.hr_version ~= nil then
+        change_image_size(picture.hr_version, factor)
+      end
+  
+      if picture.scale == nil then
+        picture.scale = 1
+      end
+  
+      picture.scale = picture.scale * factor
     end
-
-    if picture.scale == nil then
-      picture.scale = 1
-    end
-
-    picture.scale = picture.scale * factor
   end
 
   -- Cliffs
@@ -462,11 +426,11 @@ function randomize_entity_sizes ()
         end
       end
 
-      for _, picture in pairs(orientation.pictures) do
-        for _, layers in pairs(picture) do
-          for _, layer in pairs(layers) do
-            change_image_size(layer, factor)
-          end
+      if pictures.filename ~= nil or pictures.layers ~= nil then
+        change_image_size(orientation.pictures, factor)
+      else
+        for _, picture in pairs(orientation.pictures) do
+          change_image_size(picture, factor)
         end
       end
     end
@@ -692,25 +656,27 @@ function randomize_inventory_sizes ()
   for class_name, inventory_property_list in pairs(prototype_tables.inventory_names) do
     for _, prototype in pairs(data.raw[class_name]) do
       for _, property_name in pairs(inventory_property_list) do
-        if prototype[property_name] then
-          -- I have to turn these to numbers because some modders are writing inventory sizes as strings somehow
-          prototype[property_name] = tonumber(prototype[property_name])
+        if prototype[property_name] ~= nil then
+          if not blacklist["randomize_inventory_sizes"][prototype.name] then
+            -- I have to turn these to numbers because some modders are writing inventory sizes as strings somehow
+            prototype[property_name] = tonumber(prototype[property_name])
 
-          local property_info_to_use
-          if prototype[property_name] == 0 then
-            property_info_to_use = property_info.small_inventory
-          elseif prototype[property_name] < 10 then
-            property_info_to_use = property_info.small_nonempty_inventory
-          else
-            property_info_to_use = property_info.large_inventory
+            local property_info_to_use
+            if prototype[property_name] == 0 then
+              property_info_to_use = property_info.small_inventory
+            elseif prototype[property_name] < 10 then
+              property_info_to_use = property_info.small_nonempty_inventory
+            else
+              property_info_to_use = property_info.large_inventory
+            end
+
+            randomize_numerical_property{
+              prototype = prototype,
+              property = property_name,
+              inertia_function = inertia_function.inventory_size,
+              property_info = property_info_to_use
+            }
           end
-
-          randomize_numerical_property{
-            prototype = prototype,
-            property = property_name,
-            inertia_function = inertia_function.inventory_size,
-            property_info = property_info_to_use
-          }
         end
       end
     end
@@ -950,6 +916,28 @@ function randomize_pump_speed ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_radar
+---------------------------------------------------------------------------------------------------
+
+function randomize_radar ()
+  for _, prototype in pairs(data.raw["radar"]) do
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "max_distance_of_sector_revealed",
+      inertia_function = inertia_function.radar,
+      property_info = property_info.discrete_positive
+    })
+
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "max_distance_of_nearby_sector_revealed",
+      inertia_function = inertia_function.radar,
+      property_info = property_info.discrete_positive
+    })
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_reactor_neighbour_bonus
 ---------------------------------------------------------------------------------------------------
 
@@ -1042,12 +1030,14 @@ end
 
 function randomize_storage_tank_capacity ()
   for _, prototype in pairs(data.raw["storage-tank"]) do
-    randomize_numerical_property{
-      prototype = prototype,
-      tbl = prototype.fluid_box,
-      property = "base_area"
-      -- Let's not set rounding info since it can be messed up by the height anyways
-    }
+    if not blacklist["randomize_storage_tank_capacity"][prototype.name] then
+      randomize_numerical_property{
+        prototype = prototype,
+        tbl = prototype.fluid_box,
+        property = "base_area"
+        -- Let's not set rounding info since it can be messed up by the height anyways
+      }
+    end
   end
 end
 

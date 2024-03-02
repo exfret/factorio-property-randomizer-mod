@@ -1,0 +1,11 @@
+Random Factory Plus, by Kintharo
+    - https://mods.factorio.com/mod/RandomFactoryPlus
+    - Adds new content in a random manner (I don't think it randomizes the vanilla content but need to double check)
+
+Randomtorio, by CosmicWolf
+    - https://mods.factorio.com/mod/randomtorio
+    - Randomizes the recipe products AND ingredients, which actually has implications due to tech unlock orders
+
+Visual Item Randomizer
+    - https://mods.factorio.com/mod/Item_Visuals_Randomizer
+    - Randomizes icons and other visual components where possible

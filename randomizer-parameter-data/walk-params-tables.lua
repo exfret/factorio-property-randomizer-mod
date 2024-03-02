@@ -1,9 +1,19 @@
--- Offshore pump, lab, and burner biases are modified in machine_speed function in entitiy_randomizer
+-- Offshore pump, lab, and burner biases are modified in machine_speed function in entity_randomizer
 
 local walk_params = {}
 
 walk_params.electric_pole_supply_area = {
   bias = 0.565
+}
+
+-- Make equipment sizes err towards positive so that poking holes is not as bad
+walk_params.equipement_grid_size = {
+  bias = 0.6
+}
+
+-- Make equipment sizes err towards positive so that poking holes doesn't increase size as much
+walk_params.equipment_size = {
+  bias = 0.4
 }
 
 walk_params.gun_damage_modifier = {

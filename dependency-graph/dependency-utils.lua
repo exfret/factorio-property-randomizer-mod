@@ -1,13 +1,11 @@
 require("random-utils.random")
 require("globals")
 require("simplex")
-local prototype_tables = require("randomizer-parameter-data.prototype-tables")
+
+local prototype_tables = require("randomizer-parameter-data/prototype-tables")
+local reformat = require("utilities/reformat")
 
 local VOID_COST = 1
-
--- Simplex library
---local luasimplex = require("luasimplex")
---local rsm = require("luasimplex.rsm")
 
 -- TODO: Add support for starting items
 -- TODO: Add support for trees and rocks (they are special cases since they're not "automatable")
@@ -48,7 +46,8 @@ local blacklisted_recipes = {
   ["fill-petroleum-gas-barrel"] = true,
   ["fill-sulfuric-acid-barrel"] = true,
   ["fill-water-barrel"] = true,
-  ["coal-liquefaction"] = true
+  ["coal-liquefaction"] = true,
+  ["advanced-oil-processing"] = true
 }
 for _, recipe in pairs(data.raw.recipe) do
   if not blacklisted_recipes[recipe.name] then
@@ -606,7 +605,7 @@ table.insert(new_node_for_gas.prereqs, {
   name = "water",
   amount = 1
 })
-dependency_graph[prg.get_key(new_node_for_gas)] = new_node_for_gas]]
+dependency_graph[prg.get_key(new_node_for_gas)] = new_node_for_gas
 
 -- TEST
 local new_node_for_wood = {
@@ -619,9 +618,7 @@ table.insert(new_node_for_wood.prereqs, {
   name = "water",
   amount = 1
 })
-dependency_graph[prg.get_key(new_node_for_wood)] = new_node_for_wood
-
-
+dependency_graph[prg.get_key(new_node_for_wood)] = new_node_for_wood]]
 
 log("Wrapping up forward connections...")
 
@@ -676,7 +673,7 @@ for _, node in pairs(dependency_graph) do
           amount = 1
         })
       end
-    else
+    elseif data.raw.resource[node.name].minable.result ~= nil and node.name ~= "uranium-ore" and node.name ~= "crude-oil" then
       dependency_graph[prg.get_key({type = "recipe_node", name = node.name})] = {
         type = "recipe_node",
         name = node.name,
@@ -696,122 +693,425 @@ for _, node in pairs(dependency_graph) do
   end
 end
 
--- Remove problematic recipes
---[[dependency_graph[prg.get_key({type = "recipe_node", name = "empty-crude-oil-barrel"})] = nil
-dependency_graph[prg.get_key({type = "recipe_node", name = "empty-light-oil-barrel"})] = nil
-dependency_graph[prg.get_key({type = "recipe_node", name = "empty-heavy-oil-barrel"})] = nil
-dependency_graph[prg.get_key({type = "recipe_node", name = "empty-petroleum-gas-barrel"})] = nil
-dependency_graph[prg.get_key({type = "recipe_node", name = "empty-lubricant-barrel"})] = nil
-dependency_graph[prg.get_key({type = "recipe_node", name = "empty-water-barrel"})] = nil
-dependency_graph[prg.get_key({type = "recipe_node", name = "fill-crude-oil-barrel"})] = nil
-dependency_graph[prg.get_key({type = "recipe_node", name = "fill-light-oil-barrel"})] = nil
-dependency_graph[prg.get_key({type = "recipe_node", name = "fill-heavy-oil-barrel"})] = nil
-dependency_graph[prg.get_key({type = "recipe_node", name = "fill-petroleum-gas-barrel"})] = nil
-dependency_graph[prg.get_key({type = "recipe_node", name = "fill-lubricant-barrel"})] = nil
-dependency_graph[prg.get_key({type = "recipe_node", name = "fill-water-barrel"})] = nil]]
+local costs = {}
+for item_class, _ in pairs(defines.prototypes.item) do
+  for _, item in pairs(data.raw[item_class]) do
+    log("Creating recipe-item matrix...")
 
-log("Creating recipe-item matrix...")
+    local recipe_to_col = {}
+    local itemorfluid_to_row = {}
+    local col_name = {}
+    local row_name = {}
+    local matrix = {}
+    matrix[1] = {}
+    local index = 2
+    matrix[1][1] = 1
+    col_name[1] = {name = "special"}
+    for _, node in pairs(dependency_graph) do
+      if node.type == "recipe_node" then
+        matrix[1][index] = 1
 
-local recipe_to_col = {}
-local itemorfluid_to_row = {}
-local matrix = {}
-matrix[1] = {}
-local index = 2
-matrix[1][1] = 1
+        recipe_to_col[node.name] = index
+        col_name[index] = node
+        index = index + 1
+      end
+    end
+    matrix[1][#matrix[1]+1] = 0
+    col_name[#matrix[1]] = {name = "special"}
+
+    row_name[1] = {name = "special"}
+    local index_1 = 2
+    for _, node1 in pairs(dependency_graph) do
+      if node1.type == "itemorfluid_node" then
+        matrix[index_1] = {}
+
+        index_2 = 2
+        matrix[index_1][1] = 0
+        for _, node2 in pairs(dependency_graph) do
+          if node2.type == "recipe_node" then
+            matrix[index_1][index_2] = 0
+            index_2 = index_2 + 1
+          end
+        end
+        
+        -- Goal node
+        if node1.name == item.name then
+          matrix[index_1][#matrix[index_1] + 1] = -1
+        else
+          matrix[index_1][#matrix[index_1] + 1] = 0
+        end
+
+        itemorfluid_to_row[node1.name] = index_1
+        row_name[index_1] = node1
+        index_1 = index_1 + 1
+      end
+    end
+
+    for _, node in pairs(dependency_graph) do
+      if node.type == "itemorfluid_node" and (not (next(node.prereqs) == nil and next(node.dependents) == nil)) then
+        for _, prereq in pairs(node.prereqs) do
+          if prereq.type == "recipe_node" then
+            matrix[itemorfluid_to_row[node.name]][recipe_to_col[prereq.name]] = 1/prereq.amount
+          end
+        end
+        for _, dependent in pairs(node.dependents) do
+          if dependent.type == "recipe_node" then
+            matrix[itemorfluid_to_row[node.name]][recipe_to_col[dependent.name]] = -dependent.amount
+          end
+        end
+      end
+    end
+
+    -- Put first row on bottom and then back on top for technical reasons
+    local first_row = matrix[1]
+    matrix[1] = matrix[#matrix]
+    matrix[#matrix] = first_row
+    local first_name = row_name[1]
+    row_name[1] = row_name[#row_name]
+    row_name[#row_name] = first_name
+
+    -- Transpose
+    local new_matrix = {}
+    for i=1,#matrix[1] do
+      new_matrix[i] = {}
+      for j=1,#matrix do
+        new_matrix[i][j] = matrix[j][i]
+      end
+    end
+    matrix = new_matrix
+    local row_name_temp = row_name
+    row_name = col_name
+    col_name = row_name_temp
+
+    first_row = matrix[1]
+    matrix[1] = matrix[#matrix]
+    matrix[#matrix] = first_row
+    local first_name = row_name[1]
+    row_name[1] = row_name[#row_name]
+    row_name[#row_name] = first_name
+
+    -- Add new columns
+    local old_col_name_size = #col_name
+    for i=1,#matrix do
+      for j=#matrix+#matrix[1],#matrix+1,-1 do
+        matrix[i][j] = matrix[i][j-#matrix]
+      end
+      for j=1,#matrix do
+        if i == j then
+          matrix[i][j] = 1
+        else
+          matrix[i][j] = 0
+        end
+      end
+
+      if row_name[i].name ~= nil then
+        col_name[old_col_name_size + i] = {prototype = row_name[i], type = "void", name = "void_" .. row_name[i].name}
+      else
+        col_name[old_col_name_size + i] = {name = "void_special"}
+      end
+    end
+
+    --log(serpent.block(matrix))
+
+    -- Solve
+
+    log("Solving matrix...")
+
+    local col_weights = {}
+    for i=1,#col_name do
+      col_weights[i] = {}
+      for j=1,#col_name do
+        col_weights[i][j] = i == j
+      end
+    end
+
+    local row_weights = {}
+    for i=1,#matrix do
+      row_weights[i] = {}
+      for j=1,#matrix do
+        row_weights[i][j] = 0
+      end
+      row_weights[i][i] = 1
+    end
+
+    local permutation = {}
+    for i=1,#matrix[1] do
+      permutation[i] = i
+    end
+
+    local params = {matrix = matrix, row_weights = row_weights, permutation = permutation}
+
+    log("Cost of " .. tostring(solve_system(params)))
+
+    costs[item.name] = solve_system(params)
+
+    --log(serpent.block(params.row_weights))
+    --log(serpent.block(params.permutation))
+
+    --[[for i=1,#params.matrix do
+      if params.matrix[i][#params.matrix[i] ] < 0 then
+        log("\nRECIPE with value " .. params.matrix[i][#params.matrix[i] ] .. " NAMED " .. row_name[i].name .. "\nHAS:")
+        for j=1,#row_weights[i] do
+          if row_weights[i][j] ~= 0 then
+            log("\n" .. row_weights[i][j] .. " PORTION OF " .. row_name[j].name)
+          end
+        end
+      end
+    end]]
+
+    for j=2,#params.matrix[1] do
+      if params.matrix[1][j] ~= 0 and row_name[params.permutation[j]] ~= nil then
+        --log("\n" .. params.matrix[1][j] .. " PORTION OF " .. row_name[params.permutation[j]].name)
+      end
+    end
+  end
+end
+
+log(serpent.block(costs))
+
+-- Make accessibility list
+
+local accessible_list = {}
+local added_to_accessible_list = {}
+
+local node_type_operation = {
+  recipe_node = "AND",
+  itemorfluid_node = "OR",
+  technology_node = "AND",
+  recipe_tech_unlock_node = "OR",
+  recipe_category_node = "OR",
+  crafting_entity_node = "OR",
+  character_crafting_node = "AND", -- No prereqs, so essentially a source
+  mining_machine_node = "OR",
+  resource_node = "AND",
+  resource_category_list_node = "OR",
+  resource_category_node = "OR",
+  character_mining_node = "AND" -- No prereqs, so essentially a source
+}
+
+local source_nodes = {}
+local source_nodes_size = 0
 for _, node in pairs(dependency_graph) do
-  if node.type == "recipe_node" then
-    matrix[1][index] = 1
+  node.prereqs_satisfied = {}
+  for _, prereq in pairs(node.prereqs) do
+    node.prereqs_satisfied[prg.get_key(prereq)] = false
+  end
 
-    recipe_to_col[node.name] = index
-    index = index + 1
+  if node_type_operation[node.type] == "AND" and next(node.prereqs) == nil then
+    source_nodes_size = source_nodes_size + 1
+    source_nodes[source_nodes_size] = node
   end
 end
-matrix[1][#matrix[1]+1] = 0
 
-local index_1 = 2
-for _, node1 in pairs(dependency_graph) do
-  if node1.type == "itemorfluid_node" then
-    matrix[index_1] = {}
+for i=1,REALLY_BIG_FLOAT_NUM do
+  if i > source_nodes_size then
+    break
+  end
+  local curr_node = source_nodes[i]
 
-    index_2 = 2
-    matrix[index_1][1] = 0
-    for _, node2 in pairs(dependency_graph) do
-      if node2.type == "recipe_node" then
-        matrix[index_1][index_2] = 0
-        index_2 = index_2 + 1
+  if not added_to_accessible_list[prg.get_key(curr_node)] then
+    table.insert(accessible_list, curr_node)
+    added_to_accessible_list[prg.get_key(curr_node)] = true
+  end
+  for _, dependent in pairs(curr_node.dependents) do
+    local dependent_node = dependency_graph[prg.get_key(dependent)]
+    if not added_to_accessible_list[prg.get_key(dependent_node)] then
+      if node_type_operation[dependent_node.type] == "OR" then
+        source_nodes_size = source_nodes_size + 1
+        source_nodes[source_nodes_size] = dependent_node
+      elseif node_type_operation[dependent_node.type] == "AND" then
+        dependent_node.prereqs_satisfied[prg.get_key(curr_node)] = true
+
+        local all_prereqs_satisfied = true
+        for _, prereq_satisfied in pairs(dependent_node.prereqs_satisfied) do
+          if prereq_satisfied == false then
+            all_prereqs_satisfied = false
+          end
+        end
+
+        if all_prereqs_satisfied then
+          source_nodes_size = source_nodes_size + 1
+          source_nodes[source_nodes_size] = dependent_node
+        end
       end
     end
-    
-    -- Goal node
-    if node1.name == "utility-science-pack" then
-      matrix[index_1][#matrix[index_1] + 1] = -1
+  end
+end
+
+local simple_accessible_list = {}
+
+for _, node in pairs(accessible_list) do
+  local new_node = {}
+  new_node.type = node.type
+  new_node.name = node.name
+  table.insert(simple_accessible_list, new_node)
+end
+log(serpent.block(simple_accessible_list))
+
+-- Do 1000 swaps
+for i=1,1000 do
+  -- Just start at 20 for now lol
+  local first_to_swap = prg.range("dummy", 50, #accessible_list-1)
+
+  local temp_value = accessible_list[first_to_swap]
+  accessible_list[first_to_swap] = accessible_list[first_to_swap+1]
+  accessible_list[first_to_swap+1] = temp_value
+end
+
+-- Now redo connections
+local recipe_new_connections = {}
+for i=1,#accessible_list do
+  if accessible_list[i].type == "recipe_node" and data.raw.recipe[accessible_list[i].name] ~= nil and data.raw.recipe[accessible_list[i].name].category ~= "smelting" then
+
+    recipe_new_connections[i] = {}
+
+    local num_ingredients = 0
+    for j=i-1,1,-1 do
+      if num_ingredients == 0 then
+        if accessible_list[j].type == "itemorfluid_node" and accessible_list[j].name ~= "uranium-ore" and accessible_list[j].name ~= "water" and costs[accessible_list[j].name] ~= nil then
+          num_ingredients = num_ingredients + 1
+
+          table.insert(recipe_new_connections[i], accessible_list[j])
+        end
+      elseif num_ingredients < 3 and accessible_list[j].type == "itemorfluid_node" then
+        if prg.float_range(prg.get_key(nil, "dummy"), 0, 1) < 0.2 and accessible_list[j].name ~= "water" and accessible_list[j].name ~= "uranium-ore" and costs[accessible_list[j].name] ~= nil  then
+          num_ingredients = num_ingredients + 1
+
+          table.insert(recipe_new_connections[i], accessible_list[j])
+        end
+      end
+    end
+  elseif accessible_list[i].type == "itemorfluid_node" then
+
+  end
+end
+
+for i=1,#accessible_list do
+  if accessible_list[i].type == "recipe_node" and data.raw.recipe[accessible_list[i].name] ~= nil and data.raw.recipe[accessible_list[i].name].category ~= "smelting" then
+    local recipe = data.raw.recipe[accessible_list[i].name]
+
+    -- Calculate recipe costs
+    reformat.recipe(recipe)
+
+    local recipe_cost = 0
+    for _, result in pairs(recipe.results) do
+      if costs[result.name] ~= nil then
+        recipe_cost = recipe_cost + costs[result.name] * result.amount -- TODO: Include probabilities and such
+      end
+    end
+
+    weights = {}
+    local total_weights = 0
+    local new_ingredients = {}
+    local amounts_of_ingredients = {}
+    for j, ingredient in pairs(recipe_new_connections[i]) do
+      local weight = math.random(1, 10) / 10 * math.random(1, 10) / 10
+      weights[j] = weight
+      total_weights = total_weights + weight
+    end
+    for j, ingredient in pairs(recipe_new_connections[i]) do
+      amounts_of_ingredients[j] = 10 * weights[j] / total_weights
+
+      -- TODO: Do this properly
+      local type_of_thing = "item"
+      -- Don't randomize fluids yet
+      if data.raw.fluid[ingredient.name] ~= nil then
+        type_of_thing = "fluid"
+      else
+        if amounts_of_ingredients[j] == 0 then
+          amounts_of_ingredients[j] = 1
+        end
+  
+        table.insert(new_ingredients, {type = type_of_thing, name = ingredient.name, amount = math.ceil(amounts_of_ingredients[j])})
+      end
+    end
+
+    local ingredient_cost = 0
+    for j, ingredient in pairs(recipe_new_connections[i]) do
+      if costs[ingredient.name] ~= nil then
+        ingredient_cost = ingredient_cost + costs[ingredient.name] * amounts_of_ingredients[j]
+      end
+    end
+
+    if ingredient_cost > recipe_cost then
+      local multiplier
+      if recipe_cost > 0 then
+        multiplier = ingredient_cost / recipe_cost
+      else
+        multiplier = 1
+      end
+
+      -- Also multiply recipe time
+      if recipe.energy_required == nil then
+        recipe.energy_required = 0.5
+      end
+      if multiplier > 0 then
+        recipe.energy_required = recipe.energy_required * multiplier
+      end
+
+      for ind, result in pairs(recipe.results) do
+        local not_stackable = false
+        for item_class, _ in pairs(defines.prototypes.item) do
+          for _, item in pairs(data.raw[item_class]) do
+            if item.name == result.name then
+              if item.flags ~= nil then
+                for _, flag in pairs(item.flags) do
+                  if flag == "not-stackable" then
+                    not_stackable = true
+                  end
+                end
+              end
+            end
+          end
+        end
+        if (not not_stackable) and result.name ~= "modular-armor" then
+          result.amount = round(result.amount * multiplier)
+        end
+      end
     else
-      matrix[index_1][#matrix[index_1] + 1] = 0
-    end
+      local multiplier = recipe_cost / ingredient_cost
 
-    itemorfluid_to_row[node1.name] = index_1
-    index_1 = index_1 + 1
-  end
-end
-
-for _, node in pairs(dependency_graph) do
-  if node.type == "itemorfluid_node" and (not (next(node.prereqs) == nil and next(node.dependents) == nil)) then
-    for _, prereq in pairs(node.prereqs) do
-      if prereq.type == "recipe_node" then
-        matrix[itemorfluid_to_row[node.name]][recipe_to_col[prereq.name]] = prereq.amount
+      for j, ingredient in pairs(recipe_new_connections[i]) do
+        local not_stackable = false
+        for item_class, _ in pairs(defines.prototypes.item) do
+          for _, item in pairs(data.raw[item_class]) do
+            if item.name == ingredient.name then
+              if item.flags ~= nil then
+                for _, flag in pairs(item.flags) do
+                  if flag == "not-stackable" then
+                    not_stackable = true
+                  end
+                end
+              end
+            end
+          end
+        end
+        if not not_stackable then
+          ingredient.amount = math.min(10000, round(amounts_of_ingredients[j] * multiplier))
+        end
       end
     end
-    for _, dependent in pairs(node.dependents) do
 
-      --log("Found dependent!")
-
-      if dependent.type == "recipe_node" then
-        matrix[itemorfluid_to_row[node.name]][recipe_to_col[dependent.name]] = -dependent.amount
+    local occurrences = {}
+    for ind, ingredient in pairs(new_ingredients) do
+      if occurrences[ind] ~= nil then
+        occurrences[ind] = occurrences[ind] + 1
+      else
+        occurrences[ind] = 1
       end
     end
-  end
-end
-
--- Put first row on bottom and then back on top for technical reasons
-local first_row = matrix[1]
-matrix[1] = matrix[#matrix]
-matrix[#matrix] = first_row
-
--- Transpose
-local new_matrix = {}
-for i=1,#matrix[1] do
-  new_matrix[i] = {}
-  for j=1,#matrix do
-    new_matrix[i][j] = matrix[j][i]
-  end
-end
-matrix = new_matrix
-
-first_row = matrix[1]
-matrix[1] = matrix[#matrix]
-matrix[#matrix] = first_row
-
--- Add new columns
-for i=1,#matrix do
-  for j=#matrix+#matrix[1],#matrix+1,-1 do
-    matrix[i][j] = matrix[i][j-#matrix]
-  end
-  for j=1,#matrix do
-    if i == j then
-      matrix[i][j] = 1
-    else
-      matrix[i][j] = 0
+    for ind, thing in pairs(occurrences) do
+      if thing > 1 then
+        table.remove(new_ingredients, ind)
+      end
     end
+
+    log("setting new ingredients")
+    recipe.ingredients = new_ingredients
   end
 end
 
---log(serpent.block(matrix))
-
--- Solve
-
-log("Solving matrix...")
-
-log("Cost of " .. tostring(solve_system({matrix = matrix})))
+-- TODO: Don't include the wonky things in ingredients, maybe then I can actually do a playthrough
 
 if false then
 

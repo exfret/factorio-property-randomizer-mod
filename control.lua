@@ -1,4 +1,5 @@
 require("config")
+require("informatron")
 
 require("random-utils/random")
 
@@ -19,15 +20,30 @@ script.on_init(function ()
   local force_modifications = global.force_modifications
 
   force_modifications.running_speed = 0
-  -- TODO: force_modifications.reach = 0
+  --force_modifications.reach = 0
   --TODO: force_modifications.health = 0
   force_modifications.manual_crafting_speed = 0
   -- TODO: Make labs less productive and then increase productivity here so that you have to choose when to use your science packs
   --force_modifications.lab_speed = 0
   --force_modifications.lab_productivity = 0
+
+  --ok, global.data = serpent.load(bigunpack("propertyrandomizer_karma"))
+
+  --[[remote.add_interface("propertyrandomizer", {
+    informatron_menu = function(data)
+      return menu(data.player_index)
+    end,
+    informatron_page_content = function(data)
+      return page_content(data.page_name, data.player_index, data.element)
+    end
+  })]]
 end)
 
 script.on_event(defines.events.on_tick, function(event)
+  if event.tick == 10 and settings.startup["propertyrandomizer-seed"].value == 528 then
+    game.print("You are on the default seed. If you want things randomized differently for a new experience, change the \"seed\" setting under mod settings in the menu.")
+  end
+
   if event.tick % (60 * 60 * 30) == 0 and rand_character_properties_midgame then
     local old_force_modifications = util.table.deepcopy(global.force_modifications)
 
@@ -42,8 +58,8 @@ script.on_event(defines.events.on_tick, function(event)
     --player_force.character_health_bonus = -250 + (250 + player_force.character_health_bonus) * math.pow(9, new_force_modifications.health - old_force_modifications.health)
     player_force.manual_crafting_speed_modifier = -1 + (1 + player_force.manual_crafting_speed_modifier) * math.pow(13, new_force_modifications.manual_crafting_speed - old_force_modifications.manual_crafting_speed)
 
-    game.print("Running speed is now " .. 100 * (1 + player_force.character_running_speed_modifier) .. "%")
-    game.print("Crafting speed is now " .. 100 * (1 + player_force.manual_crafting_speed_modifier) .. "%")
+    game.print("Running speed is now " .. math.ceil(100 * (1 + player_force.character_running_speed_modifier)) .. "%")
+    game.print("Crafting speed is now " .. math.ceil(100 * (1 + player_force.manual_crafting_speed_modifier)) .. "%")
     --game.forces.player.character_running_speed_modifier = 
     -- TODO: Print new values when they come
   end

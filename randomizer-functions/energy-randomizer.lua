@@ -114,7 +114,7 @@ function randomize_energy_source_power_production_properties (prototype, energy_
       property_info = property_info.power
     }
 
-    -- Note: there are complicated rules on how to "fill in" this type when it is not nil... get around to using those rules later
+    -- TODO: there are complicated rules on how to "fill in" this type when it is not nil... get around to using those rules later
     if energy_source.fluid_usage_per_tick ~= nil then
       randomize_numerical_property{
         prototype = prototype,
@@ -142,7 +142,7 @@ function randomize_power_production_properties ()
   for class, properties_to_randomize in pairs(prototype_tables.energy_source_names) do
     for _, prototype in pairs(data.raw[class]) do
       for _, property in pairs(properties_to_randomize) do
-        if prototype[property] then
+        if prototype[property] ~= nil then
           randomize_energy_source_power_production_properties(prototype, prototype[property])
         end
       end

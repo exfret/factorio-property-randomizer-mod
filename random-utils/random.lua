@@ -52,12 +52,12 @@ function prg.value(key, XTable)
   return V / D40
 end
 
--- get an integer value between [1, max]
+-- Get an integer value between [1, max]
 function prg.int(key, max)
   return math.floor(prg.value(key) * max) + 1
 end
 
--- get an integer value between [min, max]
+-- Get an integer value between [min, max]
 function prg.range(key, min, max)
   return min + prg.int(key, max - min + 1) - 1
 end
@@ -66,7 +66,7 @@ function prg.float_range(key, min, max)
   return min + prg.value(key) * (max - min)
 end
 
--- shuffle a table
+--Sshuffle a table
 function prg.shuffle(key, tbl)
   for i = #tbl, 2, -1 do
     local j = prg.int(key, i)
@@ -81,6 +81,8 @@ function prg.get_key (object, type_of_key)
     return object .. "bbb"
   elseif type_of_key == "dummy" then
     return "aaadummyprg"
+  elseif type_of_key == "property" then
+    return object.type .. "ccc" .. object.name .. "ddd" .. object.property
   end
 
   return object.type .. "aaa" .. object.name

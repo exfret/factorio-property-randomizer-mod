@@ -1,12 +1,23 @@
-Goals for 0.2.0:
-  1. Rounding pretty much completely implemented
-  2. Distance group randomization started up
+0.2.3
+ - Make better things randomize to be better usually (maybe a setting if people want to turn this off)
+ - icon_size spidertron visual thing
+
+0.2.2
+ - Work on customized settings
+ - Work on crash
+ - Lab speed going to zero
+ - Make bias setting more clear
 
 Get distance based randomization up
 Add crafting cost to randomization
 Add power level normalizer to keep power levels similar to what they were at start
 
+Clean up data-final-fixes
+
 Next releases:
+
+  - Have simply including reformat do the reformatting so I don't have to call any of its functions
+  - Add chaos mode
 
   - Test mod compatibility
   - Do special evaluation of the "importance" of items to randomize their crafting times more effectively
@@ -15,6 +26,7 @@ Next releases:
   - Randomly randomized mode where which settings are randomized is randomized
   - Add "separation function"
 
+  - Get random map settings working with modded game
   - Randomize collision masks
   - Learn about fluid boxes and randomize those
   - Randomize collision boxes (do more carefully than before, like also changing graphics)
@@ -33,13 +45,11 @@ Next releases:
   - Add recommended mods (increased inventory)
   - Add special "compatibilities" for vanilla (and for other mods?)
   - prg_key for group randomizations
-  - Hard link logistics chest inventory sizes
   - Option for resistances outside of 0-100
   - Increase burner inserter and non-machine things' stats when they're burner energy sources
   - Add option to only change some recipe times
   - Function for find_separation_bias
   - Documentation for randomization_algorithms
-  - Add offshoots for furnace speeds and such (just like with stack sizes)
   - Max factor changeable with setting
   - Change color of lights/lamps/labs to disco/different colors
   - Make prg_key for entities depend on properties being randomized too
@@ -60,7 +70,6 @@ Next releases:
 Organization
   - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call
   - Make a proper readme
-  - Compare config file to other mods to see how it is
 
 Random maps
   - Randomize enemy evolution parameters
@@ -70,7 +79,7 @@ Configuration options
   - Add option for variance
 
 Support
-  - Add expensive mode support
+  - Space Exploration support
 
 Properties:
   - Gun shooting speed and range
@@ -79,7 +88,6 @@ Properties:
   - healing_per_tick
   - fuel_acceleration/top-speed multiplier (randomize with vehicles)
   - braking_power/braking_force
-  - electric pole wire connection points (so it's possible electric poles connect to fewer electrical poles than before)
   - Localizations
 
 Silly additions
@@ -89,7 +97,6 @@ Silly additions
     - Maybe to make it not just dangoreus lite, it gives something like the smelted version? Or something else that adds more complications than something you just throw into some chests?
   - Mining a building can, with a small chance, give you another building of the same "type"
   - Biters randomly spawn across the map (possibly even in your base)
-  - Randomize map colors for entities
   - Properties are randomized based on where the entity is located
   - Properties get re-randomized after each rocket launch
   - Weird things can take modules, like electric poles? Enemy spawners? Inserters?

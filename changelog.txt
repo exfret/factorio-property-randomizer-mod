@@ -1,4 +1,63 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.2
+Date: 2024.03.02
+  Major Features:
+    - I don't think I will use this in the future; just a note
+  Features:
+    - Put a features category here so I know where it goes in changelog lists
+  Minor Features:
+    - I don't think I will use this in the future; just a note
+  Changes:
+    - You can now disable mining offset randomization as a separate option again
+    - Mining offsets and inserter offsets are turned off by default, so is entity size randomization
+  Organization:
+    - Made a changelog entry with all the different changelog categories I want to use in order so I don't keep forgetting
+    - Started to separate out randomization functions more (changed a lot of code)
+  Balancing:
+    - Put a balancing category here so I know where it goes in changelog lists
+  Bugfixes:
+    - Put a bugfixes category here so I know where it goes in changelog lists
+---------------------------------------------------------------------------------------------------
+Version: 0.2.1
+Date: 2024.01.30
+  Bugfixes:
+    - Fixed a bug that the mod wouldn't work... oops
+---------------------------------------------------------------------------------------------------
+Version: 0.2.0
+Date: 2024.01.23
+  Features:
+    - Added ability to change the "chaos" factor in settings (how randomized things get)
+    - Brought back the randomized map preset :)
+    - Randomize radar properties (done if "logistics" randomization is checked)
+  Minor Features:
+    - Added electric pole parity checking back in
+  Changes:
+    - Removed dependency on big data string
+    - Removed dependency on informatron
+---------------------------------------------------------------------------------------------------
+Version: 0.1.12
+Date: 2023.11.16
+  Major Features:
+    - Recipe randomization is almost in a state for an alpha release
+  Features:
+    - You can now set "bias" to make your game more/less in your favor
+    - Started work on some informatron entries
+    - Added some compatibility with Space Exploration via blacklisting some randomizations that were causing problems
+  Minor Features:
+    - You can now randomize the map colors
+    - The way running/crafting speed randomization is presented in chat is now rounded
+  Changes:
+    - Removed "beta version" from mod name (it'll always be in beta basically and it doesn't deserve to be in the name)
+    - Reorganized settings
+    - Inserter pickup/dropoff location randomization is now on by default
+    - Cliff/entity size randomization is now on by default
+    - Character values changing midgame is now on by default
+  Balancing:
+    - Made it less likely for properties to be randomized to the same value
+  Bugfixes:
+    - Randomized cliff picture sizes correctly even when they're defined with a different tabular structure than vanilla
+    - Fixed inserter rotation speeds not being randomized last version
+---------------------------------------------------------------------------------------------------
 Version: 0.1.11
 Date: 2023.11.02
   Features:

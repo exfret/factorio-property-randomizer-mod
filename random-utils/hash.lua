@@ -18,8 +18,6 @@
 --OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
 --IN THE SOFTWARE.
 
--- module('CRC32', package.seeall)
-
 local max = 2^32 -1
 
 local CRC32 = {
@@ -118,22 +116,3 @@ function CRC32_Package.Hash(str)
 end
 
 return CRC32_Package;
-
---
--- CRC32.lua
---
--- A pure Lua implementation of a CRC32 hashing algorithm. Slower than using
--- a C implemtation, but useful having no other dependancies.
---
---
--- Synopsis
---
--- require('CRC32')
---
--- crchash = CRC32.Hash('a string')
---
--- Methods:
---
--- hashval = CRC32.Hash(val)
---    Calculates and returns (as an integer) the CRC32 hash of the
---    parameter 'val'. 

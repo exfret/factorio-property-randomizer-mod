@@ -18,6 +18,7 @@ property_info.attack_parameters_cooldown = {
       modulus = 6
     }
   }]] -- Since the display value is *inversely proportional* to the actual value, rounding properly will be a little harder
+  lower_is_better = true
 }
 
 property_info.attack_parameters_range = {
@@ -61,7 +62,8 @@ property_info.character_respawn_time = {
     [2] = {
       round = 60
     }
-  }
+  },
+  lower_is_better = true
 }
 
 property_info.character_corpse_time_to_live = {
@@ -158,7 +160,8 @@ property_info.fluid_emissions_multiplier = {
     [3] = {
       modulus = 0.1
     }
-  }
+  },
+  lower_is_better = true
 }
 
 property_info.fluid_usage = {
@@ -170,7 +173,8 @@ property_info.fluid_usage = {
     [3] = {
       modulus = 1
     }
-  }
+  },
+  lower_is_better = true
 }
 
 property_info.gate_opening_speed = {
@@ -230,7 +234,8 @@ property_info.machine_pollution = {
     [3] = {
       modulus = 1
     }
-  }
+  },
+  lower_is_better = true
 }
 
 property_info.machine_speed = {
@@ -294,7 +299,8 @@ property_info.pollution_effect = {
     [2] = {
       modulus = 0.01
     }
-  }
+  },
+  lower_is_better = true
 }
 
 property_info.power = {
@@ -304,7 +310,8 @@ property_info.power = {
       left_digits_to_keep = 3,
       modulus = 0.01
     }
-  }
+  },
+  lower_is_better = true
 }
 
 property_info.productivity_effect = {
@@ -332,7 +339,8 @@ property_info.recipe_crafting_time = {
     [2] = {
       modulus = 0.1
     }
-  }
+  },
+  lower_is_better = true
 }
 
 property_info.repair_tool_speed = {
@@ -461,7 +469,8 @@ property_info.tech_time = {
     [2] = {
       modulus = 1
     }
-  }
+  },
+  lower_is_better = true
 }
 
 property_info.temperature = {

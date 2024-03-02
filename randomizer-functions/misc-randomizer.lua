@@ -2,7 +2,9 @@ local prototype_tables = require("randomizer-parameter-data/prototype-tables")
 
 local inertia_function = require("randomizer-parameter-data/inertia-function-tables")
 local property_info = require("randomizer-parameter-data/property-info-tables")
-local walk_params = require("randomizer-parameter-data.walk-params-tables")
+local walk_params = require("randomizer-parameter-data/walk-params-tables")
+
+local equipment_variations = require("randomizer-parameter-data/equipment-variation-tables")
 
 require("random-utils/randomization-algorithms")
 
@@ -71,18 +73,13 @@ function randomize_equipment_grids ()
   for _, prototype in pairs(data.raw["equipment-grid"]) do
     randomize_numerical_property{
       prototype = prototype,
-      property = "width",
+      property = "height",
       property_info = property_info.equipment_grid
     }
     randomize_numerical_property{
       prototype = prototype,
-      property = "height",
-      property_info = property_info.discrete
-    }
-    randomize_numerical_property{
-      prototype = prototype,
       property = "width",
-      property_info = property_info.discrete
+      property_info = property_info.equipment_grid
     }
   end
 end
@@ -143,7 +140,124 @@ end
 
 -- TODO
 function randomize_equipment_shapes ()
-  for _, prototype in pairs(data.raw["equipment-grid"]) do
+  for class_name, _ in pairs(defines.prototypes.equipment) do
+    for _, prototype in pairs(data.raw[class_name]) do
+      local num_points_mult = 1
+      num_points_mult = randomize_numerical_property({
+        dummy = num_points_mult,
+        walk_params = walk_params.equipment_size,
+        prg_key = prg.get_key(prototype)
+      })
+      local num_points = math.ceil(num_points_mult * prototype.shape.width * prototype.shape.height)
+
+      -- Choose from some set shapes
+      -- We'll do a lot of hand-feeding for early numbers
+      local shape = prototype.shape
+      shape.type = "manual"
+      if num_points == 1 then
+        shape.width = 1
+        shape.height = 1
+        shape.points = {
+          {0,0}
+        }
+      elseif num_points == 2 then
+        local variations = {
+          {
+            width = 1,
+            height = 2,
+            points = {
+              {0,0},
+              {0,1}
+            }
+          }
+        }
+
+        local variation = prg.range(prg.get_key(prototype), 1, #variations)
+      end
+
+
+      local shape = prg.range(prg.get_key(prototype), 1, 1)
+
+      -- Circle
+      if shape == 1 then
+        if num_points == 1 then
+          prototype.shape.width = 1
+          prototype.shape.height = 1
+
+          prototype.shape.points = {
+            {0, 0}
+          }
+        elseif num_points <= 3 then
+          prototype.shape.width = 2
+          prototype.shape.height = 1
+
+          prototype.shape.points = {
+            {0, 0},
+            {1, 0}
+          }
+        elseif num_points == 4 then
+          prototype.shape.width = 2
+          prototype.shape.height = 2
+
+          prototype.shape.points = {
+            {0, 0},
+            {0, 1},
+            {1, 0},
+            {1, 1}
+          }
+        elseif num_points == 5 then
+          prototype.shape.width = 3
+          prototype.shape.height = 3
+
+          prototype.shape.points = {
+            {0, 0},
+            {0, 1},
+            {1, 0},
+            {1, 2},
+            {2, 1}
+          }
+        elseif num_points == 6 then
+          prototype.shape.width = 3
+          prototype.shape.height = 3
+
+          prototype.shape.points = {
+            {0, 0},
+            {0, 1},
+            {1, 0},
+            {1, 2},
+            {2, 1},
+            {2, 2}
+          }
+        elseif num_points == 7 then
+          prototype.shape.width = 3
+          prototype.shape.height = 3
+
+          prototype.shape.points = {
+            {0, 0},
+            {0, 1},
+            {0, 2},
+            {1, 0},
+            {1, 2},
+            {2, 1},
+            {2, 2}
+          }
+        elseif num_points >= 8 then
+          prototype.shape.width = 3
+          prototype.shape.height = 3
+
+          prototype.shape.points = {
+            {0, 0},
+            {0, 1},
+            {0, 2},
+            {1, 0},
+            {1, 2},
+            {2, 0},
+            {2, 1},
+            {2, 2}
+          }
+        end
+      end
+    end
   end
 end
 
@@ -163,6 +277,26 @@ function randomize_fluid_properties ()
       property = "emissions_multiplier",
       property_info = property_info.fluid_emissions_multiplier
     }
+  end
+end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_map_colors
+---------------------------------------------------------------------------------------------------
+
+function randomize_map_colors()
+  for entity_class, _ in pairs(defines.prototypes.entity) do
+    for _, entity in pairs(data.raw[entity_class]) do
+      if entity.map_color ~= nil then
+        entity.map_color = {r = prg.float_range(prg.get_key(entity), 0, 1), g = prg.float_range(prg.get_key(entity), 0, 1), b = prg.float_range(prg.get_key(entity), 0, 1)}
+      end
+      if entity.friendly_map_color ~= nil then
+        entity.friendly_map_color = {r = prg.float_range(prg.get_key(entity), 0, 1), g = prg.float_range(prg.get_key(entity), 0, 1), b = prg.float_range(prg.get_key(entity), 0, 1)}
+      end
+      if entity.enemy_map_color ~= nil then
+        entity.enemy_map_color = {r = prg.float_range(prg.get_key(entity), 0, 1), g = prg.float_range(prg.get_key(entity), 0, 1), b = prg.float_range(prg.get_key(entity), 0, 1)}
+      end
+    end
   end
 end
 
