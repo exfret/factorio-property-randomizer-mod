@@ -1,9 +1,15 @@
 {
 	"name": "propertyrandomizer",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"title": "exfret's randomizer",
-	"author": "exfret",	
+	"author": "exfret",
 	"factorio_version": "1.1",
 	"description": "Randomizes as many things in the game as possible.",
-	"dependencies": ["base", "? even-distribution", "? space-exploration-postprocess", "? ZRecipeRandomizer", "? pypostprocessing"]
+	"dependencies": [
+		"base",
+		"? even-distribution",
+		"? space-exploration-postprocess",
+		"? ZRecipeRandomizer",
+		"? pypostprocessing"
+	]
 }
