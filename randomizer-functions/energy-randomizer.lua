@@ -155,7 +155,7 @@ function randomize_power_production_properties ()
     energy_consumption_as_number = randomize_numerical_property{
       dummy = energy_consumption_as_number,
       prg_key = prg.get_key(prototype),
-      property_info = property_info.power_property_info
+      property_info = property_info.power
     }
     prototype.energy_consumption = energy_consumption_as_number .. "W"
 

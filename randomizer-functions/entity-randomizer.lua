@@ -41,7 +41,6 @@ end
 -- randomize_belt_speed
 ---------------------------------------------------------------------------------------------------
 
--- TODO: Option to sync belt tiers
 function randomize_belt_speed ()
   local min_bias = 0.45
   local max_bias = 0.6
@@ -145,7 +144,8 @@ function randomize_car_rotation_speed ()
     randomize_numerical_property{
       prototype = prototype,
       property = "rotation_speed",
-      inertia_function = inertia_function.car_rotation_speed
+      inertia_function = inertia_function.car_rotation_speed,
+      property_info = property_info.car_rotation_speed
     }
   end
 end
@@ -183,6 +183,7 @@ function randomize_character_respawn_time ()
   end
 end
 
+-- Currently unused
 -- TODO: Guarantee this comes after all other recipe randomization
 function randomize_crafting_machine_productivity()
   for _, class in pairs(prototype_tables.crafting_machine_classes) do
@@ -415,7 +416,8 @@ function randomize_entity_sizes ()
     for _, orientation in pairs(cliff.orientations) do
       local factor = randomize_numerical_property{
         inertia_function = inertia_function.cliff_size,
-        prg_key = prg.get_key(cliff)
+        prg_key = prg.get_key(cliff),
+        property_info = property_info.cliff_size
       }
 
       for _, vector in pairs(orientation.collision_bounding_box) do
@@ -594,7 +596,7 @@ function randomize_inserter_insert_dropoff_positions()
   for _, prototype in pairs(data.raw.inserter) do
     -- Test that this inserter is a "good" size
     if prototype.collision_box ~= nil and prototype.collision_box[1][1] == -0.15 and prototype.collision_box[1][2] == -0.15 and prototype.collision_box[2][1] == 0.15 and prototype.collision_box[2][2] == 0.15 then
-      local key = prototype.type .. "aaa" .. prototype.name
+      local key = prg.get_key(prototype)
 
       local inserter_position_variable = prg.range(key, 1,8)
 
@@ -623,22 +625,13 @@ function randomize_inserter_speed ()
           prototype = prototype,
           property = "rotation_speed",
           inertia_function = inertia_function.inserter_rotation_speed,
-          property_info = {
-            round = {
-              [2] = {
-                modulus = 10 / (360 * 60)
-              },
-              [3] = {
-                left_digits_to_keep = 0,
-                modulus = 100 / (360 * 60)
-              }
-            }
-          }
+          property_info = property_info.inserter_rotation_speed
         },
         {
           prototype = prototype,
           property = "extension_speed",
-          inertia_function = inertia_function.inserter_extension_speed
+          inertia_function = inertia_function.inserter_extension_speed,
+          property_info = property_info.inserter_extension_speed
         }
       }
     }
@@ -978,7 +971,8 @@ function randomize_roboports ()
     -- Randomize how quickly robots charge
     local charging_energy = 60 * util.parse_energy(prototype.charging_energy)
     charging_energy = randomize_numerical_property{
-      dummy = charging_energy
+      dummy = charging_energy,
+      property_info = property_info.limited_range
     }
     prototype.charging_energy = charging_energy .. "W"
 
@@ -994,7 +988,7 @@ function randomize_roboports ()
     randomize_numerical_property{
       prototype = prototype,
       property = "charging_station_count",
-      inertia_function = inertia_function.charging_statiion_count,
+      inertia_function = inertia_function.charging_station_count,
       property_info = property_info.charging_station_count
     }
 
@@ -1034,7 +1028,8 @@ function randomize_storage_tank_capacity ()
       randomize_numerical_property{
         prototype = prototype,
         tbl = prototype.fluid_box,
-        property = "base_area"
+        property = "base_area",
+        property_info = property_info.limited_range
         -- Let's not set rounding info since it can be messed up by the height anyways
       }
     end
@@ -1069,7 +1064,8 @@ function randomize_vehicle_crash_damage ()
       randomize_numerical_property{
         prototype = prototype,
         property = "energy_per_hit_point",
-        inertia_function = inertia_function.vehicle_crash_damage
+        inertia_function = inertia_function.vehicle_crash_damage,
+        property_info = property_info.limited_range
       }
 
       -- Increase impact resistance for higher crash damages so that this isn't just a glass cannon
@@ -1096,7 +1092,8 @@ function randomize_vehicle_speed ()
         dummy = energy_as_number,
         prg_key = prg.get_key(prototype),
         inertia_function = inertia_function.vehicle_speed,
-        walk_params = walk_params.vehicle_speed
+        walk_params = walk_params.vehicle_speed,
+        property_info = property_info.limited_range
       }
       prototype[speed_key] = new_energy_as_number .. "W"
 

@@ -1,4 +1,5 @@
-local property_info = require("randomizer-parameter-data.property-info-tables")
+local property_info = require("randomizer-parameter-data/property-info-tables")
+local walk_params = require("randomizer-parameter-data/walk-params-tables")
 
 require("random-utils/randomization-algorithms")
 
@@ -71,6 +72,7 @@ function randomize_crafting_times ()
         ["type"] = "proportional",
         slope = slope
       },
+      walk_params = walk_params.recipe_crafting_time,
       property_info = property_info.recipe_crafting_time
     }
   end

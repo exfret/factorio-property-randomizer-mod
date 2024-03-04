@@ -1,5 +1,11 @@
 require("config")
 --require("gather-randomizations")
+require("randomizer-functions/energy-randomizer")
+require("randomizer-functions/entity-randomizer")
+require("randomizer-functions/item-randomizer")
+require("randomizer-functions/misc-randomizer")
+require("randomizer-functions/recipe-randomizer")
+require("randomizer-functions/technology-randomizer")
 
 local karma = require("analysis/karma")
 
@@ -209,12 +215,12 @@ if rand_gate_opening_speed then
   table.insert(randomizing_functions_to_call, randomize_gate_opening_speed)
 end
 
-if rand_mining_drill_dropoff then
-  table.insert(randomizing_functions_to_call, randomize_mining_drill_dropoff_location)
-end
-
 if rand_inserter_position then
   table.insert(randomizing_functions_to_call, randomize_inserter_insert_dropoff_positions)
+end
+
+if rand_mining_drill_dropoff then
+  table.insert(randomizing_functions_to_call, randomize_mining_drill_dropoff_location)
 end
 
 if rand_tools then
@@ -233,7 +239,8 @@ end
 ---------------------------------------------------------------------------------------------------
 
 log("Performing randomizations...")
-for _, randomizing_function in pairs(randomizing_functions_to_call) do
+for i, randomizing_function in pairs(randomizing_functions_to_call) do
+  log(i)
   randomizing_function()
 end
 

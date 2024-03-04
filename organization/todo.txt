@@ -1,12 +1,8 @@
-0.2.3
- - Make better things randomize to be better usually (maybe a setting if people want to turn this off)
- - icon_size spidertron visual thing
+0.2.6
+ - Get custom configs working
 
-0.2.2
- - Work on customized settings
- - Work on crash
- - Lab speed going to zero
- - Make bias setting more clear
+0.2.5
+ - icon_size w/ spidertron
 
 Get distance based randomization up
 Add crafting cost to randomization

@@ -8,14 +8,15 @@ data:extend({
     localised_name = "Chaos mode",
     localised_description = "Currently a WIP.",
     default_value = false,
-    order = "aaa-chaos"
+    order = "aaa-chaos",
+    hidden = true
   },
   {
     setting_type = "startup",
     type = "int-setting",
     name = "propertyrandomizer-seed",
     localised_name = "Random seed",
-    localised_description = "Changing this will change how everything is randomized",
+    localised_description = "Changing this will change how everything is randomized.",
     default_value = 528,
     order = "aab-seed"
   },
@@ -23,11 +24,11 @@ data:extend({
     setting_type = "startup",
     type = "double-setting",
     name = "propertyrandomizer-bias",
-    localised_name = "Bias",
-    localised_description = "Higher values mean less cursed, lower mean more cursed (this is extremely sensitive so I recommend between 0.45 and 0.55)",
+    localised_name = "Bias [0.45 - 0.55] (0.45 means VERY bad)",
+    localised_description = "Higher values mean more in your favor/easier.",
     default_value = 0.5,
-    minimum_value = 0,
-    maximum_value = 1,
+    minimum_value = 0.45,
+    maximum_value = 0.55,
     order = "ab-bias"
   },
   {
@@ -38,7 +39,7 @@ data:extend({
     localised_description = "Higher numbers result in more swinginess/chaos. Numbers past 2 not tested and may break the game.",
     default_value = 1,
     minimum_value = 0.1,
-    maximum_value = 10,
+    maximum_value = 4,
     order = "ab-bias"
   },
   {
@@ -147,9 +148,9 @@ data:extend({
     setting_type = "startup",
     type = "bool-setting",
     name = "propertyrandomizer-inserter-position",
-    localised_name = "Randomize inserter positions",
+    localised_name = "Advanced: Randomize inserter positions",
     localised_description = "Any given inserter has a small chance to become a long inserter, side inserter, or a variety of other cursed options.",
-    default_value = true,
+    default_value = false,
     order = "c-advanced-inserter-offsets"
   },
   {
@@ -174,7 +175,7 @@ data:extend({
     setting_type = "startup",
     type = "bool-setting",
     name = "propertyrandomizer-mining-offsets",
-    localised_name = "Randomize mining offsets",
+    localised_name = "Advanced: Randomize mining offsets",
     localised_description = "Randomize where the mining drills drop off their ore.",
     default_value = false,
     order = "c-advanced-mining-offsets"

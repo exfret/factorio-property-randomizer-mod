@@ -12,7 +12,8 @@ function randomize_technology_science_cost ()
         prototype = prototype,
         tbl = prototype.unit,
         property = "count",
-        property_info = property_info.discrete_positive
+        intertia_function = inertia_function.tech_count,
+        property_info = property_info.tech_count
       }
     elseif prototype.unit.count_formula ~= nil then
       local formula_multiplier = randomize_numerical_property()

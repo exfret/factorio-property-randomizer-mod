@@ -209,12 +209,12 @@ function randomize_attack_parameters (prototype, attack_parameters)
     prototype = prototype,
     tbl = attack_parameters,
     property = "damage_modifier",
-    inertia_function = inertia_function.turret_damage_modifier
+    inertia_function = inertia_function.turret_damage_modifier -- TODO: Add property info for damage modifier, currently should be a min factor but it starts at -1 which complicates things
   }
   randomize_numerical_property{
     prototype = prototype,
     tbl = attack_parameters,
-    property = "ammo_consumption_modifier"
+    property = "ammo_consumption_modifier" -- TODO: Add property info for consumption modifier, currently should be a min factor but it starts at -1 which complicates things
   }
 
   if attack_parameters.fluids then
@@ -225,7 +225,8 @@ function randomize_attack_parameters (prototype, attack_parameters)
       randomize_numerical_property{
         prototype = prototype,
         tbl = fluid,
-        property = "damage_modifier"
+        property = "damage_modifier" -- TODO: Add property info for damage modifier, currently should be a min factor but it starts at -1 which complicates things
+        -- Also TODO: Probably needs a special inertia function...
       }
     end
   end

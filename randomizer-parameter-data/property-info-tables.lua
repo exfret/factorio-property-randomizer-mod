@@ -1,6 +1,7 @@
 local property_info = {}
 
 property_info.ammo_type_range_modifier = {
+  min_factor = 1 / 3,
   round = {
     [2] = {
       modulus = 0.1
@@ -9,6 +10,8 @@ property_info.ammo_type_range_modifier = {
 }
 
 property_info.attack_parameters_cooldown = {
+  min_factor = 1 / 3,
+  max_factor = 3,
   --[[round = {
     [2] = {
       modulus = 6
@@ -22,6 +25,7 @@ property_info.attack_parameters_cooldown = {
 }
 
 property_info.attack_parameters_range = {
+  min_factor = 1 / 3,
   round = {
     [2] = {
       modulus = 0.1
@@ -57,7 +61,12 @@ property_info.bot_speed = {
   }
 }
 
+property_info.car_rotation_speed = {
+  min = 0.001
+}
+
 property_info.character_respawn_time = {
+  min = 1,
   round = {
     [2] = {
       round = 60
@@ -84,6 +93,18 @@ property_info.charging_station_count = {
       modulus = 1
     }
   }
+}
+
+-- Note that this is actually a factor that the real cliff sizes are multiplied by
+property_info.cliff_size = {
+  min = 0.01,
+  max = 100,
+  round = { -- Cliff sizes don't need to be randomized
+    [1] = {},
+    [2] = {},
+    [3] = {}
+  },
+  lower_is_better = true
 }
 
 property_info.consumption_effect = {
@@ -183,6 +204,7 @@ property_info.gate_opening_speed = {
 
 property_info.gun_shooting_range = {
   min = 0.1,
+  min_factor = 1 / 5,
   round = {
     [2] = {
       modulus = 1
@@ -190,7 +212,12 @@ property_info.gun_shooting_range = {
   }
 }
 
+property_info.inserter_extension_speed = {
+  min = 0.01
+}
+
 property_info.inserter_rotation_speed = {
+  min = 10 / (360 * 60),
   round = {
     [2] = {
       modulus = 10 / (360 * 60)
@@ -229,6 +256,13 @@ property_info.large_inventory = {
   }
 }
 
+-- Used for things that would just be broken if the factor was changed too much
+-- TODO: Turn this off for chaos mode
+property_info.limited_range = {
+  min_factor = 1 / 4,
+  max_factor = 4
+}
+
 property_info.machine_pollution = {
   round = {
     [3] = {
@@ -240,6 +274,7 @@ property_info.machine_pollution = {
 
 property_info.machine_speed = {
   min = 0.001,
+  min_factor = 1 / 10,
   round = {
     [2] = {
       modulus = 0.01
@@ -252,6 +287,7 @@ property_info.machine_speed = {
 
 property_info.magazine_size = {
   min = 1,
+  min_factor = 1 / 5,
   round = {
     [2] = {
       modulus = 1
@@ -261,6 +297,7 @@ property_info.magazine_size = {
 
 property_info.max_health = {
   min = 1,
+  min_factor = 1 / 20,
   round = {
     [1] = { -- Due to weird display bugs, I'm rounding even in no rounding mode
       modulus = 1
@@ -316,6 +353,7 @@ property_info.power = {
 
 property_info.productivity_effect = {
   min = 0,
+  min_factor = 1 / 2, -- Make it so productivity modules are usually useful to an extent
   round = {
     [2] = {
       modulus = 0.01
@@ -323,8 +361,13 @@ property_info.productivity_effect = {
   }
 }
 
+-- Make projectile damage not tooo bad
+property_info.projectile_damage = {
+  min_factor = 1 / 2
+}
+
 property_info.pump_pumping_speed = {
-  min = 1 / 60,
+  min = 100 / 60,
   round = {
     [2] = {
       modulus = 10 / 60,
@@ -353,8 +396,7 @@ property_info.repair_tool_speed = {
 }
 
 property_info.researching_speed = {
-  ["type"] = "proportional",
-  slope = 10,
+  min_factor = 1 / 20,
   round = {
     [2] = {
       modulus = 0.1
@@ -383,6 +425,7 @@ property_info.resistance_percent = {
 
 property_info.roboport_radius = {
   min = 1,
+  min_factor = 1 / 4,
   round = {
     [2] = {
       modulus = 1
@@ -395,7 +438,6 @@ property_info.roboport_radius = {
 
 property_info.small_inventory = {
   min = 0,
-  max = 65535,
   round = {
     [1] = {
       modulus = 1
@@ -411,7 +453,6 @@ property_info.small_inventory = {
 
 property_info.small_nonempty_inventory = {
   min = 1,
-  max = 65535,
   round = {
     [1] = {
       modulus = 1
@@ -463,8 +504,24 @@ property_info.supply_area = {
   }
 }
 
+property_info.tech_count = {
+  min = 1,
+  min_factor = 1 / 5,
+  max_factor = 5,
+  round = {
+    [1] = {
+      modulus = 1
+    },
+    [2] = {
+      modulus = 1
+    }
+  },
+  lower_is_better = true
+}
+
 property_info.tech_time = {
   min = 0.01,
+  max_factor = 5,
   round = {
     [2] = {
       modulus = 1
@@ -483,7 +540,7 @@ property_info.temperature = {
 }
 
 property_info.tile_walking_speed_modifier = {
-  min = 0.01,
+  min = 0.25,
   round = {
     [2] = {
       modulus = 0.01

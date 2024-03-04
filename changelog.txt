@@ -1,6 +1,32 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.5
+Date: 2024.03.04
+  Balancing:
+    - Clamped property changes so they wouldn't be too large at once
+    - Only randomized magazine sizes with a base size of at least 1, also removed negative bias on magazine size
+  Bugfixes:
+    - Tech costs now are randomized in the right direction - they used to be more expensive on higher biases rather than less expensive
+    - Cliff sizes are also in the right direction - they used to be bigger on higher biases rather than smaller
+    - Typo where I tested for the "not_stackable" flag rather than the "not-stackable" flag
+---------------------------------------------------------------------------------------------------
+Version: 0.2.4
+Date: 2024.03.03
+  Changes:
+    - Made min/max setting values for bias and chaos tighter
+    - Made dependencies hidden
+  Balancing:
+    - Repair speeds are less swingy now when enabled
+    - Pump pumping speed never goes below 100 now
+  Bugfixes:
+    - Fixed that inserter extension speed was sometimes randomized to smaller than the minimum factorio distance per tick
+    - Fixed that things could get "rounded" to zero
+    - Added reasonable minimum values to many things
+---------------------------------------------------------------------------------------------------
 Version: 0.2.3
-Date: ?
+Date: 2024.03.02
+  Bugfixes:
+    - Fixed some issues with the settings that I didn't do correctly last update
+    - Apparently the entire mod didn't work, so yeah
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.2
 Date: 2024.03.02

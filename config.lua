@@ -71,9 +71,9 @@ rand_tools = settings.startup["propertyrandomizer-misc-properties"].value -- TOD
 
 --blop.blop = nil
 
-for override in string.gmatch(settings.startup["propertyrandomizer-custom-overrides"].value, "([^,]+)") do
-  if string.find(override, "=") ~= nil then
-    local equals_position = string.find(override, "=")
+for override in string.gmatch(settings.startup["propertyrandomizer-custom-overrides"].value, "([^;]+)") do
+  if string.find(override, ":") ~= nil then
+    local equals_position = string.find(override, ":")
     if string.sub(override, 1, equals_position) == "randomize" then
     end
     if string.sub(override, 1, equals_position) == "no-randomize" then

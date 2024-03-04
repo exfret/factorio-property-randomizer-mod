@@ -35,12 +35,14 @@ function randomize_ammo ()
     if prototype.magazine_size == nil then
       prototype.magazine_size = 1
     end
-    randomize_numerical_property{
-      prototype = prototype,
-      property = "magazine_size",
-      property_info = property_info.magazine_size,
-      walk_params = walk_params.magazine_size
-    }
+    if prototype.magazine_size ~= 1 then
+      randomize_numerical_property{
+        prototype = prototype,
+        property = "magazine_size",
+        property_info = property_info.magazine_size,
+        walk_params = walk_params.magazine_size
+      }
+    end
 
     --[[if prototype.reload_time == nil then
       prototype.reload_time = 0
@@ -73,14 +75,14 @@ end
 ---------------------------------------------------------------------------------------------------
 
 function randomize_armor_resistances ()
-  for _, prototype in pairs(data.raw.armor) do
+  --[[for _, prototype in pairs(data.raw.armor) do
     if prototype.resistances then
       randomize_resistances{
         prototypes = {prototype},
         variance = 0.6
       }
     end
-  end
+  end]] -- This needs to not use variance
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -106,7 +108,8 @@ function randomize_gun_damage_modifier ()
       prototype = prototype,
       tbl = prototype.attack_parameters,
       property = "damage_modifier",
-      walk_params = walk_params.gun_damage_modifier
+      walk_params = walk_params.gun_damage_modifier,
+      property_info = property_info.limited_range
     }
   end
 end
@@ -135,7 +138,8 @@ function randomize_gun_speed ()
     randomize_numerical_property{
       prototype = prototype,
       tbl = prototype.attack_parameters,
-      property = "cooldown", -- I would round, but that requires taking the inverses into account
+      property = "cooldown", -- I would round, but that requires taking the inverses into account,
+      property_info = property_info.limited_range
     }
   end
 end
@@ -150,7 +154,7 @@ function randomize_item_stack_sizes ()
       local not_stackable = false
       if prototype.flags then
         for _, flag in pairs(prototype.flags) do
-          if flag == "not_stackable" then
+          if flag == "not-stackable" then
             not_stackable = true
           end
         end
@@ -221,6 +225,7 @@ function randomize_module_effects ()
       tbl = prototype.effect.productivity,
       property = "bonus",
       inertia_function = inertia_function.productivity_effect,
+      walk_params = walk_params.productivity_effect,
       property_info = property_info.productivity_effect
     }
 
@@ -246,13 +251,14 @@ end
 
 function randomize_tools ()
   for _, class_name in pairs(prototype_tables.tool_classes) do
-    for _, prototype in pairs(data.raw[class_name]) do
+    -- TODO: Reimplement this once I figure out how to blacklist science packs
+    --[[for _, prototype in pairs(data.raw[class_name]) do
       randomize_numerical_property{
         prototype = prototype,
         property = "durability",
         property_info = property_info.tool_durability
       }
-    end
+    end]]
   end
 
   for _, prototype in pairs(data.raw["repair-tool"]) do

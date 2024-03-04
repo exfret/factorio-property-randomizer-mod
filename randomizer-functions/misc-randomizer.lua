@@ -321,7 +321,8 @@ function randomize_projectile_damage()
                     tbl = target_effect.damage,
                     property = "amount",
                     inertia_function = inertia_function.projectile_damage,
-                    walk_params = walk_params.projectile_damage
+                    walk_params = walk_params.projectile_damage,
+                    property_info = property_info.projectile_damage
                   }
                 end
               end

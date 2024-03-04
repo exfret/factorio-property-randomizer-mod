@@ -112,7 +112,7 @@ inertia_function.entity_interaction_mining_speed = {
 
 inertia_function.entity_interaction_repair_speed = {
   ["type"] = "proportional",
-  slope = 15
+  slope = 7
 }
 
 inertia_function.gate_opening_speed = {
@@ -194,7 +194,7 @@ inertia_function.radar = {
 
 inertia_function.researching_speed = {
   ["type"] = "proportional",
-  slope = 6
+  slope = 8
 }
 
 inertia_function.stack_size = {
@@ -204,9 +204,14 @@ inertia_function.stack_size = {
   {4294967295, 51539607540}
 }
 
+inertia_function.tech_count = {
+  type = "proportional",
+  slope = 6
+}
+
 inertia_function.tech_time = {
   ["type"] = "proportional",
-  slope = 5
+  slope = 8
 }
 
 inertia_function.tile_walking_speed_modifier = {

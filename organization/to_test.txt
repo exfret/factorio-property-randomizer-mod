@@ -1,0 +1,1 @@
+1. Test whether special configs work

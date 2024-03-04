@@ -152,7 +152,7 @@ for _, prototype in pairs(data.raw["electric-pole"]) do
     table.insert(number_to_prototype, prototype)
 end
 
-icon_randomizer.permute(number_to_prototype, electric_pole_image_properties)
+--icon_randomizer.permute(number_to_prototype, electric_pole_image_properties)
 
 local unit_image_properties = {
     "run_animation",
@@ -172,7 +172,7 @@ for _, prototype in pairs(data.raw.unit) do
     table.insert(number_to_prototype, prototype)
 end
 
-icon_randomizer.permute(number_to_prototype, unit_image_properties, true)
+--icon_randomizer.permute(number_to_prototype, unit_image_properties, true)
 
 local container_image_properties = {
     "picture",
@@ -191,6 +191,4 @@ for _, prototype in pairs(data.raw.container) do
     table.insert(number_to_prototype, prototype)
 end
 
-icon_randomizer.permute(number_to_prototype, container_image_properties)
-
-log(serpent.block(data.raw.container["factorio-logo-11tiles"]))
+--icon_randomizer.permute(number_to_prototype, container_image_properties)

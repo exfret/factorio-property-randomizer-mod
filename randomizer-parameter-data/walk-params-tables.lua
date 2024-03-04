@@ -6,12 +6,12 @@ walk_params.electric_pole_supply_area = {
   bias = 0.565
 }
 
--- Make equipment sizes err towards positive so that poking holes is not as bad
+-- Make equipment grid sizes err towards positive so that poking holes is not as bad
 walk_params.equipement_grid_size = {
   bias = 0.6
 }
 
--- Make equipment sizes err towards positive so that poking holes doesn't increase size as much
+-- Make equipment sizes err towards smaller so that poking holes doesn't increase size as much
 walk_params.equipment_size = {
   bias = 0.4
 }
@@ -20,16 +20,20 @@ walk_params.gun_damage_modifier = {
   bias = 0.53
 }
 
-walk_params.magazine_size = {
-  bias = 0.475 -- Make the bias towards smaller magazines to make up for the boost from having the minimum at 1
-}
-
 walk_params.offshore_pumping_speed = {
   bias = 0.47
 }
 
+walk_params.productivity_effect = {
+  bias = 0.53 -- I think higher productivity is funnier and compensates for some of the other BS you have to put up with
+}
+
 walk_params.projectile_damage = {
   bias = 0.54
+}
+
+walk_params.recipe_crafting_time = {
+  bias = 0.47
 }
 
 walk_params.stack_size = {
@@ -37,7 +41,7 @@ walk_params.stack_size = {
 }
 
 walk_params.tile_walking_speed_modifier = {
-  bias = 0.52
+  bias = 0.54
 }
 
 walk_params.trigger_damage = {

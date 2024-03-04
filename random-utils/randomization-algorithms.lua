@@ -131,7 +131,14 @@ local function nudge_properties (params, roll)
       return
     end
 
-    tbl[property] = tbl[property] + sign * settings.startup["propertyrandomizer-chaos"].value * (1 / num_steps) * param_table_utils.find_inertia_function_value(inertia_function, tbl[property])
+    local nudge = sign * settings.startup["propertyrandomizer-chaos"].value * (1 / num_steps) * param_table_utils.find_inertia_function_value(inertia_function, tbl[property])
+    if math.abs(nudge / math.sqrt(1 + tbl[property] * tbl[property]) * num_steps) >= 10 then
+      nudge = sign * 10 * math.sqrt(1 + tbl[property] * tbl[property]) / num_steps
+    elseif inertia_function.type == "proportional" and settings.startup["propertyrandomizer-chaos"].value * inertia_function.slope >= 20 then
+      -- Also limit so that proportional inertia functions don't cause things to go below zero
+      nudge = sign / num_steps * 10 * tbl[property]
+    end
+    tbl[property] = tbl[property] + nudge
   end
 
   nudge_individual_property(params.tbl, params.property, find_sign(roll, params), params.walk_params.num_steps, params.inertia_function)
@@ -147,14 +154,29 @@ local function apply_property_info_changes(tbl, property, property_info, old_val
 
   -- Rounding
   if property_info.round ~= nil then
+    -- If rounding down causes it to go to zero, instead take ceiling, this is to help with some rounding issues without rewriting huge chunks of code
+    -- It should also be relatively non-invasive
     local left_digits_to_keep = property_info.round[rounding_mode].left_digits_to_keep
     if left_digits_to_keep ~= nil and left_digits_to_keep ~= 0 and tbl[property] ~= 0 then
       local digits_modulus = math.pow(10, math.floor(math.log(math.abs(tbl[property]), 10) - left_digits_to_keep + 1))
-      tbl[property] = math.floor((tbl[property] + digits_modulus / 2) / digits_modulus) * digits_modulus
+
+      local new_value = math.floor((tbl[property] + digits_modulus / 2) / digits_modulus) * digits_modulus
+      local positive_new_value = math.ceil(tbl[property] / digits_modulus) * digits_modulus
+      if new_value == 0 then
+        tbl[property] = positive_new_value
+      else
+        tbl[property] = new_value
+      end
     end
     local modulus = property_info.round[rounding_mode].modulus
     if modulus ~= nil and modulus ~= 0 then
-      tbl[property] = math.floor((tbl[property] + modulus / 2) / modulus) * modulus
+      local new_value = math.floor((tbl[property] + modulus / 2) / modulus) * modulus
+      local positive_new_value = math.ceil(tbl[property] / modulus) * modulus
+      if new_value == 0 then
+        tbl[property] = positive_new_value
+      else
+        tbl[property] = new_value
+      end
     end
   end
 
@@ -233,6 +255,9 @@ function randomize_numerical_property (passed_params)
   end
 
   params.old_value = params.tbl[params.property]
+  for i, _ in pairs(params.group_params) do
+    params.group_params[i].old_value = params.group_params[i].tbl[params.group_params[i].property]
+  end
 
   local luckiness_of_this_randomization = 0
   for i = 1,params.walk_params.num_steps do
