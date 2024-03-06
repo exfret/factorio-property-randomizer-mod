@@ -83,6 +83,30 @@ function reformat.recipe(recipe)
     end
 end
 
+-- Don't allow normal versus expensive mode
+-- TODO
+function reformat.technology(technology)
+    local tech_table = nil
+    if technology.normal then
+        tech_table = technology.normal
+    elseif technology.expensive then
+        tech_table = technology.expensive
+    end
+
+    if tech_table ~= nil then
+        for k, v in pairs(tech_table) do
+            technology[k] = v
+        end
+    end
+
+    technology.normal = nil
+    technology.expensive = nil
+
+    if technology.effects == nil then
+        technology.effects = {}
+    end
+end
+
 --blop.blop = nil -- Reformat every prototype, particularly adding in default values
 
 function reformat.prototypes()

@@ -132,8 +132,8 @@ local function nudge_properties (params, roll)
     end
 
     local nudge = sign * settings.startup["propertyrandomizer-chaos"].value * (1 / num_steps) * param_table_utils.find_inertia_function_value(inertia_function, tbl[property])
-    if math.abs(nudge / math.sqrt(1 + tbl[property] * tbl[property]) * num_steps) >= 10 then
-      nudge = sign * 10 * math.sqrt(1 + tbl[property] * tbl[property]) / num_steps
+    if math.abs(nudge / math.sqrt(1 + tbl[property] * tbl[property]) * num_steps) >= 150 then
+      nudge = sign * 150 * math.sqrt(1 + tbl[property] * tbl[property]) / num_steps
     elseif inertia_function.type == "proportional" and settings.startup["propertyrandomizer-chaos"].value * inertia_function.slope >= 20 then
       -- Also limit so that proportional inertia functions don't cause things to go below zero
       nudge = sign / num_steps * 10 * tbl[property]

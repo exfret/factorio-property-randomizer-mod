@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.6
+Date: ?
+  Changes:
+    - After recent updates, I no longer recommend updating this mod mid-run, so I added a message not to do so
+  Bugfixes:
+    - Clamping from last version was too extreme in some cases, leading to things getting needlessly re-randomized
+---------------------------------------------------------------------------------------------------
 Version: 0.2.5
 Date: 2024.03.04
   Balancing:

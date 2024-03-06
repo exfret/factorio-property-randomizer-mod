@@ -82,7 +82,7 @@ gather_randomizations.randomization_spec = {
     {
         func = energy_randomizer.randomize_burner_generator_max_power_output,
         name = "burner-generator-production",
-        tags = {"power-production", "burner", "electric", "power"}
+        tags = {"power-production", "burner-power", "electric-power", "power"}
     },
     {
         func = energy_randomizer.randomize_electric_energy_interface_energy_production,
@@ -92,7 +92,7 @@ gather_randomizations.randomization_spec = {
     {
         func = energy_randomizer.randomize_electric_energy_interface_energy_usage,
         name = "energy-interface-consumption",
-        tags = {"electric", "power"}
+        tags = {"power-consumption", "electric", "power"}
     },
     {
         func = energy_randomizer.randomize_generator_effectivity,
@@ -127,17 +127,17 @@ gather_randomizations.randomization_spec = {
     {
         func = energy_randomizer.randomize_machine_energy_usage
         name = "machine-energy-usage",
-        tags = {"energy-usage", "power"}
+        tags = {"power-consumption", "power"}
     },
     {
         func = energy_randomizer.randomize_equipment_energy_usage
         name = "equipment-energy-usage",
-        tags = {"energy-usage", "power", "equipment"}
+        tags = {"power-consumption", "power", "equipment"}
     },
     {
         func = energy_randomizer.randomize_fluid_fuel_value,
         name = "fluid-fuel-value",
-        tags = {"fuel-value", "power"}
+        tags = {"power"}
     },
     {
         func = energy_randomizer.randomize_fluid_heat_capacity
@@ -162,17 +162,17 @@ gather_randomizations.randomization_spec = {
     {
         func = energy_randomizer.randomize_inserter_energy_per_movement,
         name = "inseter-energy-movement",
-        tags = {"energy-usage", "inserter-energy", "power"}
+        tags = {"energy-usage", "inserter-power-consumption", "power"}
     },
     {
         func = energy_randomizer.randomize_inserter_energy_per_rotation
         name = "inserter-energy-rotation",
-        tags = {"energy-usage", "inserter-energy", "power"}
+        tags = {"power-consumption", "inserter-power-consumption", "power"}
     },
     {
         func = energy_randomizer.randomize_energy_shield_energy_per_shield,
         name = "energy-shield-energy",
-        tags = {"energy-usage", "power", "equipment"}
+        tags = {"power-consumption", "power", "equipment"}
     },
     {
         func = entity_randomizer.randomize_beacon_supply_area_distance,
@@ -461,6 +461,7 @@ gather_randomizations.randomization_spec = {
     } -- TODO: util-randomizer (probably needs a rewrite of the file)
 }
 
+-- TODO: Hardcode "all" tag which applies to everything
 -- Specificity:
 --     0  = Very broad categories like "logistic" that include types of gameplay
 --     10 = More specific categories like "power" that include whole gameplay mechanics
@@ -470,137 +471,188 @@ gather_randomizations.randomization_spec = {
 gather_randomizations.tag_spec = {
     {
         name = "logistic",
-        specificity = 0
+        specificity = 0,
+        parents = {}
     },
         {
             name = "transport",
-            specificity = 10
+            specificity = 10,
+            parents = {"logistic"}
         },
             {
                 name = "material-transport",
-                specificity = 20
+                specificity = 20,
+                parents = {"transport"}
             },
             {
                 name = "player-transport",
-                specificity = 20
+                specificity = 20,
+                parents = {"player", "transport"}
             },
                 {
                     name = "personal-vehicle",
-                    specificity = 30
+                    specificity = 30,
+                    parents = {"player-transport"}
                 },
             {
                 name = "transport-speed",
-                specificity = 20
+                specificity = 20,
+                parents = {"transport"}
             },
         {
             name = "positioning",
-            specificity = 10
+            specificity = 10,
+            parents = {"logistic"}
         },
                 {
                     name = "underground-distance",
-                    specificity = 30
+                    specificity = 30,
+                    parents = {"positioning"}
                 },
                 {
                     name = "offsets",
-                    specificity = 30
+                    specificity = 30,
+                    parents = {"positioning"}
                 },
         {
             name = "storage",
-            specificity = 10
+            specificity = 10,
+            parents = {"logistics"}
         },
             {
                 name = "fluid-storage",
-                specificity = 20
+                specificity = 20,
+                parents = {"storage"}
             },
             {
                 name = "inventory",
-                specificity = 20
+                specificity = 20,
+                parents = {"storage"}
             },
                 {
-                    name = "inventory_slots",
-                    specificity = 30
+                    name = "inventory-slots",
+                    specificity = 30,
+                    parents = {"inventory"}
                 },
                     {
                         name = "special_inventory_slots",
-                        specificity = 40
+                        specificity = 40,
+                        parents = {"inventory-slots"}
                     },
+        -- Tied to logistic
+            {
+                name = "belt",
+                specificity = 20,
+                parents = {"logistic"}
+            },
     {
         name = "production",
-        specificity = 0
+        specificity = 0,
+        parents = {}
     },
         {
             name = "power",
-            specificity = 10
+            specificity = 10,
+            parents = {"production"}
         },
             {
                 name = "burner-power",
-                specificity = 20
+                specificity = 20,
+                parents = {"power"}
             },
             {
                 name = "electric-power",
-                specificity = 20
+                specificity = 20,
+                parents = {"power"}
             },
             {
                 name = "fluid-power",
-                specificity = 20
+                specificity = 20,
+                parents = {"fluids", "power"}
             },
             {
                 name = "heat-power",
-                specificity = 20
+                specificity = 20,
+                parents = {"power"}
             },
             {
                 name = "power-production",
-                specificity = 20
+                specificity = 20,
+                parents = {"power"}
             },
             {
                 name = "power-consumption",
-                specificity = 20
+                specificity = 20,
+                parents = {"power"}
             },
+                    {
+                        name = "inserter-power-consumption",
+                        specificity = 40,
+                        parents = {"power-consumption"}
+                    },
         {
             name = "production-speed",
-            specificity = 10
+            specificity = 10,
+            parents = {"production"}
         },
     {
         name = "military",
-        specificity = 0
+        specificity = 0,
+        parents = {}
     },
         {
             name = "pollution",
-            specificity = 10
+            specificity = 10,
+            parents = {"military", "production"}
         },
             {
                 name = "pollution-consumption",
-                specificity = 20
+                specificity = 20,
+                parents = {"pollution"}
             },
             {
                 name = "pollution-production",
-                specificity = 20
+                specificity = 20,
+                parents = {"pollution"}
             },
     -- Not tied to a specific major category
             {
-                name = "belt",
-                specificity = 20
-            },
-            {
                 name = "bots",
-                specificity = 20
+                specificity = 20,
+                parents = {"logistic", "military"}
             },
                 {
                     name = "bot-energy",
-                    specificity = 30
+                    specificity = 30,
+                    parents = {"power", "bots"}
                 },
                     {
                         name = "bot-energy-usage",
-                        specificity = 40
+                        specificity = 40,
+                        parents = {"bot-energy"}
                     },
                     {
                         name = "bot-charging",
-                        specificity = 40
+                        specificity = 40,
+                        parents = {"bot-energy"}
                     },
                 {
                     name = "bot-speed",
-                    specificity = 30
-                }
+                    specificity = 30,
+                    parents = {"bots"}
+                },
+        {
+            name = "player",
+            specificity = 10
+        },
+        {
+            name = "fluids",
+            specificity = 10
+        },
+            {
+                name = "temperature",
+                specificity = 20
+            }
 }
 
 -- List of tables with signature {randomization = [function], blacklist = [table of protoype --> bool of whether blacklisted]}

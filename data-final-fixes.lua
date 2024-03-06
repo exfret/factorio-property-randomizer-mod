@@ -11,7 +11,7 @@ local karma = require("analysis/karma")
 
 local reformat = require("utilities/reformat")
 
---local dependency_utils = require("dependency-graph/dependency-utils")
+local dependency_utils = require("dependency-graph/dependency-utils")
 
 log("Reformatting prototypes...")
 

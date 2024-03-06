@@ -31,7 +31,7 @@ local dependency_utils = {}
 -- source-manual indicates it can be made, but not very well (mining trees being the primary example), currently not implemented
 local dependency_graph = {}
 local recipes_not_added = {}
-local blacklisted_recipes = {
+--[[local blacklisted_recipes = {
   ["empty-crude-oil-barrel"] = true,
   ["empty-heavy-oil-barrel"] = true,
   ["empty-light-oil-barrel"] = true,
@@ -48,11 +48,11 @@ local blacklisted_recipes = {
   ["fill-water-barrel"] = true,
   ["coal-liquefaction"] = true,
   ["advanced-oil-processing"] = true
-}
+}]]
 for _, recipe in pairs(data.raw.recipe) do
-  if not blacklisted_recipes[recipe.name] then
+  --if not blacklisted_recipes[recipe.name] then
     table.insert(recipes_not_added, recipe)
-  end
+  --end
 end
 local crafting_entities_not_added = {}
 for _, crafting_machine_class in pairs(prototype_tables.crafting_machine_classes) do
@@ -269,7 +269,7 @@ for _, itemorfluid in pairs(items_and_fluids_not_added) do
 
   -- Add recipe products
   for _, recipe in pairs(data.raw.recipe) do
-    if not blacklisted_recipes[recipe.name] then
+    --if not blacklisted_recipes[recipe.name] then
       local product_amount = recipe_has_product_amount(recipe, itemorfluid)
 
       if product_amount > 0 then
@@ -279,7 +279,7 @@ for _, itemorfluid in pairs(items_and_fluids_not_added) do
           amount = 1 / product_amount
         })
       end
-    end
+    --end
   end
 
   -- Add minable results
@@ -518,7 +518,8 @@ table.insert(dependency_graph[prg.get_key({type = "itemorfluid_node", name = "wa
   amount = 1 / 1200
 })
 
---[[local new_node_for_ash = {
+--[[
+local new_node_for_ash = {
   type = "itemorfluid_node",
   name = "ash",
   prereqs = {}
@@ -692,6 +693,625 @@ for _, node in pairs(dependency_graph) do
     end
   end
 end
+
+-- Apply swaps if one doesn't depend on the other idea
+
+local dependency_graph_keys = {}
+for key, _ in pairs(dependency_graph) do
+  table.insert(dependency_graph_keys, key)
+end
+
+local node_type_operation = {
+  recipe_node = "AND",
+  itemorfluid_node = "OR",
+  technology_node = "AND",
+  recipe_tech_unlock_node = "OR",
+  recipe_category_node = "OR",
+  crafting_entity_node = "OR",
+  character_crafting_node = "AND", -- No prereqs, so essentially a source
+  mining_machine_node = "OR",
+  resource_node = "AND",
+  resource_category_list_node = "OR",
+  resource_category_node = "OR",
+  character_mining_node = "AND" -- No prereqs, so essentially a source
+}
+
+if false then
+
+-- Which things can be reached without thing
+local function reachable_without(thing)
+  local dependency_graph_without_thing = table.deepcopy(dependency_graph)
+  dependency_graph_without_thing[prg.get_key(thing)] = nil
+
+  local accessible_list = {}
+  local added_to_accessible_list = {}
+
+  local source_nodes = {}
+  local source_nodes_size = 0
+  for _, node in pairs(dependency_graph_without_thing) do
+    node.prereqs_satisfied = {}
+    for _, prereq in pairs(node.prereqs) do
+      node.prereqs_satisfied[prg.get_key(prereq)] = false
+    end
+
+    if node_type_operation[node.type] == "AND" and next(node.prereqs) == nil then
+      source_nodes_size = source_nodes_size + 1
+      source_nodes[source_nodes_size] = node
+    end
+  end
+
+  for i=1,REALLY_BIG_FLOAT_NUM do
+    if i > source_nodes_size then
+      break
+    end
+    local curr_node = source_nodes[i]
+  
+    if not added_to_accessible_list[prg.get_key(curr_node)] then
+      table.insert(accessible_list, curr_node)
+      added_to_accessible_list[prg.get_key(curr_node)] = true
+    end
+    for _, dependent in pairs(curr_node.dependents) do
+      local dependent_node = dependency_graph_without_thing[prg.get_key(dependent)]
+      if dependent_node ~= nil then
+        if not added_to_accessible_list[prg.get_key(dependent_node)] then
+          if node_type_operation[dependent_node.type] == "OR" then
+            source_nodes_size = source_nodes_size + 1
+            source_nodes[source_nodes_size] = dependent_node
+          elseif node_type_operation[dependent_node.type] == "AND" then
+            dependent_node.prereqs_satisfied[prg.get_key(curr_node)] = true
+    
+            local all_prereqs_satisfied = true
+            for _, prereq_satisfied in pairs(dependent_node.prereqs_satisfied) do
+              if prereq_satisfied == false then
+                all_prereqs_satisfied = false
+              end
+            end
+    
+            if all_prereqs_satisfied then
+              source_nodes_size = source_nodes_size + 1
+              source_nodes[source_nodes_size] = dependent_node
+            end
+          end
+        end
+      end
+    end
+  end
+
+  return added_to_accessible_list
+end
+
+local accessible_forbidden_list = {}
+local num_done = 0
+for _, node in pairs(dependency_graph) do
+  if node.type == "technology_node" then
+    log(num_done .. ": " .. serpent.block(node))
+    accessible_forbidden_list[prg.get_key(node)] = reachable_without(node)
+    num_done = num_done + 1
+  end
+end
+
+log(serpent.block(accessible_forbidden_list))
+
+log("did it")
+
+local tech_list = {}
+for _, node in pairs(dependency_graph) do
+  if node.type == "technology_node" then
+    table.insert(tech_list, node)
+  end
+end
+
+local permutation = {}
+for i=1,#tech_list do
+  permutation[i] = i
+end
+for i=1,10000000 do
+  local first = math.random(1,#tech_list)
+  local second = math.random(1,#tech_list)
+
+  if accessible_forbidden_list[prg.get_key(tech_list[first])][prg.get_key(tech_list[second])] and accessible_forbidden_list[prg.get_key(tech_list[second])][prg.get_key(tech_list[first])] then
+    log("succeeded")
+
+    local temp = permutation[first]
+    permutation[first] = permutation[second]
+    permutation[second] = temp
+  end
+end
+
+for i, node in pairs(tech_list) do
+  data.raw.technology[node.name].prerequisites = {}
+
+  for _, prereq in pairs(tech_list[permutation[i]].prereqs) do
+    if prereq.type == "technology_node" then
+      table.insert(data.raw.technology[node.name].prerequisites, prereq.name)
+    end
+  end
+end
+
+end
+
+
+-- Start with recipe_tech_unlock_node
+-- Categorize recipes as a specific building prototype, or intermediate, or science? Basically just classify by class
+-- Recipes with multiple products can be their own class for now
+-- How to prevent from becoming impossible? - pull with priority
+
+local recipe_tech_unlock_node_to_type = {}
+for _, node in pairs(dependency_graph) do
+  if node.type == "recipe_tech_unlock_node" then
+    if data.raw.recipe[node.name] == nil then
+      recipe_tech_unlock_node_to_type[prg.get_key(node)] = "NULL"
+    else
+      local recipe = data.raw.recipe[node.name]
+
+      -- TODO: Move to main reformatting)
+      reformat.recipe(recipe)
+
+      if #recipe.results == 1 then
+        local result = recipe.results[1]
+
+        if recipe.category == "centrifuging" then
+          recipe_tech_unlock_node_to_type[prg.get_key(node)] = "CENTRIFUGE"
+        elseif recipe.category == "chemistry" then
+          recipe_tech_unlock_node_to_type[prg.get_key(node)] = "CHEMISTRY"
+        elseif recipe.category == "oil-processing" then
+          recipe_tech_unlock_node_to_type[prg.get_key(node)] = "OIL"
+        elseif recipe.category == "rocket-building" then
+          recipe_tech_unlock_node_to_type[prg.get_key(node)] = "ROCKET"
+        elseif recipe.category == "smelting" then
+          recipe_tech_unlock_node_to_type[prg.get_key(node)] = "SMELT"
+        else
+          local result_prototype
+          for item_class, _ in pairs(defines.prototypes.item) do
+            if data.raw[item_class][result.name] ~= nil then
+              result_prototype = data.raw[item_class][result.name]
+            end
+          end
+
+          if result_prototype.type ~= "item" then
+            recipe_tech_unlock_node_to_type[prg.get_key(node)] = result_prototype.type
+          else
+            if result_prototype.place_result ~= nil then
+              local result_place_prototype
+              for entity_class, _ in pairs(defines.prototypes.entity) do
+                if data.raw[entity_class][result_prototype.place_result] ~= nil then
+                  result_place_prototype = data.raw[entity_class][result_prototype.place_result]
+                end
+              end
+
+              recipe_tech_unlock_node_to_type[prg.get_key(node)] = result_place_prototype.type
+            else
+              recipe_tech_unlock_node_to_type[prg.get_key(node)] = "INTERMEDIATE"
+            end
+          end
+        end
+      else
+        recipe_tech_unlock_node_to_type[prg.get_key(node)] = "COMPLEX_MEH"
+      end
+    end
+  end
+end
+
+local top_sort = {}
+local source_nodes = {}
+local source_nodes_went_through_table = {1}
+local nodes_left = table.deepcopy(dependency_graph)
+
+function add_to_source(node, top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+  local source_nodes_went_through = source_nodes_went_through_table[1]
+
+  if not source_nodes[prg.get_key(node)] then
+    top_sort[source_nodes_went_through] = node
+    source_nodes[prg.get_key(node)] = true
+    source_nodes_went_through_table[1] = source_nodes_went_through + 1
+    nodes_left[prg.get_key(node)] = nil
+  end
+end
+
+for _, node in pairs(dependency_graph) do
+  if node_type_operation[node.type] == "AND" and #node.prereqs == 0 then
+    add_to_source(node, top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+  end
+end
+
+local num_nodes = 0
+for _, _ in pairs(dependency_graph) do
+  num_nodes = num_nodes + 1
+end
+
+for i=1,num_nodes do
+  if #top_sort >= i then
+    local next_node = top_sort[i]
+
+    if next_node.dependents ~= nil then
+      for _, dependent in pairs(next_node.dependents) do
+        if node_type_operation[dependent.type] == "OR" then
+          add_to_source(table.deepcopy(dependency_graph[prg.get_key(dependent)]), top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+        else
+          local satisfied = true
+          for _, prereq in pairs(dependency_graph[prg.get_key(dependent)].prereqs) do
+            if not source_nodes[prg.get_key(prereq)] then
+              satisfied = false
+            end
+          end
+          if satisfied then
+            add_to_source(table.deepcopy(dependency_graph[prg.get_key(dependent)]), top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+          end
+        end
+      end
+    end
+  end
+end
+
+local recipe_unlock_node_list = {}
+for _, node in pairs(top_sort) do
+  if node.type == "recipe_tech_unlock_node" then
+    table.insert(recipe_unlock_node_list, node)
+  end
+end
+
+-- Recipe unlock node list is fine
+
+local recipe_unlock_node_list_sorted = table.deepcopy(recipe_unlock_node_list)
+local type_to_indices_sorted = {}
+local indices_to_types_sorted = {}
+local types_to_its_sorted = {}
+for ind, node in pairs(recipe_unlock_node_list) do
+  if type_to_indices_sorted[recipe_tech_unlock_node_to_type[prg.get_key(node)]] == nil then
+    type_to_indices_sorted[recipe_tech_unlock_node_to_type[prg.get_key(node)]] = {}
+    types_to_its_sorted[recipe_tech_unlock_node_to_type[prg.get_key(node)]] = 1
+  end
+  table.insert(type_to_indices_sorted[recipe_tech_unlock_node_to_type[prg.get_key(node)]], ind)
+  indices_to_types_sorted[ind] = recipe_tech_unlock_node_to_type[prg.get_key(node)]
+end
+
+-- recipe_unlock_node_list has no repeats
+--log(serpent.block(recipe_unlock_node_list))
+
+prg.shuffle("shuffle_me_pls", recipe_unlock_node_list)
+
+-- After shuffling it's fine
+
+-- Now sort the sub-lists of the recipe_unlock_node_list, then try to carry over
+
+local type_to_indices = {}
+local indices_to_types = {}
+local types_to_its = {}
+for ind, node in pairs(recipe_unlock_node_list) do
+  if type_to_indices[recipe_tech_unlock_node_to_type[prg.get_key(node)]] == nil then
+    type_to_indices[recipe_tech_unlock_node_to_type[prg.get_key(node)]] = {}
+    types_to_its[recipe_tech_unlock_node_to_type[prg.get_key(node)]] = 1
+  end
+  table.insert(type_to_indices[recipe_tech_unlock_node_to_type[prg.get_key(node)]], ind)
+  indices_to_types[ind] = recipe_tech_unlock_node_to_type[prg.get_key(node)]
+end
+
+--log(serpent.block(recipe_tech_unlock_node_to_type))
+-- It is indeed mixed up
+--[[log(serpent.block(indices_to_types))
+log("separator")
+log(serpent.block(indices_to_types_sorted))]]
+
+local function find_reachable_tech_unlock_nodes(tech_unlock_node_list)
+  local top_sort = {}
+  local source_nodes = {}
+  local source_nodes_went_through_table = {1}
+  local nodes_left = table.deepcopy(dependency_graph)
+
+  -- Remove tech unlock nodes except for ones in list
+  for _, node in pairs(nodes_left) do
+    if node.type == "recipe_tech_unlock_node" and not tech_unlock_node_list[prg.get_key(node)] then
+      nodes_left[prg.get_key(node)] = nil
+    end
+  end
+
+  for _, node in pairs(dependency_graph) do
+    if node_type_operation[node.type] == "AND" and #node.prereqs == 0 then
+      add_to_source(node, top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+    end
+  end
+  
+  local num_nodes = 0
+  for _, _ in pairs(dependency_graph) do
+    num_nodes = num_nodes + 1
+  end
+  
+  for i=1,num_nodes do
+    if #top_sort >= i then
+      local next_node = top_sort[i]
+  
+      for _, dependent in pairs(next_node.dependents) do
+        if node_type_operation[dependent.type] == "OR" then
+          add_to_source(table.deepcopy(dependency_graph[prg.get_key(dependent)]), top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+        else
+          local satisfied = true
+          for _, prereq in pairs(dependency_graph[prg.get_key(dependent)].prereqs) do
+            if (not source_nodes[prg.get_key(prereq)]) or (prereq.type == "recipe_tech_unlock_node" and (not tech_unlock_node_list[prg.get_key(prereq)])) then
+              satisfied = false
+            end
+          end
+          if satisfied then
+            add_to_source(table.deepcopy(dependency_graph[prg.get_key(dependent)]), top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+          end
+        end
+      end
+    end
+  end
+
+  local reachable_tech_unlock_nodes = {}
+  for _, node in pairs(top_sort) do
+    if node.type == "recipe_tech_unlock_node" then
+      reachable_tech_unlock_nodes[prg.get_key(node)] = true
+    end
+  end
+
+  return reachable_tech_unlock_nodes
+end
+
+local indices_of_recipe_tech_unlock_nodes_added = {}
+local recipe_unlocks_added = {}
+local recipe_unlock_order = {}
+for i=1,#recipe_unlock_node_list do
+  local reachable_tech_unlock_nodes = find_reachable_tech_unlock_nodes(recipe_unlocks_added)
+
+  for j=1,#recipe_unlock_node_list do
+    if not indices_of_recipe_tech_unlock_nodes_added[j] then
+      -- attempt to add next thing of type at index j
+      local type = indices_to_types[j]
+
+      if reachable_tech_unlock_nodes[prg.get_key(recipe_unlock_node_list_sorted[type_to_indices_sorted[type][types_to_its_sorted[type]]])] then
+        -- This is reachable, so add it
+
+        indices_of_recipe_tech_unlock_nodes_added[j] = true
+        recipe_unlocks_added[prg.get_key(recipe_unlock_node_list_sorted[type_to_indices_sorted[type][types_to_its_sorted[type]]])] = true
+
+        log("indices..." .. type_to_indices_sorted[type][types_to_its_sorted[type]])
+
+        -- But this is a table always: recipe_unlock_node_list_sorted[type_to_indices_sorted[type][types_to_its_sorted[type]]]
+        -- Oh, it's adding copies
+        table.insert(recipe_unlock_order, table.deepcopy(recipe_unlock_node_list_sorted[type_to_indices_sorted[type][types_to_its_sorted[type]]]))
+
+        types_to_its_sorted[type] = types_to_its_sorted[type] + 1
+
+        break
+      end
+    end
+  end
+end
+
+-- recipe_unlock_order has random 0's (these aren't zero values though?)
+-- No more duplicates!
+--log(serpent.block(recipe_unlock_order))
+
+-- Now we just need to fix up the data.raw stuff
+
+-- 183 recipe unlocks, but roboports are counted twice so I guess 182?
+-- No wait chests too so 179?
+--[[local num_recipes = 0
+for _,tech in pairs(data.raw.technology) do
+  if tech.effects ~= nil then
+    for _, effect in pairs(tech.effects) do
+      if effect.type == "unlock-recipe" then
+        num_recipes = num_recipes + 1
+      end
+    end
+  end
+end
+log(num_recipes)]]
+
+-- First remove all normal recipe unlocks
+local technology_unlock_slots = {}
+for _, technology in pairs(data.raw.technology) do
+  -- TODO: Move all reformatting to beginning of data-final-fixes
+  reformat.technology(technology)
+
+  technology_unlock_slots[technology.name] = 0
+
+  local recipe_unlock_effect_ids = {}
+  for i, effect in pairs(technology.effects) do
+    if effect.type == "unlock-recipe" then
+      technology_unlock_slots[technology.name] = technology_unlock_slots[technology.name] + 1
+      recipe_unlock_effect_ids[i] = true
+    end
+  end
+
+  -- TODO: Change 100 here lol
+  for j = 100,0,-1 do
+    if recipe_unlock_effect_ids[j] then
+      table.remove(technology.effects, j)
+    end
+  end
+end
+
+-- num techs is 192
+--[[local num_techs = 0
+for _,_ in pairs(data.raw.technology) do
+  num_techs = num_techs + 1
+end
+log(num_techs)]]
+--[[
+local tech_unlock_number = 1
+log(serpent.block(recipe_unlock_order))
+for i, node in pairs(dependency_graph) do
+  if node.type == "recipe_tech_unlock_node" then
+    --log(serpent.block(recipe_unlock_order[tech_unlock_number]))
+    log(tech_unlock_number)
+    -- recipe_unlock_order[tech_unlock_number] is nil here at 142
+    -- NOTE/TODO: We don't get all the recipe unlocks!! We are missing about 40 but I guess that's fine since there's a lot of stuff with rockets and used uranium and weirdness? 40 is still a lot...
+    if tech_unlock_number >= 142 then
+      break
+    end
+    local recipe_name = node.name--recipe_unlock_order[tech_unlock_number].name
+
+    for _, prereq in pairs(recipe_unlock_order[tech_unlock_number].prereqs) do
+      table.insert(data.raw.technology[prereq.name].effects, {
+        type = "unlock-recipe",
+        recipe = recipe_name,
+        icon = data.raw.recipe[recipe_name].icon,
+        icon_size = data.raw.recipe[recipe_name].icon_size
+      })
+    end
+
+    tech_unlock_number = tech_unlock_number + 1
+  end
+end]]
+
+local blacklisted_recipes_doop = {
+  ["electric-energy-interface"] = true,
+
+}
+
+local innnnn = {}
+for _, blop in pairs(dependency_graph) do
+  if blop.type == "recipe_tech_unlock_node" then
+    if not blacklisted_recipes_doop[blop.name] then
+      innnnn[blop.name] = true
+    end
+  end
+end
+for i, node in pairs(recipe_unlock_node_list_sorted) do
+  if recipe_unlock_order[i] == nil then
+    break
+  end
+  -- We're overwriting the data from node here with data from recipe_unlock_order
+  for _, prereq in pairs(node.prereqs) do
+    if prereq.type == "technology_node" then
+      innnnn[recipe_unlock_order[i].name] = nil
+
+      technology_unlock_slots[prereq.name] = technology_unlock_slots[prereq.name] - 1
+
+      table.insert(data.raw.technology[prereq.name].effects, {
+        type = "unlock-recipe",
+        recipe = recipe_unlock_order[i].name,
+        icon = data.raw.recipe[recipe_unlock_order[i].name].icon,
+        icon_size = data.raw.recipe[recipe_unlock_order[i].name].icon_size
+      })
+    end
+  end
+end
+
+for innn, _ in pairs(innnnn) do
+  for _, technology in pairs(data.raw.technology) do
+    if technology_unlock_slots[technology.name] > 0 then
+      technology_unlock_slots[technology.name] = technology_unlock_slots[technology.name] - 1
+      table.insert(technology.effects, {
+        type = "unlock-recipe",
+        recipe = innn,
+        icon = data.raw.recipe[innn].icon,
+        icon_size = data.raw.recipe[innn].icon_size,
+      })
+
+      break
+    end
+  end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if false then
+
+-- Make accessibility list
+
+local accessible_list = {}
+local added_to_accessible_list = {}
+
+local node_type_operation = {
+  recipe_node = "AND",
+  itemorfluid_node = "OR",
+  technology_node = "AND",
+  recipe_tech_unlock_node = "OR",
+  recipe_category_node = "OR",
+  crafting_entity_node = "OR",
+  character_crafting_node = "AND", -- No prereqs, so essentially a source
+  mining_machine_node = "OR",
+  resource_node = "AND",
+  resource_category_list_node = "OR",
+  resource_category_node = "OR",
+  character_mining_node = "AND" -- No prereqs, so essentially a source
+}
+
+local source_nodes = {}
+local source_nodes_size = 0
+for _, node in pairs(dependency_graph) do
+  node.prereqs_satisfied = {}
+  for _, prereq in pairs(node.prereqs) do
+    node.prereqs_satisfied[prg.get_key(prereq)] = false
+  end
+
+  if node_type_operation[node.type] == "AND" and next(node.prereqs) == nil then
+    source_nodes_size = source_nodes_size + 1
+    source_nodes[source_nodes_size] = node
+  end
+end
+
+for i=1,REALLY_BIG_FLOAT_NUM do
+  if i > source_nodes_size then
+    break
+  end
+  local curr_node = source_nodes[i]
+
+  if not added_to_accessible_list[prg.get_key(curr_node)] then
+    table.insert(accessible_list, curr_node)
+    added_to_accessible_list[prg.get_key(curr_node)] = true
+  end
+  for _, dependent in pairs(curr_node.dependents) do
+    local dependent_node = dependency_graph[prg.get_key(dependent)]
+    if not added_to_accessible_list[prg.get_key(dependent_node)] then
+      if node_type_operation[dependent_node.type] == "OR" then
+        source_nodes_size = source_nodes_size + 1
+        source_nodes[source_nodes_size] = dependent_node
+      elseif node_type_operation[dependent_node.type] == "AND" then
+        dependent_node.prereqs_satisfied[prg.get_key(curr_node)] = true
+
+        local all_prereqs_satisfied = true
+        for _, prereq_satisfied in pairs(dependent_node.prereqs_satisfied) do
+          if prereq_satisfied == false then
+            all_prereqs_satisfied = false
+          end
+        end
+
+        if all_prereqs_satisfied then
+          source_nodes_size = source_nodes_size + 1
+          source_nodes[source_nodes_size] = dependent_node
+        end
+      end
+    end
+  end
+end
+
+local simple_accessible_list = {}
+
+for _, node in pairs(accessible_list) do
+  local new_node = {}
+  new_node.type = node.type
+  new_node.name = node.name
+  table.insert(simple_accessible_list, new_node)
+end
+log(serpent.block(simple_accessible_list))
 
 local costs = {}
 for item_class, _ in pairs(defines.prototypes.item) do
@@ -869,88 +1489,11 @@ end
 
 log(serpent.block(costs))
 
--- Make accessibility list
-
-local accessible_list = {}
-local added_to_accessible_list = {}
-
-local node_type_operation = {
-  recipe_node = "AND",
-  itemorfluid_node = "OR",
-  technology_node = "AND",
-  recipe_tech_unlock_node = "OR",
-  recipe_category_node = "OR",
-  crafting_entity_node = "OR",
-  character_crafting_node = "AND", -- No prereqs, so essentially a source
-  mining_machine_node = "OR",
-  resource_node = "AND",
-  resource_category_list_node = "OR",
-  resource_category_node = "OR",
-  character_mining_node = "AND" -- No prereqs, so essentially a source
-}
-
-local source_nodes = {}
-local source_nodes_size = 0
-for _, node in pairs(dependency_graph) do
-  node.prereqs_satisfied = {}
-  for _, prereq in pairs(node.prereqs) do
-    node.prereqs_satisfied[prg.get_key(prereq)] = false
-  end
-
-  if node_type_operation[node.type] == "AND" and next(node.prereqs) == nil then
-    source_nodes_size = source_nodes_size + 1
-    source_nodes[source_nodes_size] = node
-  end
-end
-
-for i=1,REALLY_BIG_FLOAT_NUM do
-  if i > source_nodes_size then
-    break
-  end
-  local curr_node = source_nodes[i]
-
-  if not added_to_accessible_list[prg.get_key(curr_node)] then
-    table.insert(accessible_list, curr_node)
-    added_to_accessible_list[prg.get_key(curr_node)] = true
-  end
-  for _, dependent in pairs(curr_node.dependents) do
-    local dependent_node = dependency_graph[prg.get_key(dependent)]
-    if not added_to_accessible_list[prg.get_key(dependent_node)] then
-      if node_type_operation[dependent_node.type] == "OR" then
-        source_nodes_size = source_nodes_size + 1
-        source_nodes[source_nodes_size] = dependent_node
-      elseif node_type_operation[dependent_node.type] == "AND" then
-        dependent_node.prereqs_satisfied[prg.get_key(curr_node)] = true
-
-        local all_prereqs_satisfied = true
-        for _, prereq_satisfied in pairs(dependent_node.prereqs_satisfied) do
-          if prereq_satisfied == false then
-            all_prereqs_satisfied = false
-          end
-        end
-
-        if all_prereqs_satisfied then
-          source_nodes_size = source_nodes_size + 1
-          source_nodes[source_nodes_size] = dependent_node
-        end
-      end
-    end
-  end
-end
-
-local simple_accessible_list = {}
-
-for _, node in pairs(accessible_list) do
-  local new_node = {}
-  new_node.type = node.type
-  new_node.name = node.name
-  table.insert(simple_accessible_list, new_node)
-end
-log(serpent.block(simple_accessible_list))
+log("donedone")
 
 -- Do 1000 swaps
 for i=1,1000 do
-  -- Just start at 20 for now lol
+  -- Just start at 50 for now lol
   local first_to_swap = prg.range("dummy", 50, #accessible_list-1)
 
   local temp_value = accessible_list[first_to_swap]
@@ -2272,4 +2815,5 @@ local recipes = data.raw.recipe
 
 return dependency_utils]]
 
+end
 end
