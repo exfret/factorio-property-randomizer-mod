@@ -12,6 +12,8 @@ Clean up data-final-fixes
 
 Next releases:
 
+  - Use serpent.block or dump and such rather than prg.get_key
+
   - Have simply including reformat do the reformatting so I don't have to call any of its functions
   - Add chaos mode
 

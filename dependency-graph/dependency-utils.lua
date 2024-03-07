@@ -6,6 +6,8 @@ local prototype_tables = require("randomizer-parameter-data/prototype-tables")
 local reformat = require("utilities/reformat")
 
 local VOID_COST = 1
+local do_recipe_unlock_nodes = false
+local do_tech_node_randomization = true
 
 -- TODO: Add support for starting items
 -- TODO: Add support for trees and rocks (they are special cases since they're not "automatable")
@@ -606,10 +608,10 @@ table.insert(new_node_for_gas.prereqs, {
   name = "water",
   amount = 1
 })
-dependency_graph[prg.get_key(new_node_for_gas)] = new_node_for_gas
+dependency_graph[prg.get_key(new_node_for_gas)] = new_node_for_gas]]
 
 -- TEST
-local new_node_for_wood = {
+--[[local new_node_for_wood = {
   type = "itemorfluid_node",
   name = "wood",
   prereqs = {}
@@ -619,7 +621,19 @@ table.insert(new_node_for_wood.prereqs, {
   name = "water",
   amount = 1
 })
-dependency_graph[prg.get_key(new_node_for_wood)] = new_node_for_wood]]
+local new_node_for_basic_tech_card = {
+  type = "itemorfluid_node",
+  name = "basic-tech-card",
+  prereqs = {
+    {
+      type = "itemorfluid_node",
+      name = "wood",
+      amount = 1
+    }
+  }
+}
+dependency_graph[prg.get_key(new_node_for_wood)] = new_node_for_wood
+dependency_graph[prg.get_key(new_node_for_basic_tech_card)] = new_node_for_basic_tech_card]]
 
 log("Wrapping up forward connections...")
 
@@ -830,6 +844,18 @@ end
 
 end
 
+function add_to_source(node, top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+  local source_nodes_went_through = source_nodes_went_through_table[1]
+
+  if not source_nodes[prg.get_key(node)] then
+    top_sort[source_nodes_went_through] = node
+    source_nodes[prg.get_key(node)] = true
+    source_nodes_went_through_table[1] = source_nodes_went_through + 1
+    nodes_left[prg.get_key(node)] = nil
+  end
+end
+
+if do_recipe_unlock_nodes then
 
 -- Start with recipe_tech_unlock_node
 -- Categorize recipes as a specific building prototype, or intermediate, or science? Basically just classify by class
@@ -896,17 +922,6 @@ local top_sort = {}
 local source_nodes = {}
 local source_nodes_went_through_table = {1}
 local nodes_left = table.deepcopy(dependency_graph)
-
-function add_to_source(node, top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
-  local source_nodes_went_through = source_nodes_went_through_table[1]
-
-  if not source_nodes[prg.get_key(node)] then
-    top_sort[source_nodes_went_through] = node
-    source_nodes[prg.get_key(node)] = true
-    source_nodes_went_through_table[1] = source_nodes_went_through + 1
-    nodes_left[prg.get_key(node)] = nil
-  end
-end
 
 for _, node in pairs(dependency_graph) do
   if node_type_operation[node.type] == "AND" and #node.prereqs == 0 then
@@ -1065,8 +1080,6 @@ for i=1,#recipe_unlock_node_list do
         indices_of_recipe_tech_unlock_nodes_added[j] = true
         recipe_unlocks_added[prg.get_key(recipe_unlock_node_list_sorted[type_to_indices_sorted[type][types_to_its_sorted[type]]])] = true
 
-        log("indices..." .. type_to_indices_sorted[type][types_to_its_sorted[type]])
-
         -- But this is a table always: recipe_unlock_node_list_sorted[type_to_indices_sorted[type][types_to_its_sorted[type]]]
         -- Oh, it's adding copies
         table.insert(recipe_unlock_order, table.deepcopy(recipe_unlock_node_list_sorted[type_to_indices_sorted[type][types_to_its_sorted[type]]]))
@@ -1206,8 +1219,132 @@ for innn, _ in pairs(innnnn) do
   end
 end
 
+end
 
+if do_tech_node_randomization then
 
+local function find_reachable_tech_unlock_nodes_top(added_techs)
+  local top_sort = {}
+  local source_nodes = {}
+  local source_nodes_went_through_table = {1}
+  local nodes_left = table.deepcopy(dependency_graph)
+
+  -- Remove tech unlock nodes except for ones in list
+  for _, node in pairs(nodes_left) do
+    if node.type == "technology_node" and (not added_techs[prg.get_key(node)]) then
+      nodes_left[prg.get_key(node)] = nil
+    end
+  end
+
+  for _, node in pairs(dependency_graph) do
+    if node_type_operation[node.type] == "AND" and #node.prereqs == 0 then
+      add_to_source(node, top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+    end
+  end
+  
+  local num_nodes = 0
+  for _, _ in pairs(dependency_graph) do
+    num_nodes = num_nodes + 1
+  end
+  
+  for i=1,num_nodes do
+    if #top_sort >= i then
+      local next_node = top_sort[i]
+  
+      for _, dependent in pairs(next_node.dependents) do
+        if node_type_operation[dependent.type] == "OR" then
+          add_to_source(table.deepcopy(dependency_graph[prg.get_key(dependent)]), top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+        else
+          local satisfied = true
+          for _, prereq in pairs(dependency_graph[prg.get_key(dependent)].prereqs) do
+            if not source_nodes[prg.get_key(prereq)] or (prereq.type == "technology_node" and (not added_techs[prg.get_key(prereq)])) then
+              satisfied = false
+            end
+          end
+          if satisfied then
+            add_to_source(table.deepcopy(dependency_graph[prg.get_key(dependent)]), top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+          end
+        end
+      end
+    end
+  end
+
+  local reachable_tech_unlock_nodes = {}
+  for _, node in pairs(top_sort) do
+    if node.type == "technology_node" then
+      reachable_tech_unlock_nodes[prg.get_key(node)] = true
+    end
+  end
+
+  return {top_sort = top_sort, reachable = reachable_tech_unlock_nodes}
+end
+
+local all_techs = {}
+for _, tech in pairs(data.raw.technology) do
+  all_techs[prg.get_key({type = "technology_node", name = tech.name})] = true
+end
+local top_sort = find_reachable_tech_unlock_nodes_top(all_techs).top_sort
+
+log(serpent.block(top_sort))
+
+local tech_sort = {}
+for _, node in pairs(top_sort) do
+  if node.type == "technology_node" then
+    table.insert(tech_sort, table.deepcopy(node))
+  end
+end
+
+log(serpent.block(tech_sort))
+
+--[[for i, tech in pairs(tech_sort) do
+
+end]]
+
+local tech_shuffle = table.deepcopy(tech_sort)
+prg.shuffle("pls_shuffle", tech_shuffle)
+
+-- tech_sort empty here
+
+local new_new_dependency_graph = table.deepcopy(dependency_graph)
+local added_techs = {}
+local stripped_nodes = {}
+for i=1,#tech_sort do
+  local reachable_nodes = find_reachable_tech_unlock_nodes_top(added_techs).reachable
+
+  -- move j's prereqs to i
+  for j=1,#tech_shuffle do
+    if (not stripped_nodes[prg.get_key(tech_shuffle[j])]) and reachable_nodes[prg.get_key(tech_shuffle[j])] then
+      log("boop  " .. i .. " : " .. j)
+  
+      local node_i = tech_sort[i]
+      local node_j = tech_shuffle[j]
+  
+      new_new_dependency_graph[prg.get_key(node_i)].prereqs = node_j.prereqs
+
+      added_techs[prg.get_key(node_i)] = true
+      stripped_nodes[prg.get_key(node_j)] = true
+
+      break
+    end
+  end
+end
+
+for _, node in pairs(new_new_dependency_graph) do
+  if node.type == "technology_node" then
+    data.raw.technology[node.name].prerequisites = {}
+    for _, prereq in pairs(node.prereqs) do
+      if prereq.type == "technology_node" then
+        table.insert(data.raw.technology[node.name].prerequisites, prereq.name)
+      end
+    end
+  end
+end
+
+end
+
+for _, tech in pairs(data.raw.technology) do
+  tech.upgrade = false
+end
 
 
 
