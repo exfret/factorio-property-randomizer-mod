@@ -2,6 +2,10 @@
 
 local walk_params = {}
 
+walk_params.autoplace_control = {
+  bias = 0.53
+}
+
 walk_params.electric_pole_supply_area = {
   bias = 0.565
 }
@@ -13,7 +17,7 @@ walk_params.equipement_grid_size = {
 
 -- Make equipment sizes err towards smaller so that poking holes doesn't increase size as much
 walk_params.equipment_size = {
-  bias = 0.4
+  bias = 0.6 -- TODO: Check that equipment size has larger_is_better
 }
 
 walk_params.gun_damage_modifier = {
@@ -38,6 +42,10 @@ walk_params.recipe_crafting_time = {
 
 walk_params.stack_size = {
   bias = 0.56 -- It's better to give the player enormously large stack sizes than to have enormously small ones, so skew to larger ones
+}
+
+walk_params.temperature = { -- Since temperatures are often determined by the worst one in the chain, make bias higher to account for that
+  bias = 0.55
 }
 
 walk_params.tile_walking_speed_modifier = {

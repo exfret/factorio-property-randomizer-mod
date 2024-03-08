@@ -2,6 +2,7 @@ require("random-utils/randomization-algorithms")
 
 local property_info = require("randomizer-parameter-data/property-info-tables")
 local prototype_tables = require("randomizer-parameter-data/prototype-tables")
+local walk_params = require("randomizer-parameter-data/walk-params-tables")
 
 ---------------------------------------------------------------------------------------------------
 -- randomize_power_production_properties
@@ -23,18 +24,21 @@ function randomize_heat_buffer_power_production_properties (prototype, heat_buff
         prototype = prototype,
         tbl = heat_buffer,
         property = "max_temperature",
+        walk_params = walk_params.temperature,
         property_info = property_info.temperature
       },
       {
         prototype = prototype,
         tbl = heat_buffer,
         property = "default_temperature",
+        walk_params = walk_params.temperature,
         property_info = property_info.temperature
       },
       {
         prototype = prototype,
         tbl = heat_buffer,
         property = "min_working_temperature",
+        walk_params = walk_params.temperature,
         property_info = property_info.temperature
       }
     }
@@ -99,7 +103,7 @@ function randomize_energy_source_power_production_properties (prototype, energy_
       prototype = prototype,
       tbl = energy_source,
       property = "effectivity",
-      property_info = property_info.power
+      property_info = property_info.effectivity
     }
   elseif energy_source.type == "heat" then
     -- This has the same properties as a heat buffer and is randomized the same way if type == heat
@@ -111,7 +115,7 @@ function randomize_energy_source_power_production_properties (prototype, energy_
       prototype = prototype,
       tbl = energy_source,
       property = "effectivity",
-      property_info = property_info.power
+      property_info = property_info.effectivity
     }
 
     -- TODO: there are complicated rules on how to "fill in" this type when it is not nil... get around to using those rules later
@@ -129,6 +133,7 @@ function randomize_energy_source_power_production_properties (prototype, energy_
         prototype = prototype,
         tbl = energy_source,
         property = "maximum_temperature",
+        walk_params = walk_params.temperature,
         property_info = property_info.power
       }
     end
@@ -163,6 +168,7 @@ function randomize_power_production_properties ()
     randomize_numerical_property{
       prototype = prototype,
       property = "target_temperature",
+      walk_params = walk_params.temperature,
       property_info = property_info.temperature
     }
   end
@@ -215,6 +221,7 @@ function randomize_power_production_properties ()
     randomize_numerical_property{
       prototype = prototype,
       property = "maximum_temperature",
+      walk_params = walk_params.temperature,
       property_info = property_info.temperature
     }
 

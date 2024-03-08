@@ -80,12 +80,12 @@ local function initialize_param_walk_params_values(params)
     params.walk_params = {}
   end
   
-  local bias, num_steps
+  local bias = settings.startup["propertyrandomizer-bias"].value
   if params.walk_params.bias ~= nil then
-    bias = params.walk_params.bias
-  else
-    bias = settings.startup["propertyrandomizer-bias"].value
+    bias = bias + (params.walk_params.bias - 0.5)
   end
+
+  local num_steps
   if params.walk_params.num_steps ~= nil then
     num_steps = params.walk_params.num_steps
   else

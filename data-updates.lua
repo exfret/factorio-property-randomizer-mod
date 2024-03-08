@@ -3,6 +3,8 @@ require("config")
 require("random-utils/random")
 require("random-utils/randomization-algorithms")
 
+local walk_params = require("randomizer-parameter-data/walk-params-tables")
+
 prg.seed(seed_setting)
 
 local preset_controls = {}
@@ -10,10 +12,10 @@ local preset_controls = {}
 for _, autoplace_control in pairs(data.raw["autoplace-control"]) do
   local curr_control = {}
   if autoplace_control.richness ~= nil then
-    curr_control.richness = randomize_numerical_property({prg_key = prg.get_key(autoplace_control)})
+    curr_control.richness = randomize_numerical_property({prg_key = prg.get_key(autoplace_control), walk_params = walk_params.autoplace_control})
   end
-  curr_control.size = randomize_numerical_property({prg_key = prg.get_key(autoplace_control)})
-  curr_control.frequency = randomize_numerical_property({prg_key = prg.get_key(autoplace_control)})
+  curr_control.size = randomize_numerical_property({prg_key = prg.get_key(autoplace_control), walk_params = walk_params.autoplace_control})
+  curr_control.frequency = randomize_numerical_property({prg_key = prg.get_key(autoplace_control), walk_params = walk_params.autoplace_control})
 
   preset_controls[autoplace_control.name] = curr_control
 end

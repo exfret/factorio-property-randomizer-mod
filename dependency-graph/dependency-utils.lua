@@ -6,7 +6,7 @@ local prototype_tables = require("randomizer-parameter-data/prototype-tables")
 local reformat = require("utilities/reformat")
 
 local VOID_COST = 1
-local do_recipe_unlock_nodes = false
+local do_recipe_unlock_nodes = true
 local do_tech_node_randomization = true
 
 -- TODO: Add support for starting items

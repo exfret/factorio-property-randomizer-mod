@@ -144,6 +144,7 @@ property_info.discrete_positive = {
 
 property_info.effectivity = {
   min = 0.001,
+  min_factor = 0.7, -- Low effectivity can break things, so don't allow it to get too low
   round = {
     [2] = {
       modulus = 0.01

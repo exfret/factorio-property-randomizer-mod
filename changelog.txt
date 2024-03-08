@@ -1,10 +1,13 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.6
-Date: ?
+Date: 2024.03.07
   Changes:
     - After recent updates, I no longer recommend updating this mod mid-run, so I added a message not to do so
+    - Made some power properties randomized to be more forgiving
+    - Made the setting bias additive with pre-defined biases
+    - Made autoplace settings for randomized map preset more forgiving
   Bugfixes:
-    - Clamping from last version was too extreme in some cases, leading to things getting needlessly re-randomized
+    - Clamping from last version was too extreme in some cases, leading to things getting needlessly randomized differently
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.5
 Date: 2024.03.04
