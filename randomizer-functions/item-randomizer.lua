@@ -8,6 +8,8 @@ local walk_params = require("randomizer-parameter-data/walk-params-tables")
 require("random-utils/random")
 require("random-utils/randomization-algorithms")
 
+local reformat = require("utilities/reformat")
+
 function randomize_capsule_action (prototype, capsule_action)
   if capsule_action.type == "throw" then
     randomize_attack_parameters(prototype, capsule_action.attack_parameters)
@@ -109,7 +111,7 @@ function randomize_gun_damage_modifier ()
       tbl = prototype.attack_parameters,
       property = "damage_modifier",
       walk_params = walk_params.gun_damage_modifier,
-      property_info = property_info.limited_range
+      property_info = property_info.limited_range_strict
     }
   end
 end
@@ -139,7 +141,7 @@ function randomize_gun_speed ()
       prototype = prototype,
       tbl = prototype.attack_parameters,
       property = "cooldown", -- I would round, but that requires taking the inverses into account,
-      property_info = property_info.limited_range
+      property_info = property_info.gun_cooldown
     }
   end
 end
@@ -160,12 +162,35 @@ function randomize_item_stack_sizes ()
         end
       end
 
+      local property_info_to_use = property_info.stack_size
+      -- Use sensitive stack size if it is a building or if it is used in making a building
+      for _, recipe in pairs(data.raw.recipe) do
+        reformat.recipe(recipe) -- TODO: Reformat beforehand and remove this
+
+        for _, ingredient in pairs(recipe.ingredients) do
+          if ingredient.name == prototype.name then
+            for _, result in pairs(recipe.results) do
+              for item_class, _ in pairs(defines.prototypes.item) do
+                if item_class[result.name] ~= nil then
+                  if item_class[result.name].place_result ~= nil then
+                    property_info_to_use = property_info.stack_size_sensitive
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+      if prototype.place_result ~= nil then
+        property_info_to_use = property_info.stack_size_sensitive
+      end
+
       if not not_stackable then
         randomize_numerical_property{
           prototype = prototype,
           property = "stack_size",
           inertia_function = inertia_function.stack_size,
-          property_info = property_info.stack_size,
+          property_info = property_info_to_use,
           walk_params = walk_params.stack_size
         }
       end

@@ -1,1 +1,29 @@
+--------------------------------------------------------------------------------
+-- Big randomizations
+--------------------------------------------------------------------------------
+
+1. Recipes
+2. Tech tree
+3. Tech unlocks
+
+Whether things are fluids/items?
+Projectiles?
+Recipe outputs
+
+--------------------------------------------------------------------------------
+-- Compatibilities
+--------------------------------------------------------------------------------
+
 I should make special vanilla compatibilities
+
+--------------------------------------------------------------------------------
+-- Upgrade lines
+--------------------------------------------------------------------------------
+
+For the upgrade lines, we need to randomize prototypes, not properties at a time.
+
+Maybe go through data.raw and attach the prototypes somehow to the properties?
+
+For now we can just blacklist upgradeables and randomize them in the new way after.
+
+How to assign numbers to chains? We could do a topological sort, or just assign a random subset to one chain and repeat. I think the latter method has problems though...

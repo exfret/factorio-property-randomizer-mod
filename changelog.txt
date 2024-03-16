@@ -1,6 +1,37 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.8
+Date: ?
+  Balancing:
+    - Min tile walk speed modifier is now 80% after miserable experiences during testing
+---------------------------------------------------------------------------------------------------
+Version: 0.2.7
+Date: 2024.03.14
+  Features:
+    - Got important progress on tech tree and unlock randomizations
+    - Reload time is now randomized to be between its old value and half of its old value doubled, thanks sassxolotl!
+    - When "the rest" is checked, icon shifts are randomized
+  Changes:
+    - Some bonuses for being a burner energy source will be removed in future versions
+    - Electric poles will no longer be distance-based randomized in a future version
+    - Roboport logistic connection distance will no longer be hard-linked to logistic area in the future
+    - Made rounding mode hidden for now while it's broken
+    - Made all mins/max's "soft" in the sense that they won't change properties that were already smaller/larger
+  Organization:
+    - Started reorganizing code completely with prototype-focused randomization rather than property-focused
+  Balancing:
+    - Added more limits on stack sizes and a lot of other properties
+    - Removed lab research speed penalty
+    - Made split bias modifier based on chaos factor
+    - Capped how biased things can be
+    - Made some walk_params values closer to 0.5
+    - It's now enforced that the inserter and burner inserter can't both be useless
+  Bugfixes:
+    - Fixed labs not having module slots
+    - Fixed bug where points in space randomization applied property fixes to points themselves rather than their coordinates
+    - A lot of properties were randomized in the wrong direction (i.e.- randomized to "good" with a "bad" bias and vice versa
+---------------------------------------------------------------------------------------------------
 Version: 0.2.6
-Date: 2024.03.07
+Date: 2024.03.08
   Changes:
     - After recent updates, I no longer recommend updating this mod mid-run, so I added a message not to do so
     - Made some power properties randomized to be more forgiving

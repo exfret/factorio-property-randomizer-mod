@@ -37,6 +37,16 @@ script.on_init(function ()
       return page_content(data.page_name, data.player_index, data.element)
     end
   })]]
+
+  local new_table = {}
+  for load_value, key in pairs(game.item_prototypes["prototype-data"].entity_type_filters) do
+    table.insert(new_table, load_value)
+  end
+
+  --[[for _, value in pairs(new_table) do
+    local _, load_value = serpent.load(value)
+    log(serpent.block(load_value))
+  end]]
 end)
 
 script.on_event(defines.events.on_tick, function(event)

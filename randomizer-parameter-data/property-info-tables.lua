@@ -2,6 +2,7 @@ local property_info = {}
 
 property_info.ammo_type_range_modifier = {
   min_factor = 1 / 3,
+  max_factor = 3,
   round = {
     [2] = {
       modulus = 0.1
@@ -26,6 +27,7 @@ property_info.attack_parameters_cooldown = {
 
 property_info.attack_parameters_range = {
   min_factor = 1 / 3,
+  max_factor = 3,
   round = {
     [2] = {
       modulus = 0.1
@@ -39,6 +41,7 @@ property_info.attack_parameters_range = {
 property_info.belt_speed = {
   min = 0.00390625,
   max = 255,
+  min_factor = 1 / 4,
   round = {
     [1] = {
       modulus = 0.00390625
@@ -54,6 +57,8 @@ property_info.belt_speed = {
 
 property_info.bot_speed = {
   min = 0.1 / 216,
+  min_factor = 1 / 2,
+  max_factor = 5,
   round = {
     [2] = {
       modulus = 1 / 216
@@ -62,11 +67,15 @@ property_info.bot_speed = {
 }
 
 property_info.car_rotation_speed = {
-  min = 0.001
+  min = 0.001,
+  min_factor = 1 / 4,
+  max_factor = 4
 }
 
 property_info.character_respawn_time = {
   min = 1,
+  min_factor = 1 / 3,
+  max_factor = 3,
   round = {
     [2] = {
       round = 60
@@ -76,6 +85,8 @@ property_info.character_respawn_time = {
 }
 
 property_info.character_corpse_time_to_live = {
+  min_factor = 1 / 5,
+  max_factor = 20,
   round = {
     [2] = {
       modulus = 3600
@@ -85,6 +96,8 @@ property_info.character_corpse_time_to_live = {
 
 property_info.charging_station_count = {
   min = 1,
+  min_factor = 1 / 3,
+  max_factor = 3,
   round = {
     [1] = {
       modulus = 1
@@ -98,12 +111,7 @@ property_info.charging_station_count = {
 -- Note that this is actually a factor that the real cliff sizes are multiplied by
 property_info.cliff_size = {
   min = 0.01,
-  max = 100,
-  round = { -- Cliff sizes don't need to be randomized
-    [1] = {},
-    [2] = {},
-    [3] = {}
-  },
+  max = 20,
   lower_is_better = true
 }
 
@@ -116,7 +124,18 @@ property_info.consumption_effect = {
     [3] = {
       modulus = 0.1
     }
-  }
+  },
+  lower_is_better = true
+}
+
+property_info.consumption_modifier = {
+  min = -0.5,
+  max = 4
+}
+
+property_info.damage_modifier = {
+  min = -0.5,
+  max = 2.5
 }
 
 property_info.discrete = {
@@ -145,6 +164,21 @@ property_info.discrete_positive = {
 property_info.effectivity = {
   min = 0.001,
   min_factor = 0.7, -- Low effectivity can break things, so don't allow it to get too low
+  max_factor = 5,
+  round = {
+    [2] = {
+      modulus = 0.01
+    },
+    [3] = {
+      modulus = 0.1
+    }
+  }
+}
+
+property_info.effectivity_beacon = {
+  min = 0.001,
+  min_factor = 0.5,
+  max_factor = 2,
   round = {
     [2] = {
       modulus = 0.01
@@ -158,12 +192,25 @@ property_info.effectivity = {
 -- TODO: Only apply min if the property was originally zero
 property_info.energy = {
   min = 0.01,
+  min_factor = 1 / 2,
+  max_factor = 2,
   round = {
     [2] = {
       left_digits_to_keep = 3,
       modulus = 1
     }
   }
+}
+
+property_info.entity_interaction_mining_speed = {
+  min_factor = 1 / 3,
+  max_factor = 2,
+  lower_is_better = true
+}
+
+property_info.entity_interaction_repair_speed = {
+  min_factor = 1 / 4,
+  max_factor = 5
 }
 
 property_info.equipment_grid = {
@@ -175,6 +222,8 @@ property_info.equipment_grid = {
 }
 
 property_info.fluid_emissions_multiplier = {
+  min_factor = 1 / 4,
+  max_factor = 4,
   round = {
     [2] = {
       modulus = 0.01
@@ -199,13 +248,38 @@ property_info.fluid_usage = {
   lower_is_better = true
 }
 
+-- Used by, e.g.- generators, which just produce more power with more usage
+property_info.fluid_usage_good = {
+  min = 0.1,
+  min_factor = 1 / 4,
+  max_factor = 5,
+  round = {
+    [2] = {
+      left_digits_to_keep = 3
+    },
+    [3] = {
+      modulus = 1
+    }
+  }
+}
+
 property_info.gate_opening_speed = {
-  min = 0.01 / 60
+  min = 0.01 / 60,
+  min_factor = 1 / 4,
+  max_factor = 10
+}
+
+property_info.gun_cooldown = {
+  min = 0.01666,
+  min_factor = 1 / 3,
+  max_factor = 3,
+  lower_is_better = true
 }
 
 property_info.gun_shooting_range = {
   min = 0.1,
-  min_factor = 1 / 5,
+  min_factor = 1 / 4,
+  max_factor = 3,
   round = {
     [2] = {
       modulus = 1
@@ -214,11 +288,15 @@ property_info.gun_shooting_range = {
 }
 
 property_info.inserter_extension_speed = {
+  min_factor = 1 / 4,
+  max_factor = 30,
   min = 0.01
 }
 
 property_info.inserter_rotation_speed = {
   min = 10 / (360 * 60),
+  min_factor = 1 / 4,
+  max_factor = 30,
   round = {
     [2] = {
       modulus = 10 / (360 * 60)
@@ -233,6 +311,8 @@ property_info.inserter_rotation_speed = {
 property_info.inventory_slots = {
   min = 1,
   max = 10,
+  min_factor = 1 / 4,
+  max_factor = 6,
   round = {
     [1] = {
       modulus = 1
@@ -246,6 +326,8 @@ property_info.inventory_slots = {
 property_info.large_inventory = {
   min = 5,
   max = 65535,
+  min_factor = 1 / 4,
+  max_factor = 8,
   round = {
     [1] = {
       modulus = 1
@@ -264,7 +346,14 @@ property_info.limited_range = {
   max_factor = 4
 }
 
+property_info.limited_range_strict = {
+  min_factor = 1 / 2,
+  max_factor = 2
+}
+
 property_info.machine_pollution = {
+  min_factor = 1 / 4,
+  max_factor = 3,
   round = {
     [3] = {
       modulus = 1
@@ -275,7 +364,8 @@ property_info.machine_pollution = {
 
 property_info.machine_speed = {
   min = 0.001,
-  min_factor = 1 / 10,
+  min_factor = 1 / 3,
+  max_factor = 5,
   round = {
     [2] = {
       modulus = 0.01
@@ -288,7 +378,8 @@ property_info.machine_speed = {
 
 property_info.magazine_size = {
   min = 1,
-  min_factor = 1 / 5,
+  min_factor = 1 / 4,
+  max_factor = 10,
   round = {
     [2] = {
       modulus = 1
@@ -299,6 +390,21 @@ property_info.magazine_size = {
 property_info.max_health = {
   min = 1,
   min_factor = 1 / 20,
+  max_factor = 10,
+  round = {
+    [1] = { -- Due to weird display bugs, I'm rounding even in no rounding mode
+      modulus = 1
+    },
+    [2] = {
+      modulus = 5
+    }
+  }
+}
+
+property_info.max_health_sensitive = {
+  min = 1,
+  min_factor = 1 / 3,
+  max_factor = 3,
   round = {
     [1] = { -- Due to weird display bugs, I'm rounding even in no rounding mode
       modulus = 1
@@ -310,12 +416,14 @@ property_info.max_health = {
 }
 
 property_info.mining_drill_dropoff = {
-  max_factor = 1
+  max = 10
 }
 
 property_info.neighbour_bonus = {
+  min = 0,
+  min_factor = 1 / 4,
+  max_factor = 3,
   round = {
-    min = 0,
     [2] = {
       modulus = 0.1
     }
@@ -324,6 +432,8 @@ property_info.neighbour_bonus = {
 
 property_info.offshore_pumping_speed = {
   min = 10 / 60,
+  min_factor = 1 / 20,
+  max_factor = 10,
   round = {
     [2] = {
       modulus = 10 / 60
@@ -343,6 +453,8 @@ property_info.pollution_effect = {
 
 property_info.power = {
   min = 0.01,
+  min_factor = 1 / 3,
+  max_factor = 3,
   round = {
     [2] = {
       left_digits_to_keep = 3,
@@ -350,6 +462,18 @@ property_info.power = {
     }
   },
   lower_is_better = true
+}
+
+property_info.power_generation = {
+  min = 0.01,
+  min_factor = 1 / 2,
+  max_factor = 2,
+  round = {
+    [2] = {
+      left_digits_to_keep = 3,
+      modulus = 0.01
+    }
+  }
 }
 
 property_info.productivity_effect = {
@@ -364,11 +488,14 @@ property_info.productivity_effect = {
 
 -- Make projectile damage not tooo bad
 property_info.projectile_damage = {
-  min_factor = 1 / 2
+  min_factor = 1 / 2,
+  max_factor = 3
 }
 
 property_info.pump_pumping_speed = {
   min = 100 / 60,
+  min_factor = 1 / 5,
+  max_factor = 5,
   round = {
     [2] = {
       modulus = 10 / 60,
@@ -377,8 +504,24 @@ property_info.pump_pumping_speed = {
   }
 }
 
+property_info.radar_reveal_areas = {
+  min = 3,
+  min_factor = 1 / 2,
+  max_factor = 3,
+  round = {
+    [2] = {
+      modulus = 1
+    },
+    [3] = {
+      modulus = 1
+    }
+  }
+}
+
 property_info.recipe_crafting_time = {
   min = 0.01,
+  min_factor = 1 / 10,
+  max_factor = 4,
   round = {
     [2] = {
       modulus = 0.1
@@ -389,15 +532,18 @@ property_info.recipe_crafting_time = {
 
 property_info.repair_tool_speed = {
   min = 0.1,
+  min_factor = 1 / 10,
+  max_factor = 2,
   round = {
     [2] = {
       modulus = 0.1
     }
-  }
+  },
+  lower_is_better = true
 }
 
 property_info.researching_speed = {
-  min_factor = 1 / 20,
+  min_factor = 1 / 4,
   round = {
     [2] = {
       modulus = 0.1
@@ -426,7 +572,8 @@ property_info.resistance_percent = {
 
 property_info.roboport_radius = {
   min = 1,
-  min_factor = 1 / 4,
+  min_factor = 1 / 2,
+  max_factor = 4,
   round = {
     [2] = {
       modulus = 1
@@ -439,6 +586,7 @@ property_info.roboport_radius = {
 
 property_info.small_inventory = {
   min = 0,
+  max_factor = 4, -- TODO: Add leniency so that 0 slots can still be randomized to 1 slot if necessary
   round = {
     [1] = {
       modulus = 1
@@ -454,6 +602,8 @@ property_info.small_inventory = {
 
 property_info.small_nonempty_inventory = {
   min = 1,
+  min_factor = 1 / 4,
+  max_factor = 4,
   round = {
     [1] = {
       modulus = 1
@@ -479,6 +629,21 @@ property_info.speed_effect = {
 property_info.stack_size = {
   min = 1,
   min_factor = 2 / 5,
+  max_factor = 10,
+  round = {
+    [1] = {
+      modulus = 1
+    },
+    [2] = {
+      modulus = 5
+    }
+  }
+}
+
+property_info.stack_size_sensitive = {
+  min = 1,
+  min_factor = 3 / 5,
+  max_factor = 10,
   round = {
     [1] = {
       modulus = 1
@@ -490,8 +655,11 @@ property_info.stack_size = {
 }
 
 property_info.supply_area = {
-  min = 2,
+  min = 3,
   max = 64,
+  min_factor = 1 / 2,
+  max_factor = 5,
+  max_factor = 10,
   round = {
     [1] = {
       modulus = 0.5
@@ -522,6 +690,7 @@ property_info.tech_count = {
 
 property_info.tech_time = {
   min = 0.01,
+  min_factor = 1 / 5,
   max_factor = 5,
   round = {
     [2] = {
@@ -532,7 +701,8 @@ property_info.tech_time = {
 }
 
 property_info.temperature = {
-  min = 110,
+  min = 120,
+  max_factor = 3,
   round = {
     [2] = {
       modulus = 1
@@ -540,8 +710,10 @@ property_info.temperature = {
   }
 }
 
-property_info.tile_walking_speed_modifier = {
-  min = 0.25,
+property_info.tile_walking_speed_modifier = { -- TODO: Center around 1 better
+  min = 0.8,
+  min_factor = 4 / 5,
+  max_factor = 2,
   round = {
     [2] = {
       modulus = 0.01
@@ -562,6 +734,8 @@ property_info.tool_durability = {
 }
 
 property_info.trigger_damage = {
+  min_factor = 0.5,
+  max_factor = 2,
   round = {
     [2] = {
       modulus = 0.1
@@ -588,6 +762,8 @@ property_info.underground_belt_length = {
 property_info.wire_distance = {
   min = 1.5,
   max = 64,
+  min_factor = 1 / 3,
+  max_factor = 10,
   round = {
     [3] = {
       modulus = 1

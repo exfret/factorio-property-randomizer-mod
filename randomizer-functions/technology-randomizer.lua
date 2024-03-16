@@ -7,7 +7,7 @@ require("random-utils/randomization-algorithms")
 
 function randomize_technology_science_cost ()
   for _, prototype in pairs(data.raw.technology) do
-    if prototype.unit.count ~= nil then
+    if prototype.unit.count ~= nil and type(prototype.unit.count) == "number" then
       randomize_numerical_property{
         prototype = prototype,
         tbl = prototype.unit,

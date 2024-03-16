@@ -1,0 +1,13 @@
+Notes:
+    1. Doesn't include justification for visual properties
+    2. Justification is not required for properties that would obviously be very silly and unnoticeable anyways
+
+Circuit Connectables - Circuit Wire Max Distance
+    Probably wouldn't be noticed except when it is, and would then be unenjoyable.
+
+Energy Source - Electric - Usage Priority
+    Just makes things nonsensical and painful, would be confusing to players.
+
+Resistances
+    Is complicated to do right and I'm not sure how to do it yet.
+

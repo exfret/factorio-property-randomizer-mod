@@ -281,6 +281,31 @@ function randomize_fluid_properties ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_icon_shifts
+---------------------------------------------------------------------------------------------------
+
+-- TODO: Make this compatible with mods that have icons defined on an item
+function randomize_icon_shifts()
+  for item_class, _ in pairs(defines.prototypes.item) do
+    for _, item in pairs(data.raw[item_class]) do
+      if item.icon ~= nil then
+        item.icons = {
+          {
+            icon = item.icon,
+            icon_size = item.icon_size,
+            shift = {
+              (math.random() - 0.4) * 0.2 * item.icon_size,
+              (math.random() - 0.4) * 0.2 * item.icon_size
+            }
+          }
+        }
+        item.icon = nil
+      end
+    end
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_map_colors
 ---------------------------------------------------------------------------------------------------
 
@@ -367,10 +392,9 @@ end
 ---------------------------------------------------------------------------------------------------
 
 -- Just a silly randomization that makes you have 11 columns per row of inventory
--- Currently not really used
-function randomize_utility_constants_properties ()
+function randomize_utility_constants_properties()
   for _, prototype in pairs(data.raw["utility-constants"]) do
-    prototype.inventory_width = 11
+    prototype.inventory_width = 9
   end
 end
 

@@ -6,8 +6,46 @@ local prototype_tables = require("randomizer-parameter-data/prototype-tables")
 local reformat = require("utilities/reformat")
 
 local VOID_COST = 1
-local do_recipe_unlock_nodes = true
-local do_tech_node_randomization = true
+local do_recipe_unlock_nodes = false
+local do_tech_node_randomization = false
+
+-- HOTFIX - Add certain tech unlocks twice just to make sure
+-- NOT WORKING!
+--[[table.insert(data.raw.technology["logistics"].effects, {
+  type = "unlock-recipe",
+  recipe = "assembling-machine-1"
+})
+table.insert(data.raw.technology["optics"].effects, {
+  type = "unlock-recipe",
+  recipe = "assembling-machine-1"
+})
+table.insert(data.raw.technology["automation"].effects, {
+  type = "unlock-recipe",
+  recipe = "underground-belt"
+})
+table.insert(data.raw.technology["optics"].effects, {
+  type = "unlock-recipe",
+  recipe = "splitter"
+})
+table.insert(data.raw.technology["optics"].effects, {
+  type = "unlock-recipe",
+  recipe = "gun-turret"
+})]]
+
+-- Unlock everything in general an extra time as well
+--[[local techs = table.deepcopy(data.raw.technology)
+for _, prototype in pairs(techs) do
+  if prototype.effects ~= nil then
+    for _, unlock in pairs(prototype.effects) do
+      if unlock.type == "unlock-recipe" then
+        table.insert(data.raw.technology[prototype.name].effects, {
+          type = "unlock-recipe",
+          recipe = unlock.recipe
+        })
+      end
+    end
+  end
+end]]
 
 -- TODO: Add support for starting items
 -- TODO: Add support for trees and rocks (they are special cases since they're not "automatable")
@@ -21,11 +59,13 @@ local do_tech_node_randomization = true
 -- TODO: Offshore pump giving water
 -- TODO: Fluid/item limits on assembling machines
 -- TODO: Deal with infinite techs
--- TODO: If node is an OR, only force one prereq
 -- TODO: Actual recipe editing still messes up with normal versus expensive ugh
 -- TODO: Special attention needs to be paid to crafting categories and fluids, since regular crafting category can't have them
 -- TODO: Take special care with recipes that involve smelting/furnaces (no repeat ingredients, only one ingredient, etc.)
 -- TODO: Rocket launch products
+-- TODO: Reachable character classes
+-- TODO: Required fluid boxes
+-- TODO: Minable properties of buildings
 
 local dependency_utils = {}
 
@@ -519,6 +559,206 @@ table.insert(dependency_graph[prg.get_key({type = "itemorfluid_node", name = "wa
   name = "offshore-pump",
   amount = 1 / 1200
 })
+
+-- Just for research
+
+if false then
+  dependency_graph = {
+    ["recipe_nodeaaarule_6_9"] = {
+      type = "recipe_node",
+      name = "rule_6_9",
+      prereqs = {
+        {
+          type = "itemorfluidnode",
+          name = "fact10",
+          amount = 1
+        },
+        {
+          type = "itemorfluidnode",
+          name = "fact21",
+          amount = 1
+        }
+      }
+    },
+    ["recipe_nodeaaarule_6_19"] = {
+      type = "recipe_node",
+      name = "rule_6_19",
+      prereqs = {
+        {
+          type = "recipe_node",
+          name = "fact20",
+          amount = 1
+        },
+        {
+          type = "recipe_node",
+          name = "fact21",
+          amount = 1
+        }
+      }
+    },
+    ["recipe_nodeaaarule_2_7"] = {
+      type = "recipe_node",
+      name = "rule_2_7",
+      prereqs = {
+        {
+          type = "itemorfluid_node",
+          name = "8",
+          amount = 1
+        },
+        {
+          type = "itemorfluid_node",
+          name = "fact12",
+          amount = 1
+        },
+        {
+          type = "itemorfluid_node",
+          name = "fact13",
+          amount = 1
+        }
+      }
+    },
+    ["recipe_nodeaaarule_2_17"] = {
+      type = "recipe_node",
+      name = "rule_2_17",
+      prereqs = {
+        {
+          type = "itemorfluid_node",
+          name = "18",
+          amount = 1
+        },
+        {
+          type = "itemorfluid_node",
+          name = "fact22",
+          amount = 1
+        },
+        {
+          type = "itemorfluid_node",
+          name = "fact23",
+          amount = 1
+        }
+      }
+    },
+    ["recipe_nodeaaarule_5_4"] = {
+      type = "recipe_node",
+      name = "rule_5_4",
+      prereqs = {
+        {
+          type = "itemorfluid_node",
+          name = "fact5",
+          amount = 1
+        },
+        {
+          type = "itemorfluid_node",
+          name = "6",
+          amount = 1
+        }
+      }
+    },
+    ["recipe_nodeaaarule_5_14"] = {
+      type = "recipe_node",
+      name = "rule_5_14",
+      prereqs = {
+        {
+          type = "itemorfluid_node",
+          name = "fact15",
+          amount = 1
+        },
+        {
+          type = "itemorfluid_node",
+          name = "16",
+          amount = 1
+        }
+      }
+    },
+    ["recipe_nodeaaarule_2_2"] = {
+      type = "recipe_node"
+    },
+    ["recipe_nodeaaafact10"] = {
+      type = "recipe_node"
+    },
+    ["recipe_nodeaaafact21"] = {
+      type = "recipe_node"
+    },
+    ["recipe_nodeaaafact20"] = {
+      type = "recipe_node"
+    },
+    ["recipe_nodeaaafact22"] = {
+      type = "recipe_node"
+    },
+    ["recipe_nodeaaafact23"] = {
+      type = "recipe_node"
+    },
+    ["recipe_nodeaaafact12"] = {
+      type = "recipe_node"
+    },
+    ["recipe_nodeaaafact13"] = {
+      type = "recipe_node"
+    },
+    ["recipe_nodeaaafact5"] = {
+      type = "recipe_node"
+    },
+    ["recipe_nodeaaafact15"] = {
+      type = "recipe_node"
+    },
+    ["recipe_nodeaaafact24"] = {
+      type = "recipe_node"
+    },
+    ["recipe_nodeaaafact25"] = {
+      type = "recipe_node"
+    },
+    ["itemorfluid_nodeaaa8"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaa18"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaa6"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaa16"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaa3"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaa1"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaafact10"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaafact21"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaafact20"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaafact22"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaafact23"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaafact12"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaafact13"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaafact5"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaafact15"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaafact24"] = {
+      type = "itemorfluid_node"
+    },
+    ["itemorfluid_nodeaaafact25"] = {
+      type = "itemorfluid_node"
+    },
+  }
+end
 
 --[[
 local new_node_for_ash = {
@@ -1171,7 +1411,9 @@ end]]
 
 local blacklisted_recipes_doop = {
   ["electric-energy-interface"] = true,
-
+  ["loader"] = true,
+  ["fast-loader"] = true,
+  ["express-loader"] = true
 }
 
 local innnnn = {}
@@ -1285,7 +1527,7 @@ for _, tech in pairs(data.raw.technology) do
 end
 local top_sort = find_reachable_tech_unlock_nodes_top(all_techs).top_sort
 
-log(serpent.block(top_sort))
+--log(serpent.block(top_sort))
 
 local tech_sort = {}
 for _, node in pairs(top_sort) do
@@ -1294,7 +1536,7 @@ for _, node in pairs(top_sort) do
   end
 end
 
-log(serpent.block(tech_sort))
+--log(serpent.block(tech_sort))
 
 --[[for i, tech in pairs(tech_sort) do
 
@@ -1314,7 +1556,7 @@ for i=1,#tech_sort do
   -- move j's prereqs to i
   for j=1,#tech_shuffle do
     if (not stripped_nodes[prg.get_key(tech_shuffle[j])]) and reachable_nodes[prg.get_key(tech_shuffle[j])] then
-      log("boop  " .. i .. " : " .. j)
+      --log("boop  " .. i .. " : " .. j)
   
       local node_i = tech_sort[i]
       local node_j = tech_shuffle[j]
@@ -1346,6 +1588,278 @@ for _, tech in pairs(data.raw.technology) do
   tech.upgrade = false
 end
 
+table.insert(data.raw.technology["automation"].effects, {
+  type = "unlock-recipe",
+  recipe = "assembling-machine-1"
+})
+table.insert(data.raw.technology["optics"].effects, {
+  type = "unlock-recipe",
+  recipe = "underground-belt"
+})
+table.insert(data.raw.technology["logistics"].effects, {
+  type = "unlock-recipe",
+  recipe = "splitter"
+})
+table.insert(data.raw.technology["gun-turret"].effects, {
+  type = "unlock-recipe",
+  recipe = "gun-turret"
+})
+table.insert(data.raw.technology["automation-2"].effects, {
+  type = "unlock-recipe",
+  recipe = "assembling-machine-2"
+})
+table.insert(data.raw.technology["steel-processing"].effects, {
+  type = "unlock-recipe",
+  recipe = "steel-plate"
+})
+
+--if false then
+
+
+
+local accessible_list = {}
+local added_to_accessible_list = {}
+
+local source_nodes = {}
+local source_nodes_size = 0
+for _, node in pairs(dependency_graph) do
+  node.prereqs_satisfied = {}
+  for _, prereq in pairs(node.prereqs) do
+    node.prereqs_satisfied[prg.get_key(prereq)] = false
+  end
+
+  if node_type_operation[node.type] == "AND" and next(node.prereqs) == nil then
+    source_nodes_size = source_nodes_size + 1
+    source_nodes[source_nodes_size] = node
+  end
+end
+
+for i=1,REALLY_BIG_FLOAT_NUM do
+  if i > source_nodes_size then
+    break
+  end
+  local curr_node = source_nodes[i]
+
+  if not added_to_accessible_list[prg.get_key(curr_node)] then
+    table.insert(accessible_list, curr_node)
+    added_to_accessible_list[prg.get_key(curr_node)] = true
+  end
+  for _, dependent in pairs(curr_node.dependents) do
+    local dependent_node = dependency_graph[prg.get_key(dependent)]
+    if not added_to_accessible_list[prg.get_key(dependent_node)] then
+      if node_type_operation[dependent_node.type] == "OR" then
+        source_nodes_size = source_nodes_size + 1
+        source_nodes[source_nodes_size] = dependent_node
+      elseif node_type_operation[dependent_node.type] == "AND" then
+        dependent_node.prereqs_satisfied[prg.get_key(curr_node)] = true
+
+        local all_prereqs_satisfied = true
+        for _, prereq_satisfied in pairs(dependent_node.prereqs_satisfied) do
+          if prereq_satisfied == false then
+            all_prereqs_satisfied = false
+          end
+        end
+
+        if all_prereqs_satisfied then
+          source_nodes_size = source_nodes_size + 1
+          source_nodes[source_nodes_size] = dependent_node
+        end
+      end
+    end
+  end
+end
+
+local simple_accessible_list = {}
+
+for _, node in pairs(accessible_list) do
+  local new_node = {}
+  new_node.type = node.type
+  new_node.name = node.name
+  table.insert(simple_accessible_list, new_node)
+end
+--log(serpent.block(simple_accessible_list))
+
+local costs = {}
+for item_class, _ in pairs(defines.prototypes.item) do
+  for _, item in pairs(data.raw[item_class]) do
+    log("Creating recipe-item matrix...")
+
+    local recipe_to_col = {}
+    local itemorfluid_to_row = {}
+    local col_name = {}
+    local row_name = {}
+    local matrix = {}
+    matrix[1] = {}
+    local index = 2
+    matrix[1][1] = 1
+    col_name[1] = {name = "special"}
+    for _, node in pairs(dependency_graph) do
+      if node.type == "recipe_node" then
+        matrix[1][index] = 1
+
+        recipe_to_col[node.name] = index
+        col_name[index] = node
+        index = index + 1
+      end
+    end
+    matrix[1][#matrix[1]+1] = 0
+    col_name[#matrix[1]] = {name = "special"}
+
+    row_name[1] = {name = "special"}
+    local index_1 = 2
+    for _, node1 in pairs(dependency_graph) do
+      if node1.type == "itemorfluid_node" then
+        matrix[index_1] = {}
+
+        index_2 = 2
+        matrix[index_1][1] = 0
+        for _, node2 in pairs(dependency_graph) do
+          if node2.type == "recipe_node" then
+            matrix[index_1][index_2] = 0
+            index_2 = index_2 + 1
+          end
+        end
+        
+        -- Goal node
+        if node1.name == item.name then
+          matrix[index_1][#matrix[index_1] + 1] = -1
+        else
+          matrix[index_1][#matrix[index_1] + 1] = 0
+        end
+
+        itemorfluid_to_row[node1.name] = index_1
+        row_name[index_1] = node1
+        index_1 = index_1 + 1
+      end
+    end
+
+    for _, node in pairs(dependency_graph) do
+      if node.type == "itemorfluid_node" and (not (next(node.prereqs) == nil and next(node.dependents) == nil)) then
+        for _, prereq in pairs(node.prereqs) do
+          if prereq.type == "recipe_node" then
+            matrix[itemorfluid_to_row[node.name]][recipe_to_col[prereq.name]] = 1/prereq.amount
+          end
+        end
+        for _, dependent in pairs(node.dependents) do
+          if dependent.type == "recipe_node" then
+            matrix[itemorfluid_to_row[node.name]][recipe_to_col[dependent.name]] = -dependent.amount
+          end
+        end
+      end
+    end
+
+    -- Put first row on bottom and then back on top for technical reasons
+    local first_row = matrix[1]
+    matrix[1] = matrix[#matrix]
+    matrix[#matrix] = first_row
+    local first_name = row_name[1]
+    row_name[1] = row_name[#row_name]
+    row_name[#row_name] = first_name
+
+    -- Transpose
+    local new_matrix = {}
+    for i=1,#matrix[1] do
+      new_matrix[i] = {}
+      for j=1,#matrix do
+        new_matrix[i][j] = matrix[j][i]
+      end
+    end
+    matrix = new_matrix
+    local row_name_temp = row_name
+    row_name = col_name
+    col_name = row_name_temp
+
+    first_row = matrix[1]
+    matrix[1] = matrix[#matrix]
+    matrix[#matrix] = first_row
+    local first_name = row_name[1]
+    row_name[1] = row_name[#row_name]
+    row_name[#row_name] = first_name
+
+    -- Add new columns
+    local old_col_name_size = #col_name
+    for i=1,#matrix do
+      for j=#matrix+#matrix[1],#matrix+1,-1 do
+        matrix[i][j] = matrix[i][j-#matrix]
+      end
+      for j=1,#matrix do
+        if i == j then
+          matrix[i][j] = 1
+        else
+          matrix[i][j] = 0
+        end
+      end
+
+      if row_name[i].name ~= nil then
+        col_name[old_col_name_size + i] = {prototype = row_name[i], type = "void", name = "void_" .. row_name[i].name}
+      else
+        col_name[old_col_name_size + i] = {name = "void_special"}
+      end
+    end
+
+    --log(serpent.block(matrix))
+
+    -- Solve
+
+    log("Solving matrix...")
+
+    local col_weights = {}
+    for i=1,#col_name do
+      col_weights[i] = {}
+      for j=1,#col_name do
+        col_weights[i][j] = i == j
+      end
+    end
+
+    local row_weights = {}
+    for i=1,#matrix do
+      row_weights[i] = {}
+      for j=1,#matrix do
+        row_weights[i][j] = 0
+      end
+      row_weights[i][i] = 1
+    end
+
+    local permutation = {}
+    for i=1,#matrix[1] do
+      permutation[i] = i
+    end
+
+    local params = {matrix = matrix, row_weights = row_weights, permutation = permutation}
+
+    log("Cost of " .. tostring(solve_system(params)))
+
+    costs[item.name] = solve_system(params)
+
+    --log(serpent.block(params.row_weights))
+    --log(serpent.block(params.permutation))
+
+    --[[for i=1,#params.matrix do
+      if params.matrix[i][#params.matrix[i] ] < 0 then
+        log("\nRECIPE with value " .. params.matrix[i][#params.matrix[i] ] .. " NAMED " .. row_name[i].name .. "\nHAS:")
+        for j=1,#row_weights[i] do
+          if row_weights[i][j] ~= 0 then
+            log("\n" .. row_weights[i][j] .. " PORTION OF " .. row_name[j].name)
+          end
+        end
+      end
+    end]]
+
+    for j=2,#params.matrix[1] do
+      if params.matrix[1][j] ~= 0 and row_name[params.permutation[j]] ~= nil then
+        --log("\n" .. params.matrix[1][j] .. " PORTION OF " .. row_name[params.permutation[j]].name)
+      end
+    end
+  end
+end
+
+log(serpent.block(costs))
+
+-- starto
+
+-- Shuffle within intermediates for item/recipes
+
+--end
 
 
 

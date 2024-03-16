@@ -352,7 +352,8 @@ function randomize_entity_interaction_speed ()
           prototype = prototype,
           tbl = prototype.minable,
           property = "mining_time",
-          inertia_function = inertia_function.entity_interaction_mining_speed
+          inertia_function = inertia_function.entity_interaction_mining_speed,
+          property_info = property_info.entity_interaction_mining_speed
         }
       end
     end
@@ -367,7 +368,8 @@ function randomize_entity_interaction_speed ()
       randomize_numerical_property{
         prototype = prototype,
         property = "repair_speed_modifier",
-        inertia_function = inertia_function.entity_interaction_repair_speed
+        inertia_function = inertia_function.entity_interaction_repair_speed,
+        property_info = property_info.entity_interaction_repair_speed
       }
     end
   end
@@ -545,17 +547,17 @@ function randomize_health_properties ()
         end
 
         local inertia_function_to_use = inertia_function.max_health
-        local variance = 1
+        local property_info_to_use = property_info.max_health
         if prototype_tables.entities_with_health_sensitive[prototype.type] then
           inertia_function_to_use = inertia_function.max_health_sensitive
-          variance = 0.2
+          property_info_to_use = property_info.max_health_sensitive
         end
 
         randomize_numerical_property{
           prototype = prototype,
           property = "max_health",
           inertia_function = inertia_function_to_use,
-          property_info = property_info.max_health
+          property_info = property_info_to_use
         }
   
         -- Disable resistance randomization for now
@@ -579,16 +581,21 @@ local inserter_insert_positions = {
   {0, 1.2}, -- Standard
   {0, 0.8}, -- Near
   {0, 2.2}, -- Far
+  {0, 4.2}, -- Very far
+  {-1, 0}, -- To the side
   {1, 1}, -- Diagonal
   {0, -1.2} -- "Back where it came from"
 }
 
 local inserter_pickup_positions = {
   {0, -1}, -- Standard
+  {0, -1.2}, -- Other side of the belt
   {0, -2}, -- Long-handed
+  {0, -4}, -- Very long-handed
   {1, 0}, -- To the side
+  {-1, -1}, -- Diagonal
   {-1.2, -0.2}, -- Diagonal, sorta?
-  {-3.2, 9.2} -- Huh?
+  {-2.2, 7.2} -- Huh?
 }
 
 -- TODO: Add Bob's mods compatibility
@@ -598,17 +605,26 @@ function randomize_inserter_insert_dropoff_positions()
     if prototype.collision_box ~= nil and prototype.collision_box[1][1] == -0.15 and prototype.collision_box[1][2] == -0.15 and prototype.collision_box[2][1] == 0.15 and prototype.collision_box[2][2] == 0.15 then
       local key = prg.get_key(prototype)
 
-      local inserter_position_variable = prg.range(key, 1,8)
+      local inserter_position_variable = prg.range(key, 1,18)
 
-      -- 1/4 chance to change to a different type of insert position
-      if 1 <= inserter_position_variable and inserter_position_variable <= 3 then
+      -- 1/2 chance to change to a different type of insert position
+      if 1 <= inserter_position_variable and inserter_position_variable <= 10 then
         prototype.insert_position = inserter_insert_positions[prg.range(key, 1, #inserter_insert_positions)]
       end
 
-      -- 1/4 chance to change to a different type of pickup position
-      if 2 <= inserter_position_variable and inserter_position_variable <= 4 then
+      -- 1/2 chance to change to a different type of pickup position
+      if 3 <= inserter_position_variable and inserter_position_variable <= 13 then
         prototype.pickup_position = inserter_pickup_positions[prg.range(key, 1, #inserter_pickup_positions)]
       end
+    end
+  end
+
+  if data.raw.inserter["inserter"] ~= nil and data.raw.inserter["burner-inserter"] ~= nil then
+    local inserter_dropoff = data.raw.inserter["inserter"].insert_position
+    local burner_dropoff = data.raw.inserter["burner-inserter"].insert_position
+
+    if inserter_dropoff[1] == 0 and inserter_dropoff[2] == -1.2 and burner_dropoff[1] == 0 and burner_dropoff[2] == -1.2 then
+      data.raw.inserter["inserter"].insert_position = {0, 1.2}
     end
   end
 end
@@ -682,19 +698,11 @@ end
 
 function randomize_lab_research_speed ()
   for _, prototype in pairs(data.raw.lab) do
-    local bias_to_use = 0.5 - LAB_BIAS_PENALTY
-    if prototype.energy_source.type == "burner" then
-      bias_to_use = bias_to_use + BURNER_MACHINE_BIAS_BONUS
-    end
-
     randomize_numerical_property{
       prototype = prototype,
       property = "researching_speed",
       inertia_function = inertia_function.researching_speed,
-      property_info = property_info.researching_speed,
-      walk_params = {
-        bias = bias_to_use
-      }
+      property_info = property_info.researching_speed
     }
   end
 end
@@ -724,13 +732,14 @@ end
 
 function randomize_mining_drill_dropoff_location ()
   for _, prototype in pairs(data.raw["mining-drill"]) do
-    -- Need to check that this isn't a purely fluid-based thing, which is usually indicated by a (0,0) place vector
+    -- TODO: Need to check that this isn't a purely fluid-based thing, which is usually indicated by a (0,0) place vector
     if prototype.vector_to_place_result[1] ~= 0 or prototype.vector_to_place_result[2] ~= 0 then
       randomize_numerical_property{
         prototype = prototype,
         tbl = prototype.vector_to_place_result,
         property = 1,
-        inertia_function = inertia_function.mining_drill_dropoff
+        inertia_function = inertia_function.mining_drill_dropoff,
+        property_info = property_info.mining_drill_dropoff
       }
 
       randomize_numerical_property{
@@ -851,7 +860,17 @@ function randomize_module_slots ()
 
         -- If no effects are allowed, turn the number of modules back to 0
         -- Factorio doesn't like modules slots with no allowed modules
-        if prototype.allowed_effects == nil or next(prototype.allowed_effects) == nil then
+        local no_effects_allowed = false
+        if class_name == "lab" or class_name == "mining-drill" then
+          if prototype.allowed_effects ~= nil and next(prototype.allowed_effects) == nil then
+            no_effects_allowed = true
+          end
+        else
+          if prototype.allowed_effects == nil or next(prototype.allowed_effects) == nil then
+            no_effects_allowed = true
+          end
+        end
+        if no_effects_allowed then
           prototype["module_specification"].module_slots = 0
         end
       end
@@ -918,14 +937,14 @@ function randomize_radar ()
       prototype = prototype,
       property = "max_distance_of_sector_revealed",
       inertia_function = inertia_function.radar,
-      property_info = property_info.discrete_positive
+      property_info = property_info.radar_reveal_areas
     })
 
     randomize_numerical_property({
       prototype = prototype,
       property = "max_distance_of_nearby_sector_revealed",
       inertia_function = inertia_function.radar,
-      property_info = property_info.discrete_positive
+      property_info = property_info.radar_reveal_areas
     })
   end
 end
@@ -1032,6 +1051,20 @@ function randomize_storage_tank_capacity ()
         property_info = property_info.limited_range
         -- Let's not set rounding info since it can be messed up by the height anyways
       }
+    end
+  end
+end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_turret_attack_parameters
+---------------------------------------------------------------------------------------------------
+
+function randomize_turret_attack_parameters()
+  for _, turret_class in pairs(prototype_tables.turret_classes) do
+    for _, turret in pairs(data.raw[turret_class]) do
+      if turret.attack_parameters ~= nil then
+        randomize_attack_parameters(turret, turret.attack_parameters)
+      end
     end
   end
 end

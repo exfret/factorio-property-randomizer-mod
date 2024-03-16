@@ -84,7 +84,6 @@ function reformat.recipe(recipe)
 end
 
 -- Don't allow normal versus expensive mode
--- TODO
 function reformat.technology(technology)
     local tech_table = nil
     if technology.normal then
@@ -107,11 +106,57 @@ function reformat.technology(technology)
     end
 end
 
---blop.blop = nil -- Reformat every prototype, particularly adding in default values
-
 function reformat.prototypes()
-    for _, class in pairs(data.raw) do
+    -- The formatted data
+    local fdat = table.deepcopy(data.raw)
+
+    for _, class in pairs(fdat) do
+        class.format = "class"
+
         for _, prototype in pairs(class) do
+            prototype.format = "prototype"
+
+            if prototype.type == "accumulator" then
+                reformat.energy_source(prototype.energy_source)
+                
+                if prototype.picture ~= nil then
+                    reformat.sprite(prototype.picture)
+                end
+
+                if prototype.charge_animation ~= nil then
+                    reformat.animation(prototype.charge_animation)
+                else
+                    prototype.charge_light = nil
+                end
+
+                if prototype.charge_light ~= nil then
+                    reformat.light_definition(prototype.charge_light)
+                end
+
+                if prototype.discharge_animation ~= nil then
+                    reformat.animation(prototype.discharge_animation)
+                else
+                    prototype.discharge_light = nil
+                end
+
+                if prototype.discharge_light ~= nil then
+                    reformat.light_definition(prototype.discharge_light)
+                end
+
+                if prototype.circuit_wire_connection_point ~= nil then
+                    reformat.wire_connection_point(prototype.circuit_wire_connection_point)
+                end
+
+                if prototype.circuit_wire_max_distance == nil then
+                    prototype.circuit_wire_max_distance = 0
+                end
+
+                if prototype.draw_copper_wires == nil then
+                    prototype.draw_copper_wires = true
+                end
+
+                -- TODO
+            end
         end
     end
 end

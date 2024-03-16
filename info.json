@@ -1,12 +1,13 @@
 {
 	"name": "propertyrandomizer",
-	"version": "0.2.6",
+	"version": "0.2.8",
 	"title": "exfret's randomizer",
 	"author": "exfret",
 	"factorio_version": "1.1",
 	"description": "Randomizes as many things in the game as possible.",
 	"dependencies": [
 		"base",
+		"(?) all-the-overhaul-modpack",
 		"(?) even-distribution",
 		"(?) space-exploration-postprocess",
 		"(?) ZRecipeRandomizer",

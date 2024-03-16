@@ -1,5 +1,6 @@
 require("config")
 --require("gather-randomizations")
+require("linking-utils")
 require("randomizer-functions/energy-randomizer")
 require("randomizer-functions/entity-randomizer")
 require("randomizer-functions/item-randomizer")
@@ -7,7 +8,9 @@ require("randomizer-functions/misc-randomizer")
 require("randomizer-functions/recipe-randomizer")
 require("randomizer-functions/technology-randomizer")
 
-local karma = require("analysis/karma")
+require("random-utils/randomization-algorithms")
+
+require("analysis/karma")
 
 local reformat = require("utilities/reformat")
 
@@ -172,6 +175,10 @@ if rand_tile_walking_speed_modifier then
   table.insert(randomizing_functions_to_call, randomize_tile_walking_speed_modifier)
 end
 
+if rand_turret_attack_parameters then
+  table.insert(randomizing_functions_to_call, randomize_turret_attack_parameters)
+end
+
 if rand_underground_distance then
   table.insert(randomizing_functions_to_call, randomize_underground_belt_distance)
   -- randomize_underground_pipe_distance() TODO
@@ -240,7 +247,7 @@ end
 
 log("Performing randomizations...")
 for i, randomizing_function in pairs(randomizing_functions_to_call) do
-  log(i)
+  log("Randomization number " .. i)
   randomizing_function()
 end
 
@@ -258,10 +265,78 @@ if settings.startup["propertyrandomizer-misc-properties"].value then
   randomize_map_colors()
 end
 
+if settings.startup["propertyrandomizer-misc-properties"] then
+  randomize_icon_shifts()
+  randomize_utility_constants_properties()
+end
+
+-- Final quick fixes
+if data.raw["generator"]["steam-engine"] ~= nil and data.raw["boiler"]["boiler"] ~= nil then
+  local boiler_temp = data.raw["boiler"]["boiler"].target_temperature
+  local steam_engine_temp = data.raw["generator"]["steam-engine"].maximum_temperature
+
+  data.raw["boiler"]["boiler"].target_temperature = math.max(boiler_temp, steam_engine_temp)
+  data.raw["generator"]["steam-engine"].maximum_temperature = math.max(boiler_temp, steam_engine_temp)
+end
+
 --log(serpent.dump(karma.values))
+
+local new_table = {}
+for class_name, class in pairs(data.raw) do
+  for prototype_name, prototype in pairs(class) do
+    for property_name, property in pairs(prototype) do
+      table.insert(new_table, serpent.dump({
+        value_type = "property",
+        class = class_name,
+        prototype = prototype_name,
+        property = property_name,
+        key = prg.get_key({type = prototype.type, name = prototype.name, property = property_name}, "property"),
+        value = karma.values.property_values[prg.get_key({type = class_name, name = prototype_name, property = property_name}, "property")]
+      }))
+    end
+    table.insert(new_table, serpent.dump({
+      value_type = "prototype",
+      class = class_name,
+      prototype = prototype_name,
+      key = prg.get_key({type = class_name, name = prototype_name}),
+      value = karma.values.prototype_values[prg.get_key(prototype)]
+    }))
+  end
+  table.insert(new_table, serpent.dump({
+    value_type = "class",
+    class = class_name,
+    key = prg.get_key(class_name, "class"),
+    value = karma.values.class_values[prg.get_key(class_name, "class")]
+  }))
+end
+table.insert(new_table, serpent.dump({
+  value_type = "overall",
+  key = prg.get_key(nil, "dummy"),
+  value = karma.values.overall[prg.get_key(nil, "dummy")]
+}))
+
+data:extend({
+  {
+    type = "selection-tool",
+    name = "prototype-data",
+    icon = "__base__/graphics/icons/iron-plate.png",
+    icon_size = 64,
+    stack_size = 1,
+    selection_mode = {"blueprint"},
+    alt_selection_mode = {"blueprint"},
+    selection_color = {},
+    alt_selection_color = {},
+    selection_cursor_box_type = "entity",
+    alt_selection_cursor_box_type = "entity",
+    entity_type_filters = new_table
+  }
+})
 
 --[[for _, character in pairs(data.raw.character) do
   character.reach
 end]]
 
 -- TODO: Locale
+
+table.insert(data.raw.recipe["pistol-magazine-bismuth"].results, {name = "firearm-magazine", amount = 1})
+table.insert(data.raw.recipe["rifle-magazine-bismuth"].results, {name = "rifle-magazine", amount = 1})

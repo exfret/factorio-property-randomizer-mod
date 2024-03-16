@@ -54,7 +54,8 @@ data:extend({
       "round-ish",
       "raw and unrounded"
     },
-    order = "ac-rounding"
+    order = "ac-rounding",
+    hidden = true -- TODO: FIX
   },
   {
     setting_type = "startup",

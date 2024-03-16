@@ -1,6 +1,6 @@
 require("random-utils/random")
 
-local karma = {}
+karma = {}
 
 karma.update_params = {
   prototype_update_step = 0.023,
@@ -21,6 +21,12 @@ karma.values.overall = {}
 
 for class_name, class in pairs(data.raw) do
   for _, prototype in pairs(class) do
+    for property_name, _ in pairs(prototype) do
+      karma.values.property_values[prg.get_key({type = prototype.type, name = prototype.name, property = property_name}, "property")] = {
+        num_steps = 0,
+        num_good_steps = 0
+      }
+    end
     karma.values.prototype_values[prg.get_key(prototype)] = {
       num_steps = 0,
       num_good_steps = 0
@@ -49,14 +55,8 @@ function karma.update_values(roll, prototype, property)
   end
 
   local property_key = prg.get_key({type = prototype.type, name = prototype.name, property = property}, "property")
-  if karma.values.property_values[property_key] == nil then
-    karma.values.property_values[property_key] = {
-      num_steps = 0,
-      num_good_steps = 0
-    }
+  if karma.values.property_values[property_key] ~= nil then
+    karma.values.property_values[property_key].num_steps = karma.values.property_values[property_key].num_steps + 1
+    karma.values.property_values[property_key].num_good_steps = karma.values.property_values[property_key].num_good_steps + goodness
   end
-  karma.values.property_values[property_key].num_steps = karma.values.property_values[property_key].num_steps + 1
-  karma.values.property_values[property_key].num_good_steps = karma.values.property_values[property_key].num_good_steps + goodness
 end
-
-return karma

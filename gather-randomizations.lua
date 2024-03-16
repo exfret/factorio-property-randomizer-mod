@@ -150,7 +150,7 @@ gather_randomizations.randomization_spec = {
         tags = {"fuel-value", "power"}
     },
     {
-        func = energy_randomizer.randomize_bot_energy_per_tick -- TODO: Se
+        func = energy_randomizer.randomize_bot_energy_per_tick
         name = "bot-energy-over-time",
         tags = {"energy-usage", "bot-energy", "bots", "power"} -- TODO: Does bot energy have to be electric? Also in general how do we sense electric stuff versus not?
     },

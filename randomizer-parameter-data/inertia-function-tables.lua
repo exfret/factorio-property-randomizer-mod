@@ -84,6 +84,16 @@ inertia_function.electric_pole_wire_reach = {
   {64, 0}
 }
 
+inertia_function.energy_required_intermediates = {
+  type = "proportional",
+  slope = 4
+}
+
+inertia_function.energy_required_end_products = {
+  type = "proportional",
+  slope = 10
+}
+
 inertia_function.pollution_effect = {
   {-1, 0},
   {-0.2, 2},
@@ -167,7 +177,7 @@ inertia_function.max_health_sensitive = {
 
 inertia_function.mining_drill_dropoff = {
   ["type"] = "constant",
-  value = 30
+  value = 20
 }
 
 inertia_function.module_specification = {
@@ -195,6 +205,11 @@ inertia_function.radar = {
 inertia_function.researching_speed = {
   ["type"] = "proportional",
   slope = 8
+}
+
+inertia_function.resource_mining_speed = {
+  type = "proportional",
+  slope = 1.5
 }
 
 inertia_function.stack_size = {
@@ -232,6 +247,11 @@ inertia_function.underground_belt_length = {
   {4, 30},
   {8, 60},
   {255, 3000}
+}
+
+inertia_function.utility_constant_inventory_width = {
+  type = "constant",
+  value = 10
 }
 
 inertia_function.vehicle_crash_damage = {

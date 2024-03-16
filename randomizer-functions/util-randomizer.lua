@@ -45,12 +45,14 @@ function randomize_trigger_effect (prototype, trigger)
       prototype = prototype,
       tbl = trigger,
       property = "distance",
+      property_info = property_info.limited_range
     }
   elseif trigger.type == "destroy-cliffs" then
     randomize_numerical_property{
       prototype = prototype,
       tbl = trigger,
-      property = "radius" -- TODO: Make it smaller by default?
+      property = "radius", -- TODO: Make it smaller by default?
+      property_info = property_info.limited_range
     }
   elseif trigger.type == "show-explosion-on-chart" then
     -- TODO
@@ -164,7 +166,7 @@ end
 
 -- TODO: Need to make sure artillery *manual range* and artillery *automatic range* are set so automatic < manual
 function randomize_attack_parameters (prototype, attack_parameters)
-  if attack_parameters.ammo_type then
+  if attack_parameters.ammo_type ~= nil then
     randomize_ammo_type(prototype, attack_parameters.ammo_type)
   end
 
@@ -177,10 +179,10 @@ function randomize_attack_parameters (prototype, attack_parameters)
   }
   -- Randomize minimum range by a proportional amount if it exists
   -- TODO: Make this a group randomization
-  if attack_parameters.min_range then
-    attack_parameters.min_range = attack_parameters.min_range * attack_parameters[range] / old_range
+  if attack_parameters.min_range ~= nil and old_range ~= nil then
+    attack_parameters.min_range = attack_parameters.min_range * attack_parameters.range / old_range
   end
-  if attack_parameters.min_attack_distance then
+  if attack_parameters.min_attack_distance and old_range ~= nil then
     attack_parameters.min_attack_distance = attack_parameters.min_attack_distance * attack_parameters[range] / old_range
   end
 
@@ -196,7 +198,8 @@ function randomize_attack_parameters (prototype, attack_parameters)
   randomize_numerical_property{
     prototype = prototype,
     tbl = attack_parameters,
-    property = "fluid_consumption"
+    property = "fluid_consumption",
+    property_info = property_info.fluid_consumption
   }
 
   if attack_parameters.damage_modifier == nil then
@@ -209,12 +212,14 @@ function randomize_attack_parameters (prototype, attack_parameters)
     prototype = prototype,
     tbl = attack_parameters,
     property = "damage_modifier",
-    inertia_function = inertia_function.turret_damage_modifier -- TODO: Add property info for damage modifier, currently should be a min factor but it starts at -1 which complicates things
+    inertia_function = inertia_function.turret_damage_modifier, -- TODO: Add property info for damage modifier, currently should be a min factor but it starts at -1 which complicates things
+    property_info = property_info.damage_modifier
   }
   randomize_numerical_property{
     prototype = prototype,
     tbl = attack_parameters,
-    property = "ammo_consumption_modifier" -- TODO: Add property info for consumption modifier, currently should be a min factor but it starts at -1 which complicates things
+    property = "ammo_consumption_modifier", -- TODO: Add property info for consumption modifier, currently should be a min factor but it starts at -1 which complicates things
+    property_info = property_info.consumption_modifier
   }
 
   if attack_parameters.fluids then
@@ -225,8 +230,9 @@ function randomize_attack_parameters (prototype, attack_parameters)
       randomize_numerical_property{
         prototype = prototype,
         tbl = fluid,
-        property = "damage_modifier" -- TODO: Add property info for damage modifier, currently should be a min factor but it starts at -1 which complicates things
+        property = "damage_modifier", -- TODO: Add property info for damage modifier, currently should be a min factor but it starts at -1 which complicates things
         -- Also TODO: Probably needs a special inertia function...
+        property_info = property_info.damage_modifier
       }
     end
   end

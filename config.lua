@@ -40,6 +40,7 @@ rand_pump_pumping_speed = settings.startup["propertyrandomizer-logistic"].value
 rand_radar = settings.startup["propertyrandomizer-logistic"].value
 rand_storage_tank_capacity = settings.startup["propertyrandomizer-storage"].value
 rand_tech_costs = settings.startup["propertyrandomizer-tech-costs"].value
+rand_turret_attack_parameters = settings.startup["propertyrandomizer-military"].value
 rand_underground_distance = settings.startup["propertyrandomizer-logistic"].value
 rand_vehicles = settings.startup["propertyrandomizer-logistic"].value
 

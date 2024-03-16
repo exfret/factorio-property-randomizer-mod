@@ -1,6 +1,6 @@
 require("random-utils/random")
 
-local karma = require("analysis/karma")
+require("analysis/karma")
 require("globals")
 local param_table_utils = require("param-table-utils")
 
@@ -182,12 +182,20 @@ local function apply_property_info_changes(tbl, property, property_info, old_val
 
   -- Min/max it
   if property_info.min ~= nil then
-    tbl[property] = math.max(tbl[property], property_info.min)
+    if old_value <= property_info.min then
+      tbl[property] = old_value
+    else
+      tbl[property] = math.max(tbl[property], property_info.min)
+    end
   end
   if property_info.max ~= nil then
-    tbl[property] = math.min(tbl[property], property_info.max)
+    if tbl[property] >= property_info.max then
+      tbl[property] = old_value
+    else
+      tbl[property] = math.min(tbl[property], property_info.max)
+    end
   end
-  if property_info.min_factor ~= nil then
+  if property_info.min_factor ~= nil then -- TODO: Make this respect modulus
     tbl[property] = math.max(tbl[property], property_info.min_factor * old_value)
   end
   if property_info.max_factor ~= nil then
@@ -249,9 +257,16 @@ function randomize_numerical_property (passed_params)
 
   -- Randomly increase or decrease bias to make a distribution that's less likely to sample from the middle (i.e.- make it so things change more often than not)
   if prg.int(params.prg_key, 2) == 1 then
-    params.walk_params.bias = params.walk_params.bias - SPLIT_BIAS_MODIFIER
+    params.walk_params.bias = params.walk_params.bias - SPLIT_BIAS_MODIFIER - 0.1 * settings.startup["propertyrandomizer-chaos"].value
   else
-    params.walk_params.bias = params.walk_params.bias + SPLIT_BIAS_MODIFIER
+    params.walk_params.bias = params.walk_params.bias + SPLIT_BIAS_MODIFIER + 0.1 * settings.startup["propertyrandomizer-chaos"].value
+  end
+
+  if params.walk_params.bias >= 0.5 + MAX_BIAS_CHANGE then
+    params.walk_params.bias = 0.5 + MAX_BIAS_CHANGE
+  end
+  if params.walk_params.bias <= 0.5 - MAX_BIAS_CHANGE then
+    params.walk_params.bias = 0.5 - MAX_BIAS_CHANGE
   end
 
   params.old_value = params.tbl[params.property]
@@ -313,7 +328,7 @@ function randomize_points_in_space (passed_params)
   -- Apply property_info fixes
   for point_index, point in pairs(params.points) do
     for k=1,#point do
-      apply_property_info_changes(point, k, params.dimension_information[k].property_info, params.points[point_index])
+      apply_property_info_changes(point, k, params.dimension_information[k].property_info, params.points[point_index][k])
     end
   end
 end

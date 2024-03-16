@@ -1,16 +1,34 @@
-0.2.6
- - Get custom configs working
+1. Currently working on information
 
-0.2.5
- - icon_size w/ spidertron
 
-Get distance based randomization up
+
+ - Randomize things based on upgrade lines
+ - Rewrite randomization to be prototype based
+ - Fix rounding not working
+ - Compile and fix various bug reports
+ - Make essential technologies sooner
+ - Customization additions
+ - Rewrite randomization algorithm
+ - Randomize more parts of the dependency graph (like recipes)
+ - Go through and compile TODO's in this note and throughout program
+ - Randomize more properties
+ - Organize todo
+ - Group randomize things like crafting speed with power so that it doesn't "make both things better"
+
+
+0.2.7
+ - Next priority is prototype upgrade lines
+ - Randomize shotgun with high bias
+ - Randomize ammo with higher bias
+
+
 Add crafting cost to randomization
 Add power level normalizer to keep power levels similar to what they were at start
 
 Clean up data-final-fixes
 
 Next releases:
+  - Make mining drill dropoff and other similar properties not influenced by bias/chaos factor
 
   - Use serpent.block or dump and such rather than prg.get_key
 
