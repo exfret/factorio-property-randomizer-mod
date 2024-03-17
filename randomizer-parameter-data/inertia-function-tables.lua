@@ -212,6 +212,11 @@ inertia_function.resource_mining_speed = {
   slope = 1.5
 }
 
+inertia_function.sensitive = {
+  type = "proportional",
+  slope = 1.5
+}
+
 inertia_function.stack_size = {
   {1, 4},
   {20, 20},

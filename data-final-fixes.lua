@@ -234,6 +234,10 @@ if rand_tools then
   table.insert(randomizing_functions_to_call, randomize_tools)
 end
 
+if rand_unit then
+  table.insert(randomizing_functions_to_call, randomize_unit)
+end
+
 ---------------------------------------------------------------------------------------------------
 -- Silly randomizations
 ---------------------------------------------------------------------------------------------------
@@ -265,7 +269,7 @@ if settings.startup["propertyrandomizer-misc-properties"].value then
   randomize_map_colors()
 end
 
-if settings.startup["propertyrandomizer-misc-properties"] then
+if settings.startup["propertyrandomizer-misc-properties"].value then
   randomize_icon_shifts()
   randomize_utility_constants_properties()
 end
@@ -337,6 +341,3 @@ data:extend({
 end]]
 
 -- TODO: Locale
-
-table.insert(data.raw.recipe["pistol-magazine-bismuth"].results, {name = "firearm-magazine", amount = 1})
-table.insert(data.raw.recipe["rifle-magazine-bismuth"].results, {name = "rifle-magazine", amount = 1})

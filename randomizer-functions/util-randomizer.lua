@@ -166,7 +166,9 @@ end
 
 -- TODO: Need to make sure artillery *manual range* and artillery *automatic range* are set so automatic < manual
 function randomize_attack_parameters (prototype, attack_parameters)
-  if attack_parameters.ammo_type ~= nil then
+  -- TODO: Make this not a hotfix
+  -- This currently just ignores biters since it messes them up too much
+  if attack_parameters.ammo_type ~= nil and prototype.type ~= "unit" then
     randomize_ammo_type(prototype, attack_parameters.ammo_type)
   end
 
@@ -175,6 +177,7 @@ function randomize_attack_parameters (prototype, attack_parameters)
     prototype = prototype,
     tbl = attack_parameters,
     property = "range",
+    inertia_function = inertia_function.sensitive,
     property_info = property_info.attack_parameters_range
   }
   -- Randomize minimum range by a proportional amount if it exists
@@ -183,7 +186,7 @@ function randomize_attack_parameters (prototype, attack_parameters)
     attack_parameters.min_range = attack_parameters.min_range * attack_parameters.range / old_range
   end
   if attack_parameters.min_attack_distance and old_range ~= nil then
-    attack_parameters.min_attack_distance = attack_parameters.min_attack_distance * attack_parameters[range] / old_range
+    attack_parameters.min_attack_distance = attack_parameters.min_attack_distance * attack_parameters.range / old_range
   end
 
   -- TODO: Implement turn_range
@@ -212,15 +215,16 @@ function randomize_attack_parameters (prototype, attack_parameters)
     prototype = prototype,
     tbl = attack_parameters,
     property = "damage_modifier",
-    inertia_function = inertia_function.turret_damage_modifier, -- TODO: Add property info for damage modifier, currently should be a min factor but it starts at -1 which complicates things
+    inertia_function = inertia_function.turret_damage_modifier, -- TODO: Make property info/inertia function respect that things actually start at -1
     property_info = property_info.damage_modifier
   }
-  randomize_numerical_property{
+  -- TODO: Rerandomize; was just confusing before
+  --[[randomize_numerical_property{
     prototype = prototype,
     tbl = attack_parameters,
-    property = "ammo_consumption_modifier", -- TODO: Add property info for consumption modifier, currently should be a min factor but it starts at -1 which complicates things
+    property = "ammo_consumption_modifier", -- TODO: Make property info/inertia function respect that things actually start at -1
     property_info = property_info.consumption_modifier
-  }
+  }]]
 
   if attack_parameters.fluids then
     for _, fluid in pairs(attack_parameters.fluids) do
@@ -230,8 +234,7 @@ function randomize_attack_parameters (prototype, attack_parameters)
       randomize_numerical_property{
         prototype = prototype,
         tbl = fluid,
-        property = "damage_modifier", -- TODO: Add property info for damage modifier, currently should be a min factor but it starts at -1 which complicates things
-        -- Also TODO: Probably needs a special inertia function...
+        property = "damage_modifier", -- TODO: Make property info/inertia function respect that things actually start at -1
         property_info = property_info.damage_modifier
       }
     end

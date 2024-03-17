@@ -1111,7 +1111,7 @@ for _, node in pairs(dependency_graph) do
       local recipe = data.raw.recipe[node.name]
 
       -- TODO: Move to main reformatting)
-      reformat.recipe(recipe)
+      reformat.prototype.recipe(recipe)
 
       if #recipe.results == 1 then
         local result = recipe.results[1]
@@ -1356,7 +1356,7 @@ log(num_recipes)]]
 local technology_unlock_slots = {}
 for _, technology in pairs(data.raw.technology) do
   -- TODO: Move all reformatting to beginning of data-final-fixes
-  reformat.technology(technology)
+  reformat.prototype.technology(technology)
 
   technology_unlock_slots[technology.name] = 0
 
@@ -2185,7 +2185,7 @@ for i=1,#accessible_list do
     local recipe = data.raw.recipe[accessible_list[i].name]
 
     -- Calculate recipe costs
-    reformat.recipe(recipe)
+    reformat.prototype.recipe(recipe)
 
     local recipe_cost = 0
     for _, result in pairs(recipe.results) do

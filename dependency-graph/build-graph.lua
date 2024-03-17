@@ -158,7 +158,7 @@ end
 
 function build_graph.add_recipes()
     for _, recipe in pairs(data.raw.recipe) do
-        reformat.recipe(recipe)
+        reformat.prototype.recipe(recipe)
 
         local node = {
             type = "recipe_node",
@@ -237,7 +237,7 @@ function build_graph.add_items_and_fluids(dependency_graph)
         for _, recipe in pairs(data.raw.recipe) do
             -- TODO: Add blacklist back later
 
-            reformat.recipe(recipe)
+            reformat.prototype.recipe(recipe)
             local product_amount = build_graph.find_product_amounts(recipe, name, type)
 
             if product_amount > 0 then
@@ -262,7 +262,7 @@ function build_graph.add_items_and_fluids(dependency_graph)
                     end
 
                     -- TODO: I may need to rename this function since it's supporting minable now too
-                    reformat.recipe_products(resource.minable)
+                    reformat.type.recipe_products(resource.minable)
 
                     local product_amount = build_graph.find_product_amounts(resource.minable, name, type)
 
@@ -291,7 +291,7 @@ function build_graph.add_items_and_fluids(dependency_graph)
                             end
 
                             -- TODO: I may need to rename this function since it's supporting minable now too
-                            reformat.recipe_products(entity.minable)
+                            reformat.type.recipe_products(entity.minable)
 
                             local product_amount = build_graph.find_product_amounts(entity.minable, name, type)
 
@@ -472,7 +472,7 @@ function build_graph.add_technologies(dependency_graph)
             prereqs = {}
         }
 
-        reformat.technology(technology) -- TODO: Move all reformatting to beginning of data-final-fixes
+        reformat.prototype.technology(technology) -- TODO: Move all reformatting to beginning of data-final-fixes
 
         -- Prerequisite techs
         if technology.prerequisites ~= nil then

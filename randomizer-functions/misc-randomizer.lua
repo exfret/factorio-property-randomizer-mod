@@ -146,7 +146,8 @@ function randomize_equipment_shapes ()
       num_points_mult = randomize_numerical_property({
         dummy = num_points_mult,
         walk_params = walk_params.equipment_size,
-        prg_key = prg.get_key(prototype)
+        prg_key = prg.get_key(prototype),
+        property_info = property_info.equipment_size
       })
       local num_points = math.ceil(num_points_mult * prototype.shape.width * prototype.shape.height)
 

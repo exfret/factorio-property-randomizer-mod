@@ -165,7 +165,7 @@ function randomize_item_stack_sizes ()
       local property_info_to_use = property_info.stack_size
       -- Use sensitive stack size if it is a building or if it is used in making a building
       for _, recipe in pairs(data.raw.recipe) do
-        reformat.recipe(recipe) -- TODO: Reformat beforehand and remove this
+        reformat.prototype.recipe(recipe) -- TODO: Reformat beforehand and remove this
 
         for _, ingredient in pairs(recipe.ingredients) do
           if ingredient.name == prototype.name then

@@ -106,14 +106,6 @@ local equipment_variations = {
                       {1,0},
                 {0,1},{1,1}
             }
-        },
-        [7] = {
-            width = 2,
-            height = 2,
-            points = {
-                      {1,0},
-                {0,1},{1,1}
-            }
         } -- TODO: finish
     }
 }

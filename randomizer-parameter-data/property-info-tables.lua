@@ -26,6 +26,7 @@ property_info.attack_parameters_cooldown = {
 }
 
 property_info.attack_parameters_range = {
+  min = 1,
   min_factor = 1 / 3,
   max_factor = 3,
   round = {
@@ -214,11 +215,26 @@ property_info.entity_interaction_repair_speed = {
 }
 
 property_info.equipment_grid = {
+  min = 1,
+  min_factor = 1 / 2,
+  max_factor = 3,
   round = {
     [1] = {
       modulus = 1
     }
   }
+}
+
+property_info.equipment_size = {
+  min = 1,
+  min_factor = 1 / 2,
+  max_factor = 2,
+  round = {
+    [1] = {
+      modulus = 1
+    }
+  },
+  lower_is_better = true
 }
 
 property_info.fluid_emissions_multiplier = {
@@ -349,6 +365,11 @@ property_info.limited_range = {
 property_info.limited_range_strict = {
   min_factor = 1 / 2,
   max_factor = 2
+}
+
+property_info.limited_range_very_strict = {
+  min_factor = 2 / 3,
+  max_factor = 3 / 2
 }
 
 property_info.machine_pollution = {

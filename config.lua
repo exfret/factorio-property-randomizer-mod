@@ -62,7 +62,8 @@ rand_map_colors = settings.startup["propertyrandomizer-misc-properties"].value
 rand_mining_drill_productivity = settings.startup["propertyrandomizer-mining-drill-productivity"].value
 --rand_switch_projectiles = settings.startup["propertyrandomizer-switch-projectiles"].value
 rand_tile_walking_speed_modifier = settings.startup["propertyrandomizer-misc-properties"].value
-rand_tools = settings.startup["propertyrandomizer-misc-properties"].value -- TODO: make tools not impact research packs lol
+rand_tools = settings.startup["propertyrandomizer-misc-properties"].value
+rand_unit = settings.startup["propertyrandomizer-military-advanced"].value
 
 -- Silly randomizations
 

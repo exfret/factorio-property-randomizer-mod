@@ -299,6 +299,12 @@ function randomize_electric_poles ()
       prototype.supply_area_distance = math.min(64, math.floor(prototype.supply_area_distance + 0.5))
     end
   end
+
+  for _, prototype in pairs(data.raw["electric-pole"]) do
+    if prototype.supply_area_distance > prototype.maximum_wire_distance then
+      prototype.maximum_wire_distance = prototype.supply_area_distance
+    end
+  end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1083,6 +1089,29 @@ function randomize_underground_belt_distance ()
       property_info = property_info.underground_belt_length,
       walk_params = walk_params.underground_belt_length
     }
+  end
+end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_unit
+---------------------------------------------------------------------------------------------------
+
+function randomize_unit()
+  for _, prototype in pairs(data.raw.unit) do
+    randomize_attack_parameters(prototype, prototype.attack_parameters)
+
+    local old_movement_speed = prototype.movement_speed
+
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "movement_speed",
+      inertia_function = inertia_function.sensitive,
+      property_info = property_info.limited_range_very_strict
+    })
+
+    if prototype.old_movement_speed ~= 0 then
+      prototype.distance_per_frame = prototype.distance_per_frame * prototype.movement_speed / old_movement_speed
+    end
   end
 end
 

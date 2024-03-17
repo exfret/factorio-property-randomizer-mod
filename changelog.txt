@@ -1,8 +1,14 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.8
 Date: ?
+  Features:
+    - Randomized turret properties
   Balancing:
     - Min tile walk speed modifier is now 80% after miserable experiences during testing
+    - Some limits on how crazy equipment-related things can get
+    - Electric pole wire distance must now be at least as large as supply area
+  Bugfixes:
+    - Fixed that some "everything else" properties were on just always
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.7
 Date: 2024.03.14
