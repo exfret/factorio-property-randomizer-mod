@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.8
-Date: ?
+Date: 2024.03.19
   Features:
     - Randomized turret properties
     - Randomized landmine properties
