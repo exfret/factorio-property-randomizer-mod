@@ -129,6 +129,10 @@ if rand_lab_speed then
   table.insert(randomizing_functions_to_call, randomize_lab_research_speed)
 end
 
+if rand_landmines then
+  table.insert(randomizing_functions_to_call, randomize_landmines)
+end
+
 -- TODO: Figure out what extra things support pollution
 if rand_machine_pollution then
   table.insert(randomizing_functions_to_call, randomize_machine_pollution)
@@ -176,6 +180,7 @@ if rand_tile_walking_speed_modifier then
 end
 
 if rand_turret_attack_parameters then
+  table.insert(randomizing_functions_to_call, randomize_turret)
   table.insert(randomizing_functions_to_call, randomize_turret_attack_parameters)
 end
 
@@ -228,6 +233,18 @@ end
 
 if rand_mining_drill_dropoff then
   table.insert(randomizing_functions_to_call, randomize_mining_drill_dropoff_location)
+end
+
+if rand_mining_results_tree_rock then
+  table.insert(randomizing_functions_to_call, randomize_mining_results_tree_rock)
+end
+
+if rand_projectiles then
+  table.insert(randomizing_functions_to_call, randomize_projectiles)
+end
+
+if rand_stickers then
+  table.insert(randomizing_functions_to_call, randomize_stickers)
 end
 
 if rand_tools then

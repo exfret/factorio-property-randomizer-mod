@@ -103,6 +103,7 @@ function randomize_trigger_delivery (prototype, trigger)
   end
 end
 
+-- Actually randomizes trigger
 function randomize_trigger_item (prototype, trigger)
   if trigger.action_delivery then
     if trigger.action_delivery.type then
@@ -113,33 +114,6 @@ function randomize_trigger_item (prototype, trigger)
       end
     end
   end
-
-  -- AreaTriggerItem
-  --[[if trigger.radius then
-    trigger.radius = trigger.radius * random_modifier()
-  end
-
-  -- LineTriggerItem
-  if trigger.range then
-    trigger.range = trigger.range * random_modifier()
-  end
-  if trigger.width then
-    trigger.width = trigger.width * random_modifier()
-  end
-  if trigger.range_effects then
-    randomize_trigger_effect(prototype, trigger.range_effects)
-  end
-
-  -- ClusterTriggerItem
-  if trigger.cluster_count then
-    trigger.cluster_count = trigger.cluster_count * random_modifier()
-  end
-  if trigger.distance then
-    trigger.distance = trigger.distance * random_modifier()
-  end
-  if trigger.distance_deviation then
-    trigger.distance_deviation = trigger.distance_deviation * random_modifier()
-  end]]
 end
 
 function randomize_ammo_type (prototype, ammo_type)
@@ -160,6 +134,7 @@ function randomize_ammo_type (prototype, ammo_type)
     prototype = prototype,
     tbl = ammo_type,
     property = "range_modifier",
+    inertia_function = inertia_function.sensitive_very,
     property_info = property_info.ammo_type_range_modifier
   }
 end
@@ -177,7 +152,7 @@ function randomize_attack_parameters (prototype, attack_parameters)
     prototype = prototype,
     tbl = attack_parameters,
     property = "range",
-    inertia_function = inertia_function.sensitive,
+    inertia_function = inertia_function.sensitive_very,
     property_info = property_info.attack_parameters_range
   }
   -- Randomize minimum range by a proportional amount if it exists

@@ -1,8 +1,8 @@
 local property_info = {}
 
 property_info.ammo_type_range_modifier = {
-  min_factor = 1 / 3,
-  max_factor = 3,
+  min_factor = 1 / 2,
+  max_factor = 2,
   round = {
     [2] = {
       modulus = 0.1
@@ -765,6 +765,11 @@ property_info.trigger_damage = {
       modulus = 1
     }
   }
+}
+
+property_info.turret_turning_speed = {
+  min_factor = 1 / 5,
+  max_factor = 10
 }
 
 property_info.underground_belt_length = {

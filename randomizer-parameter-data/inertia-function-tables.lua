@@ -217,6 +217,11 @@ inertia_function.sensitive = {
   slope = 1.5
 }
 
+inertia_function.sensitive_very = {
+  type = "proportional",
+  slope = 0.75
+}
+
 inertia_function.stack_size = {
   {1, 4},
   {20, 20},
@@ -239,7 +244,7 @@ inertia_function.tile_walking_speed_modifier = {
   slope = 1
 }
 
-inertia_function.trigger_damage = {
+inertia_function.trigger_damage = { -- TODO: This is used for more than just firearms right now but is specialized for firearm magazines, need to fix
   {3, 0},
   {4, 2},
   {20, 20},

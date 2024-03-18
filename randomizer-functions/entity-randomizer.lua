@@ -4,6 +4,7 @@ require("util-randomizer")
 require("globals")
 require("linking-utils")
 local param_table_utils = require("param-table-utils")
+local reformat = require("utilities/reformat")
 
 local blacklist = require("compatibility/blacklist-tables")
 
@@ -714,6 +715,32 @@ function randomize_lab_research_speed ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_landmines
+---------------------------------------------------------------------------------------------------
+
+function randomize_landmines()
+  for _, prototype in pairs(data.raw["land-mine"]) do
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "trigger_radius",
+      property_info = property_info.limited_range
+    })
+
+    if prototype.timeout == nil then
+      prototype.timeout = 120
+    end
+
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "timeout",
+      property_info = property_info.limited_range
+    })
+
+    randomize_trigger_item(prototype, prototype.action)
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_machine_pollution
 ---------------------------------------------------------------------------------------------------
 
@@ -819,6 +846,66 @@ function randomize_mining_productivity ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_mining_results_tree_rock
+---------------------------------------------------------------------------------------------------
+
+function randomize_mining_results_tree_rock() -- TODO: This may have incompatibilities if there are simple_entities other than trees or rocks or if the products of them are more important like in other mods
+  local function randomize_mining_results(prototype)
+    if prototype.minable ~= nil then
+      local minable = prototype.minable
+
+      if minable.results ~= nil then
+        for _, result in pairs(minable.results) do
+          reformat.type.product_prototyte(result)
+
+          randomize_numerical_property({
+            prototype = prototype,
+            tbl = result,
+            property = "amount",
+            property_info = property_info.limited_range
+          })
+
+          randomize_numerical_property({
+            group_params = {
+              {
+                prototype = prototype,
+                tbl = result,
+                property = "amount_min",
+                property_info = property_info.limited_range
+              },
+              {
+                prototype = prototype,
+                tbl = result,
+                property = "amount_max",
+                property_info = property_info.limited_range
+              }
+            }
+          })
+        end
+      else
+        if minable.count == nil then
+          minable.count = 1
+        end
+
+        randomize_numerical_property({
+          prototype = prototype,
+          tbl = minable,
+          property = "count",
+          property_info = property_info.limited_range
+        })
+      end
+    end
+  end
+
+  for _, prototype in pairs(data.raw.tree) do
+    randomize_mining_results(prototype)
+  end
+  for _, prototype in pairs(data.raw["simple-entity"]) do
+    randomize_mining_results(prototype)
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_mining_speeds
 ---------------------------------------------------------------------------------------------------
 
@@ -897,6 +984,19 @@ function randomize_offshore_pump_speed ()
       property_info = property_info.offshore_pumping_speed,
       walk_params = walk_params.offshore_pumping_speed
     }
+  end
+end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_projectiles
+---------------------------------------------------------------------------------------------------
+
+function randomize_projectiles()
+  for _, prototype in pairs(data.raw.projectile) do
+    randomize_numerical_property({ -- TODO
+      prototype = prototype,
+      property = "acceleration"
+    })
   end
 end
 
@@ -1058,6 +1158,35 @@ function randomize_storage_tank_capacity ()
         -- Let's not set rounding info since it can be messed up by the height anyways
       }
     end
+  end
+end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_turret
+---------------------------------------------------------------------------------------------------
+
+function randomize_turret()
+  for _, turret_class in pairs(prototype_tables.turret_classes) do
+    for _, prototype in pairs(data.raw[turret_class]) do
+      if prototype.rotation_speed == nil then
+        prototype.rotation_speed = 1
+      end
+
+      randomize_numerical_property({ -- TODO: Custom inertia function?
+        prototype = prototype,
+        property = "rotation_speed",
+        property_info = property_info.turret_turning_speed
+      })
+    end
+  end
+
+  -- Randomize car turret stuff
+  for _, car in pairs(data.raw.car) do
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "turret_rotation_speed",
+      property_info = property_info.turret_turning_speed
+    })
   end
 end
 

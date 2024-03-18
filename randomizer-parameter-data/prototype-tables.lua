@@ -330,7 +330,8 @@ prototype_tables.tool_classes = {
 prototype_tables.turret_classes = {
   "ammo-turret",
   "electric-turret",
-  "fluid-turret"
+  "fluid-turret",
+  "turret"
 }
 
 prototype_tables.transport_belt_classes = {

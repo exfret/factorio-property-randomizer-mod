@@ -389,6 +389,79 @@ function randomize_projectile_damage()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_stickers
+---------------------------------------------------------------------------------------------------
+
+function randomize_stickers()
+  for _, prototype in pairs(data.raw.sticker) do
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "duration_in_ticks",
+      inertia_function = inertia_function.sensitive,
+      property_info = property_info.limited_range_strict
+    })
+
+    -- There's a rule for defaults here but that's when it's every tick and pretty sensitive anyways
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "damage_interval",
+      inertia_function = inertia_function.sensitive,
+      property_info = property_info.limited_range_strict
+    })
+
+    randomize_numerical_property({
+      prototype = prototype,
+      tbl = prototype.damage_per_tick,
+      property = "amount",
+      inertia_function = inertia_function.sensitive,
+      property_info = property_info.limited_range_strict
+    })
+
+    -- Don't set default movement modifier so it doesn't randomize if it's 1
+    randomize_numerical_property({
+      group_params = {
+        {
+          prototype = prototype,
+          property = "target_movement_modifier",
+          inertia_function = inertia_function.sensitive,
+          property_info = property_info.limited_range_strict
+        },
+        {
+          prototype = prototype,
+          property = "target_movement_modifier_from",
+          inertia_function = inertia_function.sensitive,
+          property_info = property_info.limited_range_strict
+        },
+        {
+          prototype = prototype,
+          property = "target_movement_modifier_to",
+          inertia_function = inertia_function.sensitive,
+          property_info = property_info.limited_range_strict
+        },
+        {
+          prototype = prototype,
+          property = "vehicle_speed_modifier",
+          inertia_function = inertia_function.sensitive,
+          property_info = property_info.limited_range_strict
+        },
+        {
+          prototype = prototype,
+          property = "vehicle_speed_modifier_from",
+          inertia_function = inertia_function.sensitive,
+          property_info = property_info.limited_range_strict
+        },
+        {
+          prototype = prototype,
+          property = "vehicle_speed_modifier_to",
+          inertia_function = inertia_function.sensitive,
+          property_info = property_info.limited_range_strict
+        }
+      }
+    })
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_utility_constants_properties
 ---------------------------------------------------------------------------------------------------
 

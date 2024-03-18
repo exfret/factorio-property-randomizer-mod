@@ -8,6 +8,9 @@ local reformat = {}
 --------------------------------------------------------------------------------
 
 reformat.type = {}
+reformat.prototype = {}
+reformat.common = {}
+reformat.test = {}
 
 function reformat.type.ingredient_prototyte(ingredient)
     if ingredient[1] then
@@ -45,7 +48,7 @@ function reformat.type.recipe_ingredients(recipe)
             reformat.type.ingredient_prototyte(ingredient)
         end
     else
-        recipe.type.ingredients = recipe.normal.ingredients
+        recipe.ingredients = recipe.normal.ingredients
     end
 end
 
@@ -162,8 +165,6 @@ end
 --------------------------------------------------------------------------------
 -- Prototypes
 --------------------------------------------------------------------------------
-
-reformat.prototype = {}
 
 reformat.prototype["accumulator"] = function(prototype)
     reformat.type.energy_source(prototype.energy_source)
@@ -570,18 +571,33 @@ end
 function reformat.test.prototype(prototype)
     local spec = reformat.spec.prototype[prototype.name]
 
-    for property, default in pairs(spec.defaults) do -- TODO: Merge overrides with defaults
-        if prototype[property] == nil then
-            prototoype[property] = default
+    if spec.defaults ~= nil then
+        for property, default in pairs(spec.defaults) do -- TODO: Merge overrides with defaults
+            if prototype[property] == nil then
+                local copy = default
+                if type(default) == "table" then
+                    copy = table.deepcopy(default)
+                end
+
+                prototoype[property] = copy
+            end
         end
     end
 
-    for property, format in pairs(spec.properties) do
-        prototype[property] = reformat.type[format](prototype[property])
+    if spec.common ~= nil then
+        for _, format in pairs(spec.common) do
+            reformat.common[format](prototype)
+        end
     end
 
-    if spec.inherits then
-        reformat.prototype[prototype.name](prototype)
+    if spec.properties ~= nil then
+        for property, format in pairs(spec.properties) do
+            prototype[property] = reformat.type[format](prototype[property])
+        end
+    end
+
+    if spec.inherits ~= nil then
+        reformat.prototype[spec.inherits](prototype)
     end
 end
 
@@ -604,7 +620,7 @@ reformat.spec = {
             overrides = {
                 stack_size = 1,
                 draw_label_for_cursor_render = true,
-                selection_mode = "blueprint,
+                selection_mode = "blueprint",
                 alt_selection_mode = "blueprint",
                 always_include_tiles = false
             },
@@ -622,7 +638,7 @@ reformat.spec = {
             },
             properties_literal = { -- TODO: No longer need to be separate
                 energy_consumption = "energy",
-            }
+            },
             defaults = {
                 fire_glow_flicker_enabled = false,
                 fire_flicker_enabled = false,
@@ -663,12 +679,171 @@ reformat.spec = {
         },
         ["car"] = {
             properties = {
-                animation = "animation",
-
+                animation = "rotated_animation",
+                consumption = "energy",
+                -- energy_source/burner is special and dealt with specially
+                turret_animation = "rotated_animation",
+                light_animation = "rotated_animation",
+                light = "light_definition",
+                sound_no_fuel = "sound",
+                track_particle_triggers = "footstep_trigger_effect_list"
+            },
+            defaults = {
+                render_layer = "object",
+                tank_driving = false,
+                has_belt_immunity = false,
+                immune_to_tree_impacts = false,
+                immune_to_rock_impacts = false,
+                immune_to_cliff_impacts = true,
+                turret_rotation_speed = 0.01,
+                turret_return_timeout = 60,
+                darkness_to_render_light_animation = 0.3,
+                guns = {},
+                collision_mask = {"player-layer", "train-layer", "consider-tile-transitions"}
+            },
+            inherits = "vehicle"
+        },
+        ["cargo-wagon"] = {
+            inherits = "rolling-stock"
+        },
+        ["character-corpse"] = {
+            common = {
+                "prototype_with_pictures" -- Need special functionality to integrate picture into pictures if it exists
+            },
+            defaults = {
+                render_layer = "object",
+                collision_mask = {}
             }
+            -- Confused about armor_picture_mapping, will leave it for now
+        },
+        ["character"] = {
+            properties = {
+                heartbeat = "sound",
+                eat = "sound",
+                damage_hit_tint = "color",
+                animations = "character_armor_animation_list",
+                light = "light_definition",
+                footstep_particle_triggers = "footstep_trigger_effect_list",
+                synced_footstep_particle_triggers = "footstep_trigger_effect_list",
+                footprint_particles = "footprint_particle_list",
+                left_footprint_offset = "vector",
+                right_footprint_offset = "vector",
+                tool_attack_result = "trigger"
+            },
+            defaults = {
+                crafting_categories = {},
+                mining_categories = {},
+                enter_vehicle_distance = 3,
+                tool_attack_distance = 1.5,
+                respawn_time = 10,
+                has_belt_immunity = false,
+                is_military_target = true,
+                collision_mask = {"player-layer", "train-layer", "consider-tile-transitions"}
+            },
+            inherits = "entity-with-owner"
+        },
+        ["cliff"] = {
+            properties = {
+                orientations = "oriented_cliff_prototype_set",
+                grid_size = "vector",
+                grid_offset = "vector"
+            },
+            defaults = {
+                cliff_height = 4,
+                collision_mask = {"item-layer", "object-layer", "player-layer", "water-tile", "not-colliding-with-itself"}
+            },
+            inherits = "entity"
+        },
+        ["combat-robot-count"] = {
+            defaults = {
+                count = 1
+            },
+            inherits = "achievement"
+        },
+        ["combat-robot"] = {
+            properties = {
+                attack_parameters = "attack_parameters",
+                idle = "rotated_animation",
+                shadow_idle = "rotated_animation",
+                in_motion = "rotated_animation",
+                shadow_in_motion = "rotated_animation",
+                destroy_action = "trigger",
+                light = "light_definition"
+            },
+            defaults = {
+                range_from_player = 0,
+                friction = 0,
+                follows_player = false
+            },
+            inherits = "flying-robot"
+        },
+        ["combinator"] = {
+            properties = {
+                energy_source = "energy_source",
+                active_energy_usage = "energy",
+                sprites = "sprite_4_way",
+                activity_led_sprites = "sprite_4_way",
+                input_connection_bounding_box = "bounding_box",
+                ouptut_connection_bounding_box = "bounding_box",
+                activity_led_light_offsets = "4_vector",
+                screen_led_light_offsets = "4_vector",
+                input_connection_points = "4_wire_connection_point",
+                output_connection_points = "4_wire_connection_point",
+                activity_led_light = "light_definition",
+                screen_light = "light_definition"
+            },
+            defaults = {
+                activity_led_hold_time = 5,
+                circuit_wire_max_distance = 0,
+                draw_copper_wires = true,
+                draw_circuit_wires = true
+            },
+            inherits = "entity-with-owner"
+        },
+        ["constant-combinator"] = {
+            properties = {
+                sprites = "sprite_4_way",
+                activity_led_sprietss = "sprite_4_way",
+                activity_led_light_offsets = "4_vector",
+                circuit_wire_connection_points = "4_wire_connection_point",
+                activity_led_light = "light_definition"
+            },
+            defaults = {
+                circuit_wire_max_distance = 0,
+                draw_copper_wires = true,
+                draw_circuit_wires = true
+            },
+            inherits = "entity-with-owner"
+        },
+        ["construct-with-robots-achievement"] = {
+            defaults = {
+                amount = 0,
+                more_than_manually = false
+            }
+        },
+        ["construction-robot"] = {
+            properties = {
+                construction_vector = "vector",
+                working = "rotated_animation",
+                shadow_working = "rotated_animation",
+                smoke = "animation",
+                sparks = "animation_variations",
+                repairing_sound = "sound",
+                working_light = "light_definition"
+            },
+            defaults = {
+                collision_box = {{0, 0} ,{0, 0}}
+            },
+            inherits = "robot-with-logistic-interface"
+        },
+        ["container"] = {
+            inherits = "entity-with-owner"
         }
     }
 }
+
+-- Special formatting: Make car "burner" property into energy_source
+-- There's also a special property in artillery I think?
 
 reformat["equipment"] = function(prototype)
     reformat.type.sprite(prototype.sprite)

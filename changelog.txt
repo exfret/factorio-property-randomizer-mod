@@ -3,10 +3,14 @@ Version: 0.2.8
 Date: ?
   Features:
     - Randomized turret properties
+    - Randomized landmine properties
+    - Randomized tree/rock product amounts
+    - Randomized various "sticker" effects, like the slowing effect of worms
   Balancing:
     - Min tile walk speed modifier is now 80% after miserable experiences during testing
     - Some limits on how crazy equipment-related things can get
     - Electric pole wire distance must now be at least as large as supply area
+    - Allowed for larger internal bias
   Bugfixes:
     - Fixed that some "everything else" properties were on just always
 ---------------------------------------------------------------------------------------------------
