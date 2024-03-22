@@ -1144,6 +1144,60 @@ function randomize_roboports ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_rocket_silo_rocket_launch_length
+---------------------------------------------------------------------------------------------------
+
+function randomize_rocket_silo_rocket_launch_length()
+  for _, prototype in pairs(data.raw["rocket-silo"]) do
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "times_to_blink",
+      inertia_function = inertia_function.rocket_launch_length,
+      walk_params = walk_params.rocket_launch_length,
+      property_info = property_info.rocket_launch_length
+    })
+
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "light_blinking_speed",
+      inertia_function = inertia_function.rocket_launch_length,
+      walk_params = walk_params.rocket_launch_speed,
+      property_info = property_info.rocket_launch_speed
+    })
+
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "door_opening_speed",
+      inertia_function = inertia_function.rocket_launch_length,
+      walk_params = walk_params.rocket_launch_speed,
+      property_info = property_info.rocket_launch_speed
+    })
+
+    if prototype.rocket_rising_delay == nil then
+      prototype.rocket_rising_delay = 30
+    end
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "rocket_rising_delay",
+      inertia_function = inertia_function.rocket_launch_length,
+      walk_params = walk_params.rocket_launch_length,
+      property_info = property_info.rocket_launch_length
+    })
+
+    if prototype.launch_wait_time == nil then
+      prototype.launch_wait_time = 120
+    end
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "launch_wait_time",
+      inertia_function = inertia_function.rocket_launch_length,
+      walk_params = walk_params.rocket_launch_length,
+      property_info = property_info.rocket_launch_length
+    })
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_storage_tank_capacity
 ---------------------------------------------------------------------------------------------------
 

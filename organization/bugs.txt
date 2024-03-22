@@ -5,3 +5,4 @@
 5. w/ wide chests, the chests get too large
 7. Incompatibility with info mods
 9. Electric pole reach is not enforced to be at least the supply area
+10. Health not being rounded correctly

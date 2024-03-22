@@ -204,12 +204,17 @@ inertia_function.radar = {
 
 inertia_function.researching_speed = {
   ["type"] = "proportional",
-  slope = 8
+  slope = 6
 }
 
 inertia_function.resource_mining_speed = {
   type = "proportional",
   slope = 1.5
+}
+
+inertia_function.rocket_launch_length = {
+  type = "proportional",
+  slope = 8
 }
 
 inertia_function.sensitive = {

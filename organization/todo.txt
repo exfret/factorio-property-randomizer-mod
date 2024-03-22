@@ -1,5 +1,8 @@
 1. Currently working on information
 
+Rocket parts required!
+Changing rocket silo causing module changes?
+
 
 
  - Randomize things based on upgrade lines

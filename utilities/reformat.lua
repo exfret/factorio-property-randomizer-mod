@@ -837,7 +837,158 @@ reformat.spec = {
             inherits = "robot-with-logistic-interface"
         },
         ["container"] = {
+            properties = {
+                picture = "sprite"
+            },
+            defaults = {
+                inventory_type = "with_bar",
+                enable_inventory_bar = true,
+                scale_info_icons = false,
+                circuit_wire_connection_point = "wire_connection_point",
+                circuit_wire_max_distance = 0,
+                draw_copper_wires = true,
+                draw_circuit_wires = true,
+                circuit_connector_sprites = "circuit_connector_sprites"
+            },
             inherits = "entity-with-owner"
+        },
+        ["copy-paste-tool"] = {
+            defaults = {
+                cuts = false,
+                stack_size = 1,
+                always_include_tiles = false
+            },
+            inherits = "selection-tool"
+        },
+        ["corpse"] = { -- Dunno what to do about direction shuffle
+            properties = {
+                animation = "rotated_animation_variations",
+                animation_overlay = "rotated_animation_variations",
+                splash = "animation_variations",
+                ground_patch = "animation_variations",
+                ground_patch_higher = "animation_variations"
+            },
+            defaults = {
+                dying_speed = 1,
+                splash_speed = 1,
+                time_before_shading_off = 60 * 15,
+                time_before_removed = 60 * 120,
+                remove_on_entity_placement = true,
+                remove_on_tile_placement = true,
+                final_render_layer = "corpse",
+                ground_patch_render_layer = "ground-patch",
+                animation_render_layer = "object",
+                splash_render_layer = "object",
+                animation_overlay_render_layer = "object",
+                animation_overlay_final_render_layer = "corpse",
+                shuffle_directions_at_frame = 1,
+                use_tile_color_for_ground_patch_tint = false,
+                ground_patch_fade_in_delay = 0,
+                ground_patch_fade_in_speed = 0,
+                ground_patch_fade_out_start = 0,
+                ground_patch_fade_out_duration = 0,
+                collision_mask = {}
+            },
+            inherits = "entity"
+        },
+        ["crafting-machine"] = {
+            properties = {
+                energy_usage = "energy",
+                energy_source = "energy_source",
+                fluid_boxes = "fluid_box_array_with_off_when_no_fluid_recipe", -- They can have an extra key in their fluid boxes I need to account for
+                allowed_effects = "effect_type_limitation",
+                animation = "animation_4_way",
+                idle_animation = "animation_4_way",
+                default_recipe_tint = "default_recipe_tint",
+                shift_animation_waypoints = "shift_animation_waypoints",
+                status_colors = "status_colors",
+                entity_info_icon_shift = "vector",
+                module_specification = "module_specification",
+                working_visualisations = "working_visualization_array"
+            },
+            defaults = {
+                fluid_boxes = {},
+                allowed_effects = {},
+                scale_entity_info_icon = false,
+                show_recipe_icon = true,
+                return_ingredients_on_change = true,
+                always_raw_idle_animation = false,
+                shift_animation_waypoint_stop_duration = 0,
+                shift_animation_transition_duration = 0,
+                draw_entity_info_icon_background = true,
+                match_animation_speed_to_activity = true,
+                show_recipe_icon_on_map = true,
+                base_productivity = 0
+            },
+            implements = "entity-with-owner"
+        },
+        ["curved-rail"] = {
+            defaults = {
+                bending_type = "turn"
+            },
+            implements = "rail"
+        },
+        ["custom-input"] = { -- Has some special strings? Look back on this later
+            defaults = {
+                linked_game_control = "",
+                consuming = "none",
+                enabled = true,
+                enabled_while_spectating = false,
+                enabled_while_in_cutscene  = flase,
+                include_selected_prototype = false,
+                action = "lua"
+            },
+            implements = "base"
+        },
+        ["damage-type"] = {
+            defaults = {
+                hidden = false
+            }
+        },
+        ["decider-combinator"] = {
+            properties = {
+                equal_symbol_sprites = "sprite_4_way",
+                greater_symbol_sprites = "sprite_4_way",
+                less_symbol_sprites = "sprite_4_way",
+                not_equal_symbol_sprites = "sprite_4_way",
+                greater_or_equal_symbol_sprites = "sprite_4_way",
+                less_or_equal_symbol_sprites = "sprite_4_way"
+            },
+            implements = "combinator"
+        },
+        ["deconstruct-with-robots-achievement"] = {
+            implements = "achievement"
+        },
+        ["deconstructible-tile-proxy"] = {
+            implements = "entity"
+        },
+        ["deconstruction-item"] = {
+            defaults = {
+                entity_filter_count = 0,
+                tile_filter_count = 0,
+                stack_size = 1,
+                selection_mode = "deconstruct",
+                alt_selection_mode = "cancel-deconstruct",
+                always_include_tiles = false
+            },
+            implements = "selection-tool"
+        },
+        ["optimized-decorative"] = {
+            properties = {
+                pictures = "sprite_variations",
+                collision_box = "collision_box",
+                walking_sound = "sound",
+                trigger_effect = "trigger_effect",
+                autoplace = "autoplace_specification"
+            },
+            defaults = {
+                render_layer = "decorative",
+                grows_through_rail_path = false,
+                tile_layer = 0,
+                decal_overdraw_priority = 0,
+                collision_mask = {"doodad-layer"}
+            },
+            implements = "base"
         }
     }
 }

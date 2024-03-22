@@ -55,7 +55,7 @@ script.on_event(defines.events.on_tick, function(event)
   end
 
   if event.tick % (60 * 60 * 30) == 0 and rand_character_properties_midgame then
-    local old_force_modifications = util.table.deepcopy(global.force_modifications)
+    --[[local old_force_modifications = util.table.deepcopy(global.force_modifications)
 
     local new_force_modifications = global.force_modifications
     new_force_modifications.running_speed = prg.value(nil, global) - 1 / 3
@@ -66,7 +66,16 @@ script.on_event(defines.events.on_tick, function(event)
     player_force.character_running_speed_modifier = -1 + (1 + player_force.character_running_speed_modifier) * math.pow(4, new_force_modifications.running_speed - old_force_modifications.running_speed)
     -- TODO: Dynamically sense base max health
     --player_force.character_health_bonus = -250 + (250 + player_force.character_health_bonus) * math.pow(9, new_force_modifications.health - old_force_modifications.health)
-    player_force.manual_crafting_speed_modifier = -1 + (1 + player_force.manual_crafting_speed_modifier) * math.pow(13, new_force_modifications.manual_crafting_speed - old_force_modifications.manual_crafting_speed)
+    player_force.manual_crafting_speed_modifier = -1 + (1 + player_force.manual_crafting_speed_modifier) * math.pow(13, new_force_modifications.manual_crafting_speed - old_force_modifications.manual_crafting_speed)]]
+
+    local old_force_modifications = util.table.deepcopy(global.force_modifications)
+    local new_force_modifications = global.force_modifications
+    new_force_modifications.running_speed = prg.value(nil, global) + 2 / 3
+    new_force_modifications.manual_crafting_speed = prg.value(nil, global) + 2 / 3
+
+    player_force = game.forces.player -- TODO: Different forces compatibility
+    player_force.character_running_speed_modifier = player_force.character_running_speed_modifier - old_force_modifications.running_speed + new_force_modifications.running_speed
+    player_force.manual_crafting_speed_modifier = player_force.manual_crafting_speed_modifier - old_force_modifications.manual_crafting_speed + new_force_modifications.manual_crafting_speed
 
     game.print("Running speed is now " .. math.ceil(100 * (1 + player_force.character_running_speed_modifier)) .. "%")
     game.print("Crafting speed is now " .. math.ceil(100 * (1 + player_force.manual_crafting_speed_modifier)) .. "%")

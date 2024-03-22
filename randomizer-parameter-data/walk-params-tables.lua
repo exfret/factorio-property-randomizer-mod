@@ -45,6 +45,14 @@ walk_params.recipe_crafting_time = {
   bias = 0.47
 }
 
+walk_params.rocket_launch_length = {
+  bias = 0.55
+}
+
+walk_params.rocket_launch_speed = {
+  bias = 0.45
+}
+
 walk_params.stack_size = {
   bias = 0.54 -- It's better to give the player enormously large stack sizes than to have enormously small ones, so skew to larger ones
 }

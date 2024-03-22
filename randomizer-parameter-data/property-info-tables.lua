@@ -43,6 +43,7 @@ property_info.belt_speed = {
   min = 0.00390625,
   max = 255,
   min_factor = 1 / 4,
+  max_factor = 8,
   round = {
     [1] = {
       modulus = 0.00390625
@@ -111,8 +112,8 @@ property_info.charging_station_count = {
 
 -- Note that this is actually a factor that the real cliff sizes are multiplied by
 property_info.cliff_size = {
-  min = 0.01,
-  max = 20,
+  min = 0.04,
+  max = 10,
   lower_is_better = true
 }
 
@@ -605,6 +606,19 @@ property_info.roboport_radius = {
   }
 }
 
+property_info.rocket_launch_length = {
+  min = 1,
+  max = 255,
+  min_factor = 1 / 100,
+  max_factor = 100,
+  lower_is_better = true
+}
+
+property_info.rocket_launch_speed = {
+  min_factor = 1 / 100,
+  max_factor = 100
+}
+
 property_info.small_inventory = {
   min = 0,
   max_factor = 4, -- TODO: Add leniency so that 0 slots can still be randomized to 1 slot if necessary
@@ -680,7 +694,6 @@ property_info.supply_area = {
   max = 64,
   min_factor = 1 / 2,
   max_factor = 5,
-  max_factor = 10,
   round = {
     [1] = {
       modulus = 0.5

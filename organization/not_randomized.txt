@@ -2,6 +2,12 @@ Notes:
     1. Doesn't include justification for visual properties
     2. Justification is not required for properties that would obviously be very silly and unnoticeable anyways
 
+AmmoCategory - All
+    I don't see a sensible way of randomizing ammo categories, they're mostly just names of things anyways.
+
+AmbientSound - All
+    Maybe could switch around ambients sounds without it being too wack, but I don't see this changing much or even being noticeable
+
 Circuit Connectables - Circuit Wire Max Distance
     Probably wouldn't be noticed except when it is, and would then be unenjoyable.
 
@@ -10,4 +16,3 @@ Energy Source - Electric - Usage Priority
 
 Resistances
     Is complicated to do right and I'm not sure how to do it yet.
-

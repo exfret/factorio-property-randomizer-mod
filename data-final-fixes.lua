@@ -80,8 +80,8 @@ if rand_electric_poles then
 end
 
 if rand_energy_values then
-  table.insert(randomizing_functions_to_call, randomize_energy_properties) -- RocketSilo has extra properties I haven't randomized yet it seems
-  table.insert(randomizing_functions_to_call, randomize_power_production_properties) -- TODO
+  table.insert(randomizing_functions_to_call, randomize_energy_properties) -- Don't randomize rocket silo lamp and active energy usage, most people don't even know about those
+  table.insert(randomizing_functions_to_call, randomize_power_production_properties)
   table.insert(randomizing_functions_to_call, randomize_reactor_neighbour_bonus)
 end
 
@@ -289,6 +289,7 @@ end
 if settings.startup["propertyrandomizer-misc-properties"].value then
   randomize_icon_shifts()
   randomize_utility_constants_properties()
+  randomize_rocket_silo_rocket_launch_length()
 end
 
 -- Final quick fixes

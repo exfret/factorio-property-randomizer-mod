@@ -501,6 +501,11 @@ randomization_spec.numerical_randomizations = {
         inertia_function = inertia_function.offshore_pumping_speed,
         walk_params = walk_params.offshore_pumping_speed
     },
+    ["pipe-to-ground-distance"] = {
+        target = "pipe-connection-definition",
+        target_class = "pipe-to-ground",
+        property = "max_underground_distance"
+    },
     ["projectile-damage"] = {
         target_class = "projectile",
         target = "trigger-effect-item",
