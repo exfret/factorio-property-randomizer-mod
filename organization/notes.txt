@@ -1,4 +1,12 @@
 --------------------------------------------------------------------------------
+-- Distribution for Numerical Randomizations
+--------------------------------------------------------------------------------
+
+I don't know exactly how to specify or compute this distribution. Maybe it the "peak" ranges should be specified separately?
+
+We assume that we can evaluate the derivative of goodness but not goodness itself. We can form the 150 or so possible points to choose from...
+
+--------------------------------------------------------------------------------
 -- Big randomizations
 --------------------------------------------------------------------------------
 

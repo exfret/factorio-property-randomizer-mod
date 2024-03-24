@@ -19,12 +19,6 @@ Changing rocket silo causing module changes?
  - Group randomize things like crafting speed with power so that it doesn't "make both things better"
 
 
-0.2.7
- - Next priority is prototype upgrade lines
- - Randomize shotgun with high bias
- - Randomize ammo with higher bias
-
-
 Add crafting cost to randomization
 Add power level normalizer to keep power levels similar to what they were at start
 
@@ -87,15 +81,10 @@ Next releases:
   - Randomize reach distance mid-game
 
 Organization
-  - Insert {randomization_function, prototype, property} tables into randomizing_functions_to_call instead of just functions to call
-  - Make a proper readme
 
 Random maps
   - Randomize enemy evolution parameters
   - Randomize pollution parameters
-
-Configuration options
-  - Add option for variance
 
 Support
   - Space Exploration support
@@ -110,13 +99,3 @@ Properties:
   - Localizations
 
 Silly additions
-  - Figure out a way to randomize sounds or graphics?
-  - Randomize what rocks drop
-  - Mining ores gives you random items sometimes (a random other ore?)
-    - Maybe to make it not just dangoreus lite, it gives something like the smelted version? Or something else that adds more complications than something you just throw into some chests?
-  - Mining a building can, with a small chance, give you another building of the same "type"
-  - Biters randomly spawn across the map (possibly even in your base)
-  - Properties are randomized based on where the entity is located
-  - Properties get re-randomized after each rocket launch
-  - Weird things can take modules, like electric poles? Enemy spawners? Inserters?
-  - Randomly change what's being researched without notice

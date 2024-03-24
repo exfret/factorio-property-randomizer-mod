@@ -3,6 +3,9 @@ Version: 0.2.9
 Date: ?
   Features:
     - Randomized some rocket silo properties
+    - Randomized a couple equipment properties I hadn't touched yet
+  Balancing:
+    - Tile walking speed modifier is less random for tiles that don't normally have a modifier
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.8
 Date: 2024.03.19

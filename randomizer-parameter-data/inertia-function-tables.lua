@@ -249,6 +249,11 @@ inertia_function.tile_walking_speed_modifier = {
   slope = 1
 }
 
+inertia_function.tile_walking_speed_modifier_nonstandard = {
+  type = "proportional",
+  slope = 0.5
+}
+
 inertia_function.trigger_damage = { -- TODO: This is used for more than just firearms right now but is specialized for firearm magazines, need to fix
   {3, 0},
   {4, 2},

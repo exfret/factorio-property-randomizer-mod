@@ -1,10 +1,10 @@
 local prototype_tables = require("randomizer-parameter-data/prototype-tables")
-
 local inertia_function = require("randomizer-parameter-data/inertia-function-tables")
 local property_info = require("randomizer-parameter-data/property-info-tables")
 local walk_params = require("randomizer-parameter-data/walk-params-tables")
-
 local equipment_variations = require("randomizer-parameter-data/equipment-variation-tables")
+
+require("randomizer-functions/util-randomizer")
 
 require("random-utils/randomization-algorithms")
 
@@ -95,6 +95,64 @@ end
 function randomize_equipment_properties ()
   for class_name, _ in pairs(defines.prototypes["equipment"]) do
     for _, prototype in pairs(data.raw[class_name]) do
+      if prototype.type == "active-defense-equipment" then
+        randomize_attack_parameters(prototype, prototype.attack_parameters)
+      end
+
+      if prototype.type == "battery-equipment" then
+        -- No special properties
+      end
+
+      if prototype.type == "belt-immunity-equipment" then
+        -- energy_consumption already covered by energy randomizer
+      end
+
+      if prototype.type == "energy-shield-equipment" then
+        randomize_numerical_property({
+          prototype = prototype,
+          property = max_shield_value,
+          property_info = property_info.limited_range
+        })
+
+        local energy_as_number = util.parse_energy(prototype.energy_per_shield)
+        energy_as_number = randomize_numerical_property({
+          dummy = energy_as_number,
+          prg_key = prg.get_key(prototype),
+          property_info = property_info.energy
+        })
+        prototype.energy_per_shield = energy_as_number .. "J"
+      end
+
+      -- TODO: Move to energy randomizer (also in general separate equipment energy from entity energy more too)
+      if prototype.type == "generator-equipment" then
+        local power_as_number = 60 * util.parse_energy(prototype.power)
+        power_as_number = randomize_numerical_property({
+          dummy = power_as_number,
+          prg_key = prg.get_key(prototype),
+          property_info = property_info.power_generation
+        })
+        prototype.power = power_as_number .. "W"
+      end
+
+      if prototype.type == "movement-bonus-equipment" then
+        randomize_numerical_property({
+          prototype = prototype,
+          property = "movement_bonus",
+          property_info = property_info.limited_range
+        })
+
+        if prototype.type == "night-vision-equipment" then
+          -- Not much more to randomize here
+        end
+
+        if prototype.type == "roboport-equipment" then
+          -- TODO
+        end
+
+        if prototype.type == "solar-panel-equipment" then
+          -- TODO: Unify with energy randomizer
+        end
+      end
     end
   end
 
@@ -509,10 +567,16 @@ function randomize_tile_walking_speed_modifier ()
       if tile.walking_speed_modifier == nil then
         tile.walking_speed_modifier = 1
       end
+
+      local inertia_function_to_use = inertia_function.tile_walking_speed_modifier
+      if tile.walking_speed_modifier == 1 then
+        inertia_function_to_use = inertia_function.tile_walking_speed_modifier_nonstandard
+      end
+
       table.insert(group_params, {
         prototype = tile,
         property = "walking_speed_modifier",
-        inertia_function = inertia_function.tile_walking_speed_modifier,
+        inertia_function = inertia_function_to_use,
         property_info = property_info.tile_walking_speed_modifier
       })
     end

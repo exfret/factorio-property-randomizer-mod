@@ -1,11 +1,38 @@
+AI's Science Shuffle, forked an maintained by chembot, by Alrecenk and Chembot
+    - https://mods.factorio.com/mod/zChemsScienceShuffle
+    - Randomizes science pack ingredients like Science-Randomizer. I haven't tried it enough to know the differences.
+
+Archipelago Randomizer, by ?
+    - I've heard of a multi-game randomizer from streamers but haven't looked into it too much
+
+Icon Randomizer, by RedRafe
+    - https://mods.factorio.com/mod/icon-randomizer
+    - Randomizes icons, but doesn't go as far as BenCat's visual item randomizer with locales. However, I think it's more compatible with other mods with some initial tests. My randomizer essentially does the same thing as redrafe's with icon randomization turned on.
+
+Keniras' Random Recipes, by Keniras
+    - https://mods.factorio.com/mod/zKenirasRandomRecipes
+    - Randomizes properties. Also randomizes ingredients/products by a multiplier in relatively non-balanced way, so I generally turn that option off.
+
 Random Factory Plus, by Kintharo
     - https://mods.factorio.com/mod/RandomFactoryPlus
-    - Adds new content in a random manner (I don't think it randomizes the vanilla content but need to double check)
+    - Adds new content in a random manner (I don't think it randomizes the vanilla content but need to double check).
+
+Random Science, by MelonDude360
+    - https://mods.factorio.com/mod/Zrandomscience
+    - Procedurally generates new science packs.
 
 Randomtorio, by CosmicWolf
     - https://mods.factorio.com/mod/randomtorio
-    - Randomizes the recipe products AND ingredients, which actually has implications due to tech unlock orders
+    - Randomizes the recipe products, which actually has additional implications over just randomizing ingredients due to tech unlock orders, essentially does a "smart brute force" to make a valid "doable" game, so can be slow and result in games that are only doable via technicality.
 
-Visual Item Randomizer
+Science-Randomizer, by redart
+    - https://mods.factorio.com/mod/science-randomizer
+    - Randomizes science pack costs. Doesn't have to deal with as much balancing due to implicit assumption that science packs aren't often used as intermediates.
+
+Vill's Recipe Rnadomizer, by Villfuk
+    - https://mods.factorio.com/mod/ZRecipeRandomizer
+    - Randomizes recipes only, but does so in a balanced way and feels the most "right" out of all the randomization mods.
+
+Visual Item Randomizer, by BenCat
     - https://mods.factorio.com/mod/Item_Visuals_Randomizer
-    - Randomizes icons and other visual components where possible
+    - Randomizes icons and other visual components where possible, need to check into this for how it does locale, not compatible with space exploration (and probably not with other overhauls either).

@@ -17,8 +17,8 @@ pdf.get = function(passed_pdf_params)
         -- same, or a range value
         range_min = "same",
         range_max = "same",
-        -- none = 
-        split_weight = "medium"
+        -- same = range, none = centered around mean, very_small = x1.15, small = x1.5, medium = x2, 
+        split = "medium"
     }
 
     for key, value in pairs(pdf.default) do
