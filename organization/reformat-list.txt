@@ -1,0 +1,13 @@
+modifiers:
+    - union
+    - table
+    - array
+
+Complete list of prototypes/types
+
+electric_or_void_energy_source
+create_decoratives_trigger_effect_item
+float
+bool
+double
+uint32

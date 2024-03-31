@@ -584,15 +584,20 @@ function reformat.test.prototype(prototype)
         end
     end
 
-    if spec.common ~= nil then
+    -- TODO: Should I remove this?
+    --[[if spec.common ~= nil then
         for _, format in pairs(spec.common) do
             reformat.common[format](prototype)
         end
-    end
+    end]]
 
     if spec.properties ~= nil then
         for property, format in pairs(spec.properties) do
-            prototype[property] = reformat.type[format](prototype[property])
+            if type(format) == "table" then
+                prototype[property] = reformat.type[format](prototype[property], format)
+            elseif type(format) == "string" then
+                prototype[property] = reformat.type[format](prototype[property])
+            end
         end
     end
 
@@ -600,6 +605,11 @@ function reformat.test.prototype(prototype)
         reformat.prototype[spec.inherits](prototype)
     end
 end
+
+--[[
+    1) All properties must be defined in the properties table of a prototype's spec
+    2) An optional property must be in the defaults or the "allow_nil" table
+    ]]
 
 reformat.spec = {
     prototype = {
@@ -973,7 +983,7 @@ reformat.spec = {
             },
             implements = "selection-tool"
         },
-        ["optimized-decorative"] = {
+        ["optimized-decorative"] = { -- Just called DecorativePrototype in the list
             properties = {
                 pictures = "sprite_variations",
                 collision_box = "collision_box",
@@ -989,6 +999,214 @@ reformat.spec = {
                 collision_mask = {"doodad-layer"}
             },
             implements = "base"
+        }, -- TODO: Reformat previous things for like entity-ids
+        ["deliver-by-robots-achievement"] = {
+            properties = {
+                amount = "material_amount_type"
+            },
+            inherits = "achievement"
+        },
+        ["dont-build-entity-achievement"] = {
+            properties = {
+                -- Do dont_build manually so I can turn singleton entityId's into arrays
+                amount = "uint32"
+            },
+            inherits = "achievement"
+        },
+        ["dont-craft-manually-achievement"] = {
+            properties = {
+                amount = "material_amount_type"
+            },
+            inherits = "achievement"
+        },
+        ["dont-use-entity-in-energy-production-achievement"] = {
+            properties = {
+                excluded = {
+                    modifier = "array",
+                    possibly_just_value = true,
+                    format = "entity_id"
+                }
+                included = {
+                    modifier = "array",
+                    possibly_just_value = true,
+                    format = "entity_id"
+                },
+                last_hour_only = "bool",
+                minimum_energy_produced = "energy"
+            },
+            defaults = {
+                last_hour_only = false,
+                minimum_energy_produced = "0J"
+            },
+            inherits = "achievement"
+        },
+        ["editor-controller"] = {
+            properties = {
+                type = {
+                    modifier = "union",
+                    union_members = {
+                        "editor-controller"
+                    }
+                },
+                name = "string",
+                inventory_size = "item_stack_index",
+                gun_inventory_size = "item_stack_index",
+                movement_speed = "double",
+                item_pickup_distance = "double",
+                loot_pickup_distance = "double",
+                mining_speed = "double",
+                enable_flash_light = "bool",
+                adjust_speed_based_off_zoom = "bool",
+                render_as_day = "bool",
+                instant_blueprint_building = "bool",
+                instant_deconstruction = "bool",
+                instant_upgrading = "bool",
+                instant_rail_planner = "bool",
+                show_status_icons = "bool",
+                show_hidden_entities = "bool",
+                show_entity_tags = "bool",
+                show_entity_health_bars = "bool",
+                show_additional_entity_info_gui = "bool",
+                generate_neighbor_chunks = "bool",
+                fill_built_entity_energy_buffers = "bool",
+                show_character_tab_in_controller_gui = "bool",
+                show_infinity_filters_in_controller_gui = "bool",
+                placed_corpses_never_expire = "bool"
+            }
+        },
+        ["electric-energy-interface"] = {
+            -- TODO: Special functionality for picture/pictures
+            properties = {
+                energy_source = "electric-energy-source",
+                energy_production = "energy",
+                energy_usage = "energy",
+                gui_mode = {
+                    modifier = "union",
+                    union_members = {
+                        "all",
+                        "none",
+                        "admins"
+                    },
+                    continuous_animation = "bool",
+                    render_layer = "render_layer",
+                    light = "light_definition",
+                    picture = "sprite",
+                    pictures = "sprite_4_way",
+                    animation = "animation",
+                    animations = "animation_4_way"
+                }
+            },
+            defaults = {
+                energy_production = "0J",
+                energy_usage = "0J",
+                gui_mode = "none",
+                continuous_animation = false,
+                render_layer = "object"
+            },
+            allow_nil = {
+                light = true,
+                picture = true,
+                pictures = true,
+                animation = true,
+                animations = true
+            },
+            overrides = {
+                allow_copy_paste = false
+            },
+            inherits = "entity-with-owner"
+        },
+        ["electric-pole"] = {
+            properties = {
+                pictures = "rotated-sprite",
+                supply_area_distance = "double",
+                connection_points = {
+                    modifier = "array",
+                    format = "wire_connection_point"
+                },
+                radius_visualisation_picture = "sprite",
+                active_picture = "sprite",
+                maximum_wire_distance = "double",
+                draw_copper_wires = "bool",
+                draw_circuit_wires = "bool",
+                light = "light_definition",
+                track_coverage_during_build_by_moving = "bool"
+            },
+            defaults = {
+                maximum_wire_distance = 0,
+                draw_copper_wires = true,
+                draw_circuit_wires = true,
+                track_coverage_during_build_by_moving = false
+            },
+            allow_nil = {
+                radius_visualisation_picture = true,
+                active_picture = true,
+                light = true
+            },
+            inherits = "entity-with-owner"
+        },
+        ["electric-turret"] = {
+            properties = {
+                energy_source = "electric_or_void_energy_source" -- TODO: I don't know if there's a better way of doing this
+            },
+            inherits = "turret"
+        },
+        ["unit-spawner"] = {
+            properties = {
+                animations = "animation_variations",
+                max_count_of_owned_units = "uint32",
+                max_friends_around_to_spawn = "uint32",
+                spawning_cooldown = {
+                    modifier = "table",
+                    format = {
+                        [1] = "double",
+                        [2] = "double"
+                    }
+                },
+                spawning_radius = "double",
+                spawning_spacing = "double",
+                max_richness_for_spawn_shift = "double",
+                max_spawn_shift = "double",
+                pollution_absorption_absolute = "double",
+                pollution_absorption_proportional = "double",
+                call_for_help_radius = "double",
+                result_units = {
+                    modifier = "array",
+                    format = "unit_spawn_definition"
+                },
+                dying_sound = "sound",
+                integration = "sprite_variations",
+                min_darkness_to_spawn = "float",
+                max_darkness_to_spawn = "float",
+                random_animation_offset = "bool",
+                spawn_decorations_on_expansion = "bool",
+                spawn_decoration = {
+                    modifier = "array",
+                    possibly_just_value = true,
+                    format = "create_decoratives_trigger_effect_item"
+                },
+                defaults = {
+                    min_darkness_to_spawn = 0,
+                    max_darkness_to_spawn = 1,
+                    random_animation_offset = true,
+                    spawn_decorations_on_expansion = false,
+                    spawn_decoration = {}
+                },
+                allow_nil = {
+                    integration = true
+                },
+                overrides = {
+                    is_military_target = true,
+                    allow_run_time_change_of_is_military_target = false
+                },
+                inherits = "entity-with-owner"
+            }
+        },
+        ["energy-shield-equipment"] = {
+            properties = {
+                max_shield_value = "float",
+                energy_per_shield = "energy"
+            },
+            inherits = "equipment"
         }
     }
 }
