@@ -16,6 +16,14 @@ script.on_init(function ()
     prg.value(nil, global)
   end
 
+  global.key_bind_map = {
+    ["build"] = "build",
+    ["clear-cursor"] = "clear-cursor",
+    ["confirm-gui"] = "confirm-gui",
+    ["confirm-message"] = "confirm-message",
+    ["mine"] = "mine"
+  }
+
   global.force_modifications = {}
   local force_modifications = global.force_modifications
 
@@ -38,7 +46,7 @@ script.on_init(function ()
     end
   })]]
 
-  local new_table = {}
+  --[[local new_table = {}
   for load_value, key in pairs(game.item_prototypes["prototype-data"].entity_type_filters) do
     table.insert(new_table, load_value)
   end
@@ -84,8 +92,8 @@ script.on_event(defines.events.on_tick, function(event)
   end
 end)
 
-script.on_configuration_changed(function ()
+script.on_configuration_changed(function()
   game.print("[color=red]Warning:[/color] Mod configuration was changed... if you just updated exfret's randomizer, keep in mind that things may break in pre-existing runs.")
-  game.print("To change back, you can select the version via a drop-down in the in-game mod portal or download old versions from the mods website.")
-  game.print("If you need any help, message exfret on discord or on the mods website (mods.factorio.com/mod/propertyrandomizer).")
+  game.print("To change back, you can select the version via a drop-down in the in-game mod portal or download old versions from the factorio mod website.")
+  game.print("If you need any help, message exfret on discord or on the factorio mod website (mods.factorio.com/mod/propertyrandomizer).")
 end)

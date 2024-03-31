@@ -257,7 +257,7 @@ function randomize_numerical_property (passed_params)
 
   -- Randomly increase or decrease bias to make a distribution that's less likely to sample from the middle (i.e.- make it so things change more often than not)
   if prg.int(params.prg_key, 2) == 1 then
-    params.walk_params.bias = params.walk_params.bias - SPLIT_BIAS_MODIFIER - 0.1 * settings.startup["propertyrandomizer-chaos"].value
+    params.walk_params.bias = params.walk_params.bias - SPLIT_BIAS_MODIFIER - 0.1 * settings.startup["propertyrandomizer-chaos"].value -- TODO: Isn't 0.1 a lot lol
   else
     params.walk_params.bias = params.walk_params.bias + SPLIT_BIAS_MODIFIER + 0.1 * settings.startup["propertyrandomizer-chaos"].value
   end
@@ -331,4 +331,146 @@ function randomize_points_in_space (passed_params)
       apply_property_info_changes(point, k, params.dimension_information[k].property_info, params.points[point_index][k])
     end
   end
+end
+
+-- prototype must be defined
+function randnum(passed_params)
+  local params = table.deepcopy(passed_params)
+
+  params.key = prg.get_key({type = passed_params.prototype.type, name = passed_params.prototype.name, property = passed_params.property}, "property")
+  params.tbl = passed_params.tbl or passed_params.prototype
+  
+  -- TODO: Move these to constants or globals
+  local num_rolls = 25
+  local steps_per_roll = 20
+  local split_bias = 0.2
+
+  -- Note that prototoype, tbl, property, and key don't have defaults
+  local defaults = {
+    -- See str_to_cap for soft and hard caps
+    range = "medium",
+    -- Can be "same" or a range value
+    range_min = "same",
+    range_max = "same",
+    step_size = 5,
+    -- Extra bias to add/subtract
+    bias = 0,
+    -- 1 or -1, defines whether the property is good (1) or bad (-1) to have
+    dir = 1
+  }
+
+  for key, value in pairs(defaults) do
+    if params[key] == nil then
+      params[key] = value
+    end
+  end
+  
+  local tbl, property, key, step_size, bias, dir = params.tbl, params.property, params.key, params.step_size, params.bias, params.dir
+  local val = tbl[property]
+  local old_val = val
+
+  local soft_min, soft_max, hard_min, hard_max
+  local str_to_cap = {
+    very_small = {1.1, 1.3},
+    small = {2, 3},
+    medium = {4, 6},
+    big = {10, 20},
+    very_big = {25, 50},
+    none = {0, REALLY_BIG_FLOAT_NUM}
+  }
+  local cap_keys = {"range_min", "range_max"}
+  for _, cap_key in pairs(cap_keys) do
+    local cap_str
+    if params[cap_key] == "same" then
+      cap_str = params.range
+    else
+      cap_str = params[cap_key]
+    end
+
+    local soft_factor = str_to_cap[cap_str][1]
+    local hard_factor = str_to_cap[cap_str][2]
+    soft_min, soft_max = 1 / soft_factor * old_val, soft_factor * old_val
+    hard_min, hard_max = 1 / hard_factor * old_val, hard_factor * old_val
+  end
+
+  local real_split_bias = 0.2 * (2 * prg.range(key, 0, 1) - 1)
+  local real_bias = 0.5 + bias + real_split_bias
+
+  for i = 1, num_rolls do
+    local sign = dir
+    if prg.value(key) >= real_bias then
+      sign = -1 * sign
+    end
+
+    for j = 1, steps_per_roll do
+      local forces = 0
+
+      if val < soft_min then
+        forces = 1 - (val - hard_min) / (soft_min - hard_min)
+      end
+      if val > soft_max then
+        forces = -1 + (hard_max - val) / (hard_max - hard_min)
+      end
+
+      val = val + val * (step_size / (num_rolls * steps_per_roll)) * (sign + forces)
+    end
+  end
+
+  -- Update table value
+  tbl[property] = val
+end
+
+function test_new_randomize_numerical(passed_params)
+  local params = table.deepcopy(passed_params)
+  params.tbl = passed_params.tbl or passed_params.prototype
+
+  local num_rolls = 25
+  local steps_per_roll = 4
+  -- This should always be at most, say, a fifth of the num_steps * num_step_inc which is 100, so at most 20
+  -- Modify this by chaos_factor, which is at most 4, so never get step_size above 5
+  local step_size = 5
+
+  local tbl, property = params.tbl, params.property
+  local val = tbl[property]
+  local old_val = val
+
+  -- Either 0.2 or -0.2
+  local split_bias = 0.2 * (2 * prg.range("dummy_test", 0, 1) - 1)
+
+  local soft_min = 1 / 2 * old_val
+  local soft_max = 2 * old_val
+  local hard_min = 1 / 4 * old_val
+  local hard_max = 4 * old_val
+
+  log("name: " .. tbl.name)
+  local roll_diff = 0
+  for i = 1, num_rolls do
+    local sign
+    if prg.value("dummy_test2") < 0.5 + split_bias then
+      sign = 1
+      log("positive")
+    else
+      sign = -1
+      log("negative")
+    end
+
+    for j = 1, steps_per_roll do
+      local forces = 0
+      -- Force upwards
+      if val < soft_min then
+        -- val = hard_min means force of 1, val = soft_min means force of 0
+        --forces = 1 - (val - hard_min) / (soft_min - hard_min)
+      end
+      if val > soft_max then
+        -- val = hard_min means force of 1, val = soft_min means force of 0
+        --forces = -1 + (hard_max - val) / (hard_max - hard_min)
+      end
+      -- Force of 1 should never decrement (ditto for force of -1 and increment)
+
+      val = val + val * (step_size / (num_rolls * steps_per_roll)) * (sign + forces)
+    end
+  end
+  log("end rolling")
+
+  tbl[property] = val
 end

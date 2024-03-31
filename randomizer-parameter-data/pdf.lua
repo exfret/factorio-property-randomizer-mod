@@ -4,11 +4,14 @@ local pdf = {}
 
 -- Still do walk-based?
 
+-- Increment formula: roll based on bias, increment/decrement value by value * step_amount
+--      also add force away from range min's/max's
+
 pdf.get = function(passed_pdf_params)
     local pdf_params = table.deepcopy(passed_pdf_params)
 
     pdf.default = {
-        -- Function that modifies the input before randomization to account for things like efficiency modules, which essentially have a min value of 0.8 rather than 0
+        -- Function that modifies the input before randomization to account for things like module speed effects, which essentially have a min value of -1 rather than 0
         sanitizer = function(x) return x end
         -- Inverse of sanitizer
         desanitizer = function(x) return x end
@@ -17,8 +20,11 @@ pdf.get = function(passed_pdf_params)
         -- same, or a range value
         range_min = "same",
         range_max = "same",
-        -- same = range, none = centered around mean, very_small = x1.15, small = x1.5, medium = x2, 
-        split = "medium"
+        -- none, standard = 0.04
+        split_force = "standard",
+        -- absolute min/max values allowed, written values are before sanitization
+        min = 0,
+        max = REALLY_BIG_FLOAT_NUM
     }
 
     for key, value in pairs(pdf.default) do
@@ -26,6 +32,8 @@ pdf.get = function(passed_pdf_params)
             pdf_params[key] = value
         end
     end
+
+
 end
 
 return pdf

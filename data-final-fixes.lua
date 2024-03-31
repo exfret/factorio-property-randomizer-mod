@@ -354,8 +354,7 @@ data:extend({
   }
 })
 
---[[for _, character in pairs(data.raw.character) do
-  character.reach
-end]]
+-- TEST
+-- require("randomizer-functions/keybind-randomizer-prototypes")
 
 -- TODO: Locale
