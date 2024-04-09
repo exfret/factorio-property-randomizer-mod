@@ -84,6 +84,15 @@ data:extend({
     default_value = true,
     order = "b-basic-crafting-times"
   },
+  --[[{
+    setting_type = "startup",
+    type = "bool-setting",
+    name = "propertyrandomizer-extra",
+    localised_name = "Randomize extras",
+    localised_description = "Misc. things that are on by default, like achievement requirements.",
+    default_value = true,
+    order = "b-basic-extra"
+  },]] -- TODO: Decide whether I want this
   {
     setting_type = "startup",
     type = "bool-setting",

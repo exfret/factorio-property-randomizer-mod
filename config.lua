@@ -39,6 +39,7 @@ rand_module_slots = settings.startup["propertyrandomizer-production"].value
 rand_offshore_pump_speed = settings.startup["propertyrandomizer-production"].value
 rand_pump_pumping_speed = settings.startup["propertyrandomizer-logistic"].value
 rand_radar = settings.startup["propertyrandomizer-logistic"].value
+rand_rocket_silo_parts_required = settings.startup["propertyrandomizer-production"].value
 rand_storage_tank_capacity = settings.startup["propertyrandomizer-storage"].value
 rand_tech_costs = settings.startup["propertyrandomizer-tech-costs"].value
 rand_turret_attack_parameters = settings.startup["propertyrandomizer-military"].value
@@ -47,6 +48,7 @@ rand_vehicles = settings.startup["propertyrandomizer-logistic"].value
 
 -- Advanced randomizations
 
+rand_achievements = settings.startup["propertyrandomizer-misc-properties"].value
 rand_armor_resistances = settings.startup["propertyrandomizer-military-advanced"].value
 rand_character_corpse_time_to_live = settings.startup["propertyrandomizer-misc-properties"].value
 rand_character_properties_midgame = settings.startup["propertyrandomizer-character-values-midgame"].value

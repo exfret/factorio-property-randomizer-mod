@@ -14,6 +14,8 @@ require("analysis/karma")
 
 local reformat = require("utilities/reformat")
 
+require("parse-docs")
+
 --local dependency_utils = require("dependency-graph/dependency-utils")
 
 log("Reformatting prototypes...")
@@ -80,7 +82,7 @@ if rand_electric_poles then
 end
 
 if rand_energy_values then
-  table.insert(randomizing_functions_to_call, randomize_energy_properties) -- Don't randomize rocket silo lamp and active energy usage, most people don't even know about those
+  table.insert(randomizing_functions_to_call, randomize_energy_properties) -- Doesn't randomize rocket silo lamp and active energy usage, most people don't even know about those
   table.insert(randomizing_functions_to_call, randomize_power_production_properties)
   table.insert(randomizing_functions_to_call, randomize_reactor_neighbour_bonus)
 end
@@ -119,7 +121,6 @@ if rand_inserter_speed then
   table.insert(randomizing_functions_to_call, randomize_inserter_speed)
 end
 
--- TODO: Modify fluid "inventory" sizes too
 if rand_inventory_properties then
   table.insert(randomizing_functions_to_call, randomize_inventory_sizes)
   table.insert(randomizing_functions_to_call, randomize_item_stack_sizes)
@@ -133,7 +134,7 @@ if rand_landmines then
   table.insert(randomizing_functions_to_call, randomize_landmines)
 end
 
--- TODO: Figure out what extra things support pollution
+-- TODO: Figure out what extra things support pollution (reference mod-help question?)
 if rand_machine_pollution then
   table.insert(randomizing_functions_to_call, randomize_machine_pollution)
 end
@@ -166,6 +167,10 @@ if rand_radar then
   table.insert(randomizing_functions_to_call, randomize_radar)
 end
 
+if rand_rocket_silo_parts_required then
+  table.insert(randomizing_functions_to_call, randomize_rocket_silo_parts_required)
+end
+
 if rand_storage_tank_capacity then
   table.insert(randomizing_functions_to_call, randomize_storage_tank_capacity)
 end
@@ -186,7 +191,7 @@ end
 
 if rand_underground_distance then
   table.insert(randomizing_functions_to_call, randomize_underground_belt_distance)
-  -- randomize_underground_pipe_distance() TODO
+  table.insert(randomizing_functions_to_call, randomize_underground_pipe_distance)
 end
 
 if rand_vehicles then
@@ -198,6 +203,10 @@ end
 ---------------------------------------------------------------------------------------------------
 -- Advanced randomizations
 ---------------------------------------------------------------------------------------------------
+
+if rand_achievements then
+  table.insert(randomizing_functions_to_call, randomize_achievements)
+end
 
 if rand_character_corpse_time_to_live then
   table.insert(randomizing_functions_to_call, randomize_character_corpse_time_to_live)

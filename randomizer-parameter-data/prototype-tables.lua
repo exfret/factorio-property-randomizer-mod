@@ -242,6 +242,12 @@ prototype_tables.entities_with_health_sensitive = {
   unit = true
 }
 
+prototype_tables.has_heat_buffer = {
+  ["heat-interface"] = true,
+  ["heat-pipe"] = true,
+  reactor = true
+}
+
 -- Furnace inventory sizes and rocket_result_inventory_size are cursed properties... don't randomize
 -- Don't randomize trash inventory sizes
 prototype_tables.inventory_names = {

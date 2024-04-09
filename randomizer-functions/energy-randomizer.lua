@@ -111,6 +111,7 @@ function randomize_energy_source_power_production_properties (prototype, energy_
   elseif energy_source.type == "void" then
     -- No further action needed
   elseif energy_source.type == "fluid" then
+    -- TODO: Default to 1
     randomize_numerical_property{
       prototype = prototype,
       tbl = energy_source,

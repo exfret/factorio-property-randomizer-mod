@@ -12,7 +12,7 @@ for prototype_name, _ in pairs(data.raw.projectile) do
   table.insert(projectile_list, prototype_name)
 end
 
-function randomize_trigger_effect (prototype, trigger)
+function randomize_trigger_effect(prototype, trigger)
   if trigger.type == "damage" then
     randomize_numerical_property{
       prototype = prototype,
@@ -71,7 +71,7 @@ function randomize_trigger_effect (prototype, trigger)
   end
 end
 
-function randomize_trigger_delivery (prototype, trigger)
+function randomize_trigger_delivery(prototype, trigger)
   if trigger.target_effects then
     if trigger.target_effects.type then
       randomize_trigger_effect(prototype, trigger.target_effects)
@@ -104,7 +104,7 @@ function randomize_trigger_delivery (prototype, trigger)
 end
 
 -- Actually randomizes trigger
-function randomize_trigger_item (prototype, trigger)
+function randomize_trigger_item(prototype, trigger)
   if trigger.action_delivery then
     if trigger.action_delivery.type then
       randomize_trigger_delivery(prototype, trigger.action_delivery)
@@ -116,7 +116,7 @@ function randomize_trigger_item (prototype, trigger)
   end
 end
 
-function randomize_ammo_type (prototype, ammo_type)
+function randomize_ammo_type(prototype, ammo_type)
   if ammo_type.action then
     if ammo_type.action.type then
       randomize_trigger_item(prototype, ammo_type.action)
@@ -140,7 +140,7 @@ function randomize_ammo_type (prototype, ammo_type)
 end
 
 -- TODO: Need to make sure artillery *manual range* and artillery *automatic range* are set so automatic < manual
-function randomize_attack_parameters (prototype, attack_parameters)
+function randomize_attack_parameters(prototype, attack_parameters)
   -- TODO: Make this not a hotfix
   -- This currently just ignores biters since it messes them up too much
   if attack_parameters.ammo_type ~= nil and prototype.type ~= "unit" then
@@ -216,8 +216,8 @@ function randomize_attack_parameters (prototype, attack_parameters)
   end
 end
 
--- TODO: Do this in a cooler way?
-function randomize_resistances (params)
+-- TODO: Do this in a better way?
+function randomize_resistances(params)
   local group_params = {}
   for damage_type, _ in pairs(data.raw["damage-type"]) do
     group_params[damage_type] = {decrease = {}, percent = {}}

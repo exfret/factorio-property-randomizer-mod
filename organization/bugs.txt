@@ -1,8 +1,12 @@
-1. Crash when rounding mode set to round-est
-2. Crash with icon randomizer and pyanodons
-3. Crash with rounding mode set to raw and unrounded
-4. Steam still seems to randomize to less than 100 degrees still?
-5. w/ wide chests, the chests get too large
-7. Incompatibility with info mods
-9. Electric pole reach is not enforced to be at least the supply area
-10. Health not being rounded correctly
+Compatibility
+1. Add blacklist for wide chests
+
+Future versions
+1. Rounding modes other than the default are currently broken
+2. Crash with icon randomizer and other mods (in this case, pyanodons)
+
+Can't reproduce
+1. Steam randomizing to less than 100 degrees
+
+Can't Fix
+1. Incompatibility with info mods: Need other mods to add hidden optional dependency on mine so they load afterward

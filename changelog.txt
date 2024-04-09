@@ -2,10 +2,14 @@
 Version: 0.2.9
 Date: ?
   Features:
-    - Randomized some rocket silo properties
+    - Randomized rocket launch times (a misc. feature)
     - Randomized a couple equipment properties I hadn't touched yet
+    - Randomized underground pipe length (I hadn't done that yet!)
+    - Randomized achievements (a misc. feature)
+    - Randomized rocket parts required for the rocket (on with the "production" setting)
   Balancing:
     - Tile walking speed modifier is less random for tiles that don't normally have a modifier
+    - Random crafting/running speeds are now rolled with a simpler, more balanced formula
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.8
 Date: 2024.03.19

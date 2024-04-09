@@ -79,6 +79,8 @@ Next releases:
   - Check that I make sure inserters aren't too slow for belts
   - Randomize technology bonus amounts (like bullet damage increase)
   - Randomize reach distance mid-game
+  - Randomize ore/basic resource gathering (Loup&Snoop idea)
+  - Ores produce "random" sideproducts
 
 Organization
 

@@ -1144,6 +1144,20 @@ function randomize_roboports ()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_rocket_silo_parts_required
+---------------------------------------------------------------------------------------------------
+
+function randomize_rocket_silo_parts_required()
+  for _, prototype in pairs(data.raw["rocket-silo"]) do
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "rocket_parts_required",
+      property_info = property_info.rocket_silo_rockets_required
+    })
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_rocket_silo_rocket_launch_length
 ---------------------------------------------------------------------------------------------------
 
@@ -1262,7 +1276,7 @@ end
 -- randomize_underground_belt_distance
 ---------------------------------------------------------------------------------------------------
 
-function randomize_underground_belt_distance ()
+function randomize_underground_belt_distance()
   -- Underground belt
   for _, prototype in pairs(data.raw["underground-belt"]) do
     randomize_numerical_property{
@@ -1272,6 +1286,28 @@ function randomize_underground_belt_distance ()
       property_info = property_info.underground_belt_length,
       walk_params = walk_params.underground_belt_length
     }
+  end
+end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_underground_pipe_distance
+---------------------------------------------------------------------------------------------------
+
+function randomize_underground_pipe_distance()
+  for _, prototype in pairs(data.raw["pipe-to-ground"]) do
+    local fluid_box = prototype.fluid_box
+    local pipe_connections = fluid_box.pipe_connections
+
+    for _, conn in pairs(pipe_connections) do
+      if conn.max_underground_distance ~= nil and conn.max_underground_distance ~= nil then
+        randomize_numerical_property({
+          prototype = prototype,
+          tbl = conn,
+          property = "max_underground_distance",
+          property_info = property_info.discrete_positive
+        })
+      end
+    end
   end
 end
 

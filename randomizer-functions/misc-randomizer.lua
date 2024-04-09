@@ -9,6 +9,278 @@ require("randomizer-functions/util-randomizer")
 require("random-utils/randomization-algorithms")
 
 ---------------------------------------------------------------------------------------------------
+-- randomize_achievements
+---------------------------------------------------------------------------------------------------
+
+-- TODO: Add walk_params: lower_is_better
+function randomize_achievements()
+  -- TODO: Build incompatibility for mods that change/remove vanilla achievements altogether
+
+  local is_vanilla_achievement = {
+    ["computer-age-1"] = true,
+    ["computer-age-2"] = true,
+    ["computer-age-3"] = true,
+    ["circuit-veteran-1"] = true,
+    ["circuit-veteran-2"] = true,
+    ["circuit-veteran-3"] = true,
+    ["steam-all-the-way"] = true,
+    ["automated-cleanup"] = true,
+    ["automated-construction"] = true,
+    ["you-are-doing-it-right"] = true,
+    ["lazy-bastard"] = true,
+    ["eco-unfriendly"] = true,
+    ["tech-maniac"] = true,
+    ["mass-production-1"] = true,
+    ["mass-production-2"] = true,
+    ["mass-production-3"] = true,
+    ["getting-on-track"] = true,
+    ["getting-on-track-like-a-pro"] = true,
+    ["it-stinks-and-they-dont-like-it"] = true,
+    ["raining-bullets"] = true,
+    ["iron-throne-1"] = true,
+    ["iron-throne-2"] = true,
+    ["iron-throne-3"] = true,
+    ["logistic-network-embargo"] = true,
+    ["smoke-me-a-kipper-i-will-be-back-for-breakfast"] = true,
+    ["no-time-for-chitchat"] = true,
+    ["there-is-no-spoon"] = true,
+    ["steamrolled"] = true,
+    ["run-forrest-run"] = true,
+    ["pyromaniac"] = true,
+    ["so-long-and-thanks-for-all-the-fish"] = true,
+    ["trans-factorio-express"] = true,
+    ["you-have-got-a-package"] = true,
+    ["delivery-service"] = true,
+    ["golem"] = true,
+    ["watch-your-step"] = true,
+    ["solaris"] = true,
+    ["minions"] = true
+  }
+
+  for _, prototype in pairs(data.raw["build-entity-achievement"]) do
+    if prototype.amount ~= nil and prototype.amount > 1 then
+      randomize_numerical_property({
+        prototype = prototype,
+        property = "amount",
+        property_info = property_info.achievement_amount
+      })
+
+      if is_vanilla_achievement[prototype.name] then
+        prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, prototype.amount}
+      end
+    end
+
+    if prototype.until_second ~= nil and prototype.until_second > 0 then
+      randomize_numerical_property({
+        prototype = prototype,
+        property = "until_second",
+        property_info = property_info.achievement_timed
+      })
+
+      if is_vanilla_achievement[prototype.name] then
+        prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, math.floor(10 * prototype.until_second / 60) / 10}
+      end
+    end
+  end
+
+  for _, prototype in pairs(data.raw["combat-robot-count"]) do
+    if prototype.count ~= nil and prototype.count > 1 then
+      randomize_numerical_property({
+        prototype = prototype,
+        property = "count",
+        property_info = property_info.achievement_sensitive
+      })
+
+      if is_vanilla_achievement[prototype.name] then
+        prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, prototype.count}
+      end
+    end
+  end
+
+  for _, prototype in pairs(data.raw["construct-with-robots-achievement"]) do
+    if prototype.amount ~= nil and prototype.amount > 1 then
+      randomize_numerical_property({
+        prototype = prototype,
+        property = "amount",
+        property_info = property_info.achievement_amount
+      })
+
+      if is_vanilla_achievement[prototype.name] then
+        prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, prototype.amount}
+      end
+    end
+  end
+
+  for _, prototype in pairs(data.raw["deconstruct-with-robots-achievement"]) do
+    if prototype.amount ~= nil and prototype.amount > 1 then
+      randomize_numerical_property({
+        prototype = prototype,
+        property = "amount",
+        property_info = property_info.achievement_amount
+      })
+
+      if is_vanilla_achievement[prototype.name] then
+        prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, prototype.amount}
+      end
+    end
+  end
+
+  for _, prototype in pairs(data.raw["deliver-by-robots-achievement"]) do
+    if prototype.amount > 1 then
+      randomize_numerical_property({
+        prototype = prototype,
+        property = "amount",
+        property_info = property_info.achievement_amount
+      })
+
+      if is_vanilla_achievement[prototype.name] then
+        prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, prototype.amount}
+      end
+    end
+  end
+
+  for _, prototype in pairs(data.raw["dont-build-entity-achievement"]) do
+    if prototype.amount ~= nil and prototype.amount > 1 then
+      randomize_numerical_property({
+        prototype = prototype,
+        property = "amount",
+        property_info = property_info.achievement_sensitive
+      })
+
+      if is_vanilla_achievement[prototype.name] then
+        prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, prototype.amount}
+      end
+    end
+  end
+
+  for _, prototype in pairs(data.raw["dont-craft-manually-achievement"]) do
+    if prototype.amount > 1 then
+      randomize_numerical_property({
+        prototype = prototype,
+        property = "amount",
+        property_info = property_info.achievement_lazy_bastard
+      })
+
+      if is_vanilla_achievement[prototype.name] then
+        prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, prototype.amount}
+      end
+    end
+  end
+
+  for _, prototype in pairs(data.raw["dont-use-entity-in-energy-production-achievement"]) do
+    if prototype.minimum_energy_produced and util.parse_energy(prototype.minimum_energy_produced) > 0 then
+      local energy_as_number = util.parse_energy(prototype.minimum_energy_produced)
+      randomize_numerical_property({
+        dummy = energy_as_number,
+        prg_key = prg.get_key(prototype),
+        property_info = property_info.achievement_amount
+      })
+      prototype.minimum_energy_produced = energy_as_number .. "J"
+
+      if is_vanilla_achievement[prototype.name] then
+        prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, util.parse_energy(prototype.minimum_energy_produced) / 1000000000}
+      end
+    end
+  end
+
+  for _, prototype in pairs(data.raw["finish-the-game-achievement"]) do
+    if prototype.until_second ~= nil and prototype.until_second > 1 then
+      randomize_numerical_property({
+        prototype = prototype,
+        property = "until_second",
+        property_info = property_info.achievement_timed
+      })
+
+      if is_vanilla_achievement[prototype.name] then
+        prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, math.floor(10 * prototype.until_second / 3600) / 10}
+      end
+    end
+  end
+
+  for _, prototype in pairs(data.raw["group-attack-achievement"]) do
+    if prototype.amount ~= nil and prototype.amount > 1 then
+      randomize_numerical_property({
+        prototype = prototype,
+        property = "amount",
+        property_info = property_info.achievement_amount
+      })
+
+      if is_vanilla_achievement[prototype.name] then
+        prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, prototype.amount}
+      end
+    end
+  end
+
+  for _, prototype in pairs(data.raw["kill-achievement"]) do
+    if prototype.amount ~= nil and prototype.amount > 1 then
+      randomize_numerical_property({
+        prototype = prototype,
+        property = "amount",
+        property_info = property_info.achievement_amount
+      })
+
+      if is_vanilla_achievement[prototype.name] then
+        prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, prototype.amount}
+      end
+    end
+  end
+
+  for _, prototype in pairs(data.raw["player-damaged-achievement"]) do
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "minimum_damage",
+      property_info = property_info.achievement_sensitive
+    })
+
+    if is_vanilla_achievement[prototype.name] then
+      prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, prototype.minimum_damage}
+    end
+  end
+
+  for _, prototype in pairs(data.raw["produce-achievement"]) do
+    if prototype.amount > 1 then
+      randomize_numerical_property({
+        prototype = prototype,
+        property = "amount",
+        property_info = property_info.achievement_amount
+      })
+
+      if is_vanilla_achievement[prototype.name] then
+        prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, prototype.amount}
+      end
+    end
+  end
+
+  for _, prototype in pairs(data.raw["produce-per-hour-achievement"]) do
+    if prototype.amount > 1 then
+      randomize_numerical_property({
+        prototype = prototype,
+        property = "amount",
+        property_info = property_info.achievement_amount
+      })
+
+      if is_vanilla_achievement[prototype.name] then
+        prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, prototype.amount}
+      end
+    end
+  end
+
+  -- research-achievement doesn't have numerical properties, so skip it
+
+  for _, prototype in pairs(data.raw["train-path-achievement"]) do
+    randomize_numerical_property({
+      prototype = prototype,
+      property = "minimum_distance",
+      property_info = property_info.achievement_amount
+    })
+
+    if is_vanilla_achievement[prototype.name] then
+      prototype.localised_description = {"achievement-description-propertyrandomizer." .. prototype.name, prototype.minimum_distance}
+    end
+  end
+end
+
+---------------------------------------------------------------------------------------------------
 -- randomize_all_game_sounds
 ---------------------------------------------------------------------------------------------------
 

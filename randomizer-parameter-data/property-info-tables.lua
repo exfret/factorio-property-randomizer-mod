@@ -1,5 +1,44 @@
 local property_info = {}
 
+property_info.achievement_amount = {
+  min = 2,
+  min_factor = 1 / 10,
+  max_factor = 10,
+  round = {
+    [2] = {
+      left_digits_to_keep = 2
+    }
+  },
+  lower_is_better = true
+}
+
+property_info.achievement_lazy_bastard = {
+  min = 106,
+  max_factor = 3
+}
+
+property_info.achievement_sensitive = {
+  min = 2,
+  min_factor = 1 / 2,
+  max_factor = 2,
+  round = {
+    [2] = {
+      left_digits_to_keep = 2
+    }
+  },
+  lower_is_better = true
+}
+
+property_info.achievement_timed = {
+  min_factor = 1 / 2,
+  max_factor = 2,
+  round = {
+    [2] = {
+      left_digits_to_keep = 2
+    }
+  }
+}
+
 property_info.ammo_type_range_modifier = {
   min_factor = 1 / 2,
   max_factor = 2,
@@ -604,6 +643,17 @@ property_info.roboport_radius = {
       modulus = 5
     }
   }
+}
+
+property_info.rocket_silo_rockets_required = {
+  min_factor = 1 / 3,
+  max_factor = 3,
+  round = {
+    [2] = {
+      left_digits_to_keep = 2
+    }
+  },
+  lower_is_better = true
 }
 
 property_info.rocket_launch_length = {

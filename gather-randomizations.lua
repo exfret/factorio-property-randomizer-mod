@@ -2,13 +2,7 @@ blop.blop = nil -- So, reformat things, then have the functions gather the proto
 
 blop.blop = nil -- Make these files return things
 
-local energy_randomizer = require("randomizer-functions/energy-randomizer")
-local entity_randomizer = require("randomizer-functions/entity-randomizer")
-local item_randomizer = require("randomizer-functions/item-randomizer")
-local locale_randomizer = require("randomizer-functions/locale-randomizer") -- Currently TODO
-local misc_randomizer = require("randomizer-functions/misc-randomizer")
-local recipe_randomizer = require("randomizer-functions/recipe-randomizer")
-local technology_randomizer = require("randomizer-functions/technology-randomizer")
+require("randomize/master")
 
 local gather_randomizations = {}
 
@@ -20,58 +14,53 @@ blop.blop = nil -- Add tags for randomizations and names for configs
 -- Later will be populated with list of allowed prototypes to randomize
 gather_randomizations.randomization_spec = {
     {
-        func = energy_randomizer.randomize_heat_buffer_max_transfer,
-        name = "heat-buffer-transfer-rate",
+        func = rand.heat_buffer_max_transfer,
+        name = "heat-transfer-rate",
         tags = {"heat", "power"}
     },
     {
-        func = energy_randomizer.randomize_heat_buffer_specific_heat,
-        name = "heat-buffer-specific-heat",
-        tags = {"specific-heat", "heat", "power"}
+        func = rand.heat_buffer_specific_heat,
+        name = "specific-heat",
+        tags = {"heat", "power"}
     },
     {
-        func = energy_randomizer.randomize_heat_buffer_temperatures, -- TODO: Separate this out more into max temperature etc.
-        name = "heat-buffer-temperature",
+        func = rand.heat_buffer_temperatures,
+        name = "heat-temperature",
         tags = {"temperature", "heat", "power"}
     },
-    {
-        func = energy_randomizer.randomize_energy_source_electric_buffer_capacity,
-        name = "electric-buffer-capacity"
-        tags = {"electric-buffer", "electric", "power"}
+    { -- Technically could be applied to other entities, like roboports, but just applies to accumulators now
+        func = rand.energy_source_electric_buffer_capacity,
+        name = "electric-capacity"
+        tags = {"electric", "power"}
     },
     {
-        func = energy_randomizer.randomize_energy_source_electric_input_flow_limit,
-        name = "electric-buffer-input-limit"
-        tags = {"electric-buffer", "electric", "power"}
+        func = rand.energy_source_electric_input_flow_limit,
+        name = "electric-input-limit"
+        tags = {"electric", "power"}
     },
     {
-        func = energy_randomizer.randomize_energy_source_electric_output_flow_limit,
-        name = "electric-buffer-output-limit",
-        tags = {"electric-buffer", "electric", "power"}
+        func = rand.energy_source_electric_output_flow_limit,
+        name = "electric-output-limit",
+        tags = {"electric", "power"}
     },
     {
-        func = energy_randomizer.randomize_energy_source_burner_effectivity,
+        func = rand.energy_source_burner_effectivity,
         name = "burner-effectivity",
-        tags = {"effectivity", "burner", "power"}
+        tags = {"burner", "power"}
     },
     {
-        func = energy_randomizer.randomize_energy_source_fluid_effectivity,
+        func = rand.energy_source_fluid_effectivity,
         name = "fluid-power-effectivity",
-        tags = {"effectivity", "fluid-power", "power"}
-    },
-    {
-        func = energy_randomizer.randomize_energy_source_fluid_usage,
-        name = "fluid-power-usage",
         tags = {"fluid-power", "power"}
     },
     {
-        func = energy_randomizer.randomize_energy_source_fluid_maximum_temperature,
+        func = rand.energy_source_fluid_maximum_temperature,
         name = "fluid-power-max-temperature",
         tags = {"temperature", "fluid-power", "power"}
     },
     {
         func = energy_randomizer.randomize_boiler_energy_consumption,
-        name = "boiler-consumption",
+        name = "boiler-power",
         tags = {"power"}
     },
     {
@@ -97,27 +86,22 @@ gather_randomizations.randomization_spec = {
     {
         func = energy_randomizer.randomize_generator_effectivity,
         name = "generator-effectivity",
-        tags = {"power-production", "effectivity", "electric", "power"}
-    },
-    {
-        func = energy_randomizer.randomize_generator_fluid_usage,
-        name = "generator-fluid-usage",
-        tags = {"power"}
-    },
-    {
-        func = energy_randomizer.randomize_generator_maximum_temperature,
-        name = "generator-max-temperature",
-        tags = {"temperature", "power"}
-    },
-    {
-        func = energy_randomizer.randomize_generator_max_power_output,
-        name = "generator-max-production",
         tags = {"power-production", "electric", "power"}
     },
     {
+        func = energy_randomizer.randomize_generator_fluid_usage,
+        name = "fluid-generator-production",
+        tags = {"power-production", "electric", "power"}
+    },
+    {
+        func = energy_randomizer.randomize_generator_maximum_temperature,
+        name = "fluid-generator-max-temperature",
+        tags = {"power-production", "temperature", "power"}
+    }, -- Excluded: generator_max_production
+    {
         func = energy_randomizer.randomize_reactor_consumption
         name = "reactor-consumption",
-        tags = {"power"}
+        tags = {"power-production", "power"}
     },
     {
         func = energy_randomizer.randomize_solar_panel_production
@@ -132,102 +116,92 @@ gather_randomizations.randomization_spec = {
     {
         func = energy_randomizer.randomize_equipment_energy_usage
         name = "equipment-energy-usage",
-        tags = {"power-consumption", "power", "equipment"}
+        tags = {"equipment"}
     },
     {
         func = energy_randomizer.randomize_fluid_fuel_value,
         name = "fluid-fuel-value",
         tags = {"power"}
-    },
-    {
-        func = energy_randomizer.randomize_fluid_heat_capacity
-        name = "fluid-heat-capacity",
-        tags = {"specific-heat", "fuel-value", "power"}
-    },
+    }, -- Excluded: fluid heat capacity
     {
         func = energy_randomizer.randomize_item_fuel_value,
         name = "item-fuel-value",
-        tags = {"fuel-value", "power"}
+        tags = {"power"}
     },
-    {
+    { -- This is technically two things: over time and movement, but we should do a group randomization of them
         func = energy_randomizer.randomize_bot_energy_per_tick
-        name = "bot-energy-over-time",
-        tags = {"energy-usage", "bot-energy", "bots", "power"} -- TODO: Does bot energy have to be electric? Also in general how do we sense electric stuff versus not?
+        name = "bot-power",
+        tags = {"power-consumption", "bots", "power"} -- TODO: Does bot energy have to be electric? Also in general how do we sense electric stuff versus not?
     },
-    {
-        func = energy_randomizer.randomize_bot_energy_per_move,
-        name = "bot-energy-movement",
-        tags = {"energy-usage", "bot-energy", "bots", "power"}
-    },
-    {
+    { -- This is technically two things: per rotation and per movement, but they should be group randomized
         func = energy_randomizer.randomize_inserter_energy_per_movement,
-        name = "inseter-energy-movement",
-        tags = {"energy-usage", "inserter-power-consumption", "power"}
-    },
-    {
-        func = energy_randomizer.randomize_inserter_energy_per_rotation
-        name = "inserter-energy-rotation",
-        tags = {"power-consumption", "inserter-power-consumption", "power"}
+        name = "inserter-power",
+        tags = {"power-consumption", "power"}
     },
     {
         func = energy_randomizer.randomize_energy_shield_energy_per_shield,
-        name = "energy-shield-energy",
-        tags = {"power-consumption", "power", "equipment"}
+        name = "energy-shield-power",
+        tags = {"equipment"}
     },
     {
         func = entity_randomizer.randomize_beacon_supply_area_distance,
         name = "beacon-supply-area",
-        tags = {"supply-area", "module", "production"}
+        tags = {"modules", "production"}
     },
     {
         func = entity_randomizer.randomize_beacon_distribution_effectivity,
         name = "beacon-effectivity",
-        tags = {"module", "production"}
+        tags = {"modules", "production"}
     },
     {
         func = entity_randomizer.randomize_belt_speed,
         name = "belt-speed",
-        tags = {"belt", "logistic-speed", "logistic"}
+        tags = {"logistic"}
     },
     {
         func = entity_randomizer.randomize_bot_speed,
         name = "bot-speed",
-        tags = {"bot", "logistic-speed", "logistic"}
+        tags = {"bots", "logistic"}
     },
     {
         func = entity_randomizer.randomize_car_rotation_speed,
         name = "car-turn-radius",
-        tags = {"vehicle", "player-transport"}
+        tags = {"vehicle"}
     },
     {
         func = entity_randomizer.randomize_character_corpse_time_to_live,
         name = "corpse-time",
-        tags = {}
+        tags = {"misc"}
     },
     {
         func = entity_randomizer.randomize_respawn_time,
         name = "respawn-time",
-        tags = {}
+        tags = {"misc"}
     },
     {
         func = entity_randomizer.randomize_crafting_machine_speeds,
-        name = "machine-speeds",
-        tags = {"production-speed", "production"}
+        name = "crafting-machine-speeds",
+        tags = {"production"}
     },
     {
-        func = entity_randomizer.randomize_electric_poles, -- TODO: Add way to randomize supply area but not wire distance and vice versa
-        name = "electric-poles",
+        func = entity_randomizer.randomize_electric_pole_supply_area
+        name = "electric-pole-supply-area",
+        tags = {"logistic"}
+    },
+    {
+        func = entity_randomizer.randomize_electric_pole_wire_distance
+        name = "electric-pole-wire-distance",
         tags = {"logistic"}
     },
     {
         func = entity_randomizer.randomize_non_resource_mining_speeds,
         name = "non-resource-mining-speeds",
-        tags = {}
+        tags = {"misc"}
     },
     {
         func = entity_randomizer.randomize_repair_speed_modifiers,
         name = "repair-speed-modifiers",
-        tags = {"military"}
+        tags = {"misc"}
     },
     {
         func = entity_randomizer.randomize_cliff_sizes,
@@ -237,27 +211,27 @@ gather_randomizations.randomization_spec = {
     {
         func = entity_randomizer.randomize_fuel_inventory_slots,
         name = "fuel-slots",
-        tags = {"inventory-slots", "inventory"}
+        tags = {"inventory-slots", "storage"}
     },
     {
         func = entity_randomizer.randomize_gate_opening_speed,
         name = "gate-speed",
-        tags = {}
+        tags = {"misc"}
     },
     {
         func = entity_randomizer.randomize_non_sensitive_max_health,
         name = "non-sensitive-max-health",
-        tags = {"health", "military"}
+        tags = {"misc"}
     },
     {
         func = entity_randomizer.randomize_sensitive_max_health,
         name = "sensitive-max-health",
-        tags = {"health", "military"}
+        tags = {"military"}
     },
     {
         func = entity_randomizer.randomize_inserter_offsets,
         name = "inserter-offsets",
-        tags = {"offsets", "logistic"}
+        tags = {"logistic"}
     },
     {
         func = entity_randomizer.randomize_inserter_speed,
@@ -267,77 +241,67 @@ gather_randomizations.randomization_spec = {
     {
         func = entity_randomizer.randomize_inventory_sizes,
         name = "inventory-sizes", -- TODO: Randomize small/big inventories separately
-        tags = {"inventory-slots", "inventory"}
+        tags = {"inventory-slots", "storage"}
     },
     {
         func = entity_randomizer.randomize_lab_research_speed,
         name = "research-speed",
-        tags = {"production-speed", "production"}
+        tags = {"production"}
     },
     {
         func = entity_randomizer.randomize_machine_pollution,
         name = "machine-pollution",
-        tags = {"pollution", "production", "military"}
+        tags = {"production", "military"}
     },
     {
         func = entity_randomizer.randomize_mining_drill_dropoff_location,
         name = "drill-offsets",
-        tags = {"offsets", "logistic"}
+        tags = {"logistic"}
     },
     {
         func = entity_randomizer.randomize_mining_speeds,
         name = "mining-speed",
-        tags = {"production-speed", "production"}
+        tags = {"production"}
     },
     {
         func = entity_randomizer.randomize_module_slots,
         name = "module-slots",
-        tags = {"module", "production"}
+        tags = {"modules", "production"}
     },
     {
         func = entitiy_randomizer.randomize_offshore_pump_speed,
         name = "offshore-pump-speed",
-        tags = {"production-speed", "production"}
+        tags = {"production"}
     },
     {
         func = entity_randomizer.randomize_pump_pumping_speed,
         name = "pump-speed",
-        tags = {"fluid", "logistic-speed", "logistic"} -- TODO: Add fluid as a tag to other places?
+        tags = {"fluid", "logistic"} -- TODO: Add fluid as a tag to other places?
     },
     {
         func = entity_randomizer.randomize_radar_search_area,
         name = "radar-search-area",
-        tags = {}
+        tags = {"misc"}
     },
     {
         func = entity_randomizer.randomize_radar_reveal_area,
         name = "radar-reveal-area",
-        tags = {}
+        tags = {"misc"}
     },
     {
         func = entity_randomizer.randomize_reactor_neighbour_bonus,
         name = "reactor_bonus",
-        tags = {"power"}
-    },
-    {
-        func = entity_randomizer.randomize_roboport_material_slots_count,
-        name = "roboport-repair-pack-slots",
-        tags = {"inventory-slots", "inventory", "bots"}
-    },
-    {
-        func = entity_randomizer.randomize_roboport_robot_slots_count,
-        name = "roboport-robot-slots",
-        tags = {"inventory-slots", "inventory", "bots"}
-    },
+        tags = {"power-production", "power"}
+    }, -- Excluded: roboport inventory slots for repair packs/bots
     {
         func = entity_randomizer.randomize_roboport_charging_energy,
-        name = "roboport-charging-power",
-        tags = {"bot-energy", "bots", "power"}
+        name = "roboport-charging-speed",
+        tags = {"bots", "power"}
     },
     {
         func = entity_randomizer.randomize_roboport_charging_station_count,
         name = "roboport-charging-count",
-        tags = {"bot-energy", "bots"}
+        tags = {"bots", "power"}
     },
     {
         func = entity_randomizer.randomize_roboport_logistic_radius,
@@ -352,22 +316,22 @@ gather_randomizations.randomization_spec = {
     {
         func = entity_randomizer.randomize_storage_tank_capacity,
         name = "tank-capacity",
-        tags = {"fluid-storage", "storage"}
+        tags = {"fluid", "storage"}
     },
     {
         func = entity_randomizer.randomize_underground_belt_distance,
         name = "underground-belt-distance",
-        tags = {"belt", "logistic"}
+        tags = {"logistic"}
     },
     {
         func = entity_randomizer.randomize_vehicle_crash_damage,
         name = "crash-damage",
-        tags = {"personal-vehicle", "player-transport", "transport", "logistic"}
+        tags = {"vehicle"}
     },
     {
         func = entity_randomizer.randomize_vehicle_power,
         name = "vehicle-speed",
-        tags = {"personal-vehicle", "player-transport", "transport-speed", "transport", "logistic"}
+        tags = {"vehicle", "player-transport"}
     },
     {
         func = icon_randomizer.randomize_icons,
@@ -377,17 +341,17 @@ gather_randomizations.randomization_spec = {
     {
         func = item_randomizer.randomize_cliff_explosive_throw_range,
         name = "cliff-explosive-throw-range",
-        tags = {}
+        tags = {"misc"}
     },
     {
         func = item_randomizer.randomize_ammo_magazine_size,
         name = "magazine-size",
-        tags = {"military-resource-usage", "military"}
+        tags = {"military"}
     },
     {
         func = item_randomizer.randomize_gun_damage_modifier,
         name = "gun-damage-modifier",
-        tags = {"damage", "military"}
+        tags = {"military"}
     },
     {
         func = item_randomizer.randomize_gun_range,
@@ -407,12 +371,12 @@ gather_randomizations.randomization_spec = {
     {
         func = item_randomizer.randomize_module_effects,
         name = "module-effects",
-        tags = {"module", "production"}
+        tags = {"modules", "production"}
     },
     {
         func = item_randomizer.randomizer_repair_tool_speeds,
         name = "repair-speeds",
-        tags = {"military"}
+        tags = {"military", "misc"}
     },
     {
         func = misc_randomizer.randomize_sounds,
@@ -431,28 +395,28 @@ gather_randomizations.randomization_spec = {
     },
     {
         func = misc_randomizer.randomize_map_colors,
-        name = "map_colors",
+        name = "map-colors",
         tags = {"visual"}
     },
     {
         func = misc_randomizer.randomize_projectile_damage,
         name = "projectile-damage",
-        tags = {"damage", "military"}
+        tags = {"military"}
     }, -- TODO: Utility constants properties
     {
         func = misc_randomizer.randomize_tile_walking_speed_modifier,
         name = "tile-speeds",
-        tags = {"player-transport", "transport", "logistic"}
+        tags = {"player-transport", "misc"}
     },
     {
         func = recipe_randomizer.randomize_crafting_times,
-        name = "crafting_times",
-        tags = {"production-speed", "production"}
+        name = "recipe-times",
+        tags = {"production"}
     },
     {
         func = technology_randomizer.randomize_tech_costs,
         name = "tech-costs",
-        tags = {"tech", "production"}
+        tags = {"production"}
     },
     {
         func = technology_randomizer.randomize_tech_times,
@@ -468,7 +432,7 @@ gather_randomizations.randomization_spec = {
 --     20 = Sub-mechanics categories like "electric-power"
 --     30 = "Solutions" or subareas to these sub-mechanics like "nuclear-power"
 --     40 = Specific ways of looking at these mechanics or aspects of them like "nuclear-power-heat-transfer" (not that this is even a tag right now)
-gather_randomizations.tag_spec = {
+--[[gather_randomizations.tag_spec = {
     {
         name = "logistic",
         specificity = 0,
@@ -653,7 +617,7 @@ gather_randomizations.tag_spec = {
                 name = "temperature",
                 specificity = 20
             }
-}
+}]]
 
 -- List of tables with signature {randomization = [function], blacklist = [table of protoype --> bool of whether blacklisted]}
 gather_randomizations.list_to_randomize = {}

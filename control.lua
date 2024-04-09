@@ -62,7 +62,7 @@ script.on_event(defines.events.on_tick, function(event)
     game.print("You are on the default seed. If you want things randomized differently for a new experience, change the \"seed\" setting under mod settings in the menu.")
   end
 
-  if event.tick % (60 * 60 * 30) == 0 and rand_character_properties_midgame then
+  if event.tick % (30 * 60 * 60) == 0 and rand_character_properties_midgame then
     --[[local old_force_modifications = util.table.deepcopy(global.force_modifications)
 
     local new_force_modifications = global.force_modifications
@@ -78,8 +78,8 @@ script.on_event(defines.events.on_tick, function(event)
 
     local old_force_modifications = util.table.deepcopy(global.force_modifications)
     local new_force_modifications = global.force_modifications
-    new_force_modifications.running_speed = prg.value(nil, global) + 2 / 3
-    new_force_modifications.manual_crafting_speed = prg.value(nil, global) + 2 / 3
+    new_force_modifications.running_speed = 3 / 2 * (prg.value(nil, global) - 1 / 4)
+    new_force_modifications.manual_crafting_speed = -1 + math.pow(prg.value(nil, global) + 2 / 3, 3)
 
     player_force = game.forces.player -- TODO: Different forces compatibility
     player_force.character_running_speed_modifier = player_force.character_running_speed_modifier - old_force_modifications.running_speed + new_force_modifications.running_speed
