@@ -437,13 +437,14 @@ function build_graph.add_electricity_node(dependency_graph)
         prereqs = {}
     })
 
-    local steam_node = { -- AND
-        type = "steam_electricity_node",
-        name = "steam_electricity",
+    local fluid_generator_electricity_node = { -- AND
+        type = "fluid_generator_electricity_node",
+        name = "fluid_generator_electricity",
         prereqs = {}
     }
 
-    local steam_engine_node = { -- OR
+    -- TODO
+    local fluid_generator_node = { -- OR
     }
 end
 -- TODO: Check boilers and offshore pumps with fluids

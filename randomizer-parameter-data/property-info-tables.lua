@@ -96,6 +96,18 @@ property_info.belt_speed = {
   }
 }
 
+property_info.boiler_consumption = {
+  min = 0.01,
+  min_factor = 1 / 5,
+  max_factor = 20,
+  round = {
+    [2] = {
+      left_digits_to_keep = 3,
+      modulus = 0.01
+    }
+  }
+}
+
 property_info.bot_speed = {
   min = 0.1 / 216,
   min_factor = 1 / 2,
@@ -115,7 +127,7 @@ property_info.car_rotation_speed = {
 
 property_info.character_respawn_time = {
   min = 1,
-  min_factor = 1 / 3,
+  min_factor = 1 / 10,
   max_factor = 3,
   round = {
     [2] = {
@@ -204,7 +216,7 @@ property_info.discrete_positive = {
 
 property_info.effectivity = {
   min = 0.001,
-  min_factor = 0.7, -- Low effectivity can break things, so don't allow it to get too low
+  min_factor = 1 / 2, -- Low effectivity can break things, so don't allow it to get too low
   max_factor = 5,
   round = {
     [2] = {
@@ -218,8 +230,8 @@ property_info.effectivity = {
 
 property_info.effectivity_beacon = {
   min = 0.001,
-  min_factor = 0.5,
-  max_factor = 2,
+  min_factor = 1 / 4,
+  max_factor = 3,
   round = {
     [2] = {
       modulus = 0.01
@@ -230,11 +242,10 @@ property_info.effectivity_beacon = {
   }
 }
 
--- TODO: Only apply min if the property was originally zero
 property_info.energy = {
   min = 0.01,
-  min_factor = 1 / 2,
-  max_factor = 2,
+  min_factor = 1 / 4,
+  max_factor = 10,
   round = {
     [2] = {
       left_digits_to_keep = 3,
@@ -244,7 +255,7 @@ property_info.energy = {
 }
 
 property_info.entity_interaction_mining_speed = {
-  min_factor = 1 / 3,
+  min_factor = 1 / 6,
   max_factor = 2,
   lower_is_better = true
 }
@@ -326,15 +337,19 @@ property_info.gate_opening_speed = {
 }
 
 property_info.gun_cooldown = {
-  min = 0.01666,
   min_factor = 1 / 3,
   max_factor = 3,
   lower_is_better = true
 }
 
+property_info.gun_damage_modifier = {
+  min_factor = 1 / 2,
+  max_factor = 4
+}
+
 property_info.gun_shooting_range = {
   min = 0.1,
-  min_factor = 1 / 4,
+  min_factor = 1 / 3,
   max_factor = 3,
   round = {
     [2] = {
@@ -344,14 +359,14 @@ property_info.gun_shooting_range = {
 }
 
 property_info.inserter_extension_speed = {
-  min_factor = 1 / 4,
+  min_factor = 1 / 8,
   max_factor = 30,
   min = 0.01
 }
 
 property_info.inserter_rotation_speed = {
   min = 10 / (360 * 60),
-  min_factor = 1 / 4,
+  min_factor = 1 / 8,
   max_factor = 30,
   round = {
     [2] = {
@@ -398,8 +413,8 @@ property_info.large_inventory = {
 -- Used for things that would just be broken if the factor was changed too much
 -- TODO: Turn this off for chaos mode
 property_info.limited_range = {
-  min_factor = 1 / 4,
-  max_factor = 4
+  min_factor = 1 / 5,
+  max_factor = 5
 }
 
 property_info.limited_range_strict = {
@@ -425,8 +440,8 @@ property_info.machine_pollution = {
 
 property_info.machine_speed = {
   min = 0.001,
-  min_factor = 1 / 3,
-  max_factor = 5,
+  min_factor = 1 / 5,
+  max_factor = 8,
   round = {
     [2] = {
       modulus = 0.01
@@ -439,7 +454,7 @@ property_info.machine_speed = {
 
 property_info.magazine_size = {
   min = 1,
-  min_factor = 1 / 4,
+  min_factor = 1 / 2,
   max_factor = 10,
   round = {
     [2] = {
@@ -476,8 +491,28 @@ property_info.max_health_sensitive = {
   }
 }
 
-property_info.mining_drill_dropoff = {
+property_info.mining_drill_dropoff_horizontal = {
+  min = -10,
   max = 10
+}
+
+property_info.mining_drill_dropoff_vertical = {
+  min = -10,
+  max = -1.85
+}
+
+property_info.mining_speed = {
+  min = 0.001,
+  min_factor = 1 / 3,
+  max_factor = 20,
+  round = {
+    [2] = {
+      modulus = 0.01
+    },
+    [3] = {
+      modulus = 0.1
+    }
+  }
 }
 
 property_info.neighbour_bonus = {
@@ -514,8 +549,8 @@ property_info.pollution_effect = {
 
 property_info.power = {
   min = 0.01,
-  min_factor = 1 / 3,
-  max_factor = 3,
+  min_factor = 1 / 5,
+  max_factor = 5,
   round = {
     [2] = {
       left_digits_to_keep = 3,
@@ -525,10 +560,13 @@ property_info.power = {
   lower_is_better = true
 }
 
+property_info.power_good = property_info.power
+property_info.power_good.lower_is_better = false
+
 property_info.power_generation = {
   min = 0.01,
-  min_factor = 1 / 2,
-  max_factor = 2,
+  min_factor = 1 / 3,
+  max_factor = 10,
   round = {
     [2] = {
       left_digits_to_keep = 3,
@@ -604,7 +642,7 @@ property_info.repair_tool_speed = {
 }
 
 property_info.researching_speed = {
-  min_factor = 1 / 4,
+  min_factor = 1 / 6,
   round = {
     [2] = {
       modulus = 0.1
@@ -671,7 +709,7 @@ property_info.rocket_launch_speed = {
 
 property_info.small_inventory = {
   min = 0,
-  max_factor = 4, -- TODO: Add leniency so that 0 slots can still be randomized to 1 slot if necessary
+  max_factor = 10, -- TODO: Add leniency so that 0 slots can still be randomized to 1 slot if necessary
   round = {
     [1] = {
       modulus = 1
@@ -688,7 +726,7 @@ property_info.small_inventory = {
 property_info.small_nonempty_inventory = {
   min = 1,
   min_factor = 1 / 4,
-  max_factor = 4,
+  max_factor = 10,
   round = {
     [1] = {
       modulus = 1
@@ -757,6 +795,24 @@ property_info.supply_area = {
   }
 }
 
+property_info.supply_area_beacon = {
+  min = 1,
+  max = 64,
+  min_factor = 1 / 2,
+  max_factor = 2,
+  round = {
+    [1] = {
+      modulus = 1
+    },
+    [2] = {
+      modulus = 1
+    },
+    [3] = {
+      modulus = 1
+    }
+  }
+}
+
 property_info.tech_count = {
   min = 1,
   min_factor = 1 / 5,
@@ -786,6 +842,7 @@ property_info.tech_time = {
 
 property_info.temperature = {
   min = 120,
+  min_factor = 1 / 3,
   max_factor = 3,
   round = {
     [2] = {
@@ -835,7 +892,7 @@ property_info.turret_turning_speed = {
   max_factor = 10
 }
 
-property_info.underground_belt_length = {
+property_info.underground_length = {
   min = 2, -- TODO: Allow underground distance of 1 on extreme mode
   max = 255,
   round = {

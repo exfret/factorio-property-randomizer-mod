@@ -1,3 +1,9 @@
+require("gather-randomizations")
+
+randomize()
+
+if false then
+
 require("config")
 --require("gather-randomizations")
 require("linking-utils")
@@ -14,8 +20,6 @@ require("analysis/karma")
 
 local reformat = require("utilities/reformat")
 
-require("parse-docs")
-
 --local dependency_utils = require("dependency-graph/dependency-utils")
 
 log("Reformatting prototypes...")
@@ -27,12 +31,6 @@ log("Gathering things to randomize...")
 local randomizing_functions_to_call = {}
 
 log("Performing randomizations...")
-
---[[for _, class in pairs(data.raw) do
-  for _, prototype in pairs(class) do
-
-  end
-end]]
 
 --blop.blop = nil
 
@@ -367,3 +365,5 @@ data:extend({
 -- require("randomizer-functions/keybind-randomizer-prototypes")
 
 -- TODO: Locale
+
+end

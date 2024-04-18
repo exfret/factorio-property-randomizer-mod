@@ -1,3 +1,5 @@
+local reformat = require("utilities/reformat")
+
 local prototype_tables = {}
 
 prototype_tables.bot_classes = {
@@ -6,6 +8,17 @@ prototype_tables.bot_classes = {
   "logistic-robot"
 }
 
+prototype_tables.bot_classes_as_keys = {
+  ["combat-robot"] = true,
+  ["construction-robot"] = true,
+  ["logistic-robot"] = true
+}
+
+prototype_tables.bot_energy_keys = {
+  ["construction-robot"] = {"energy_per_move", "energy_per_tick"},
+  ["logistic-robot"] = {"energy_per_move", "energy_per_tick"}
+  -- Don't include combat robots
+}
 
 prototype_tables.container_classes = {
   container = true,
@@ -18,6 +31,12 @@ prototype_tables.crafting_machine_classes = {
   "assembling-machine",
   "rocket-silo",
   "furnace"
+}
+
+prototype_tables.crafting_machine_classes_as_keys = {
+  ["assembling-machine"] = true,
+  ["rocket-silo"] = true,
+  ["furnace"] = true
 }
 
 prototype_tables.energy_property_names = {
@@ -144,12 +163,17 @@ prototype_tables.entities_to_modify_mining_speed = {
   "spider-vehicle",
   "wall",
   "fish",
-  -- Not simple-entity
+  "simple-entity",
   "tree",
   "item-entity",
   -- Not resource (that's too sensitive, must be randomized separately)
   "tile-ghost"
 }
+
+prototype_tables.entities_to_modify_mining_speed_as_keys = {}
+for _, val in pairs(prototype_tables.entities_to_modify_mining_speed) do
+  prototype_tables.entities_to_modify_mining_speed_as_keys[val] = true
+end
 
 -- TODO: Find a more general way to make tools for dealing with entity classes
 prototype_tables.entities_with_health = {
@@ -229,6 +253,11 @@ prototype_tables.entities_with_health = {
   "tree"
 }
 
+prototype_tables.entities_with_health_as_keys = {}
+for _, val in pairs(prototype_tables.entities_with_health) do
+  prototype_tables.entities_with_health_as_keys[val] = true
+end
+
 -- Entities blacklisted from randomizing their health
 prototype_tables.entities_with_health_blacklist = {
   character = true,
@@ -239,13 +268,36 @@ prototype_tables.entities_with_health_blacklist = {
 prototype_tables.entities_with_health_sensitive = {
   ["unit-spawner"] = true,
   turret = true, -- For worms
-  unit = true
+  unit = true,
+  wall = true
+}
+
+prototype_tables.entities_with_health_non_sensitive_as_keys = prototype_tables.entities_with_health_as_keys
+for val, _ in pairs(prototype_tables.entities_with_health_blacklist) do
+  prototype_tables.entities_with_health_non_sensitive_as_keys[val] = nil
+end
+for val, _ in pairs(prototype_tables.entities_with_health_sensitive) do
+  prototype_tables.entities_with_health_non_sensitive_as_keys[val] = nil
+end
+
+prototype_tables.equipment_energy_properties = {
+  ["energy-shield-equipment"] = {"energy_per_shield"}
+}
+
+prototype_tables.equipment_power_properties = {
+  ["belt-immunity-equipment"] = {"energy_consumption"},
+  ["movement-bonus-equipment"] = {"energy_consumption"},
+  ["night-vision-equipment"] = {"energy_input"}
 }
 
 prototype_tables.has_heat_buffer = {
   ["heat-interface"] = true,
   ["heat-pipe"] = true,
   reactor = true
+}
+
+prototype_tables.inserter_energy_keys = {
+  inserter = {"energy_per_movement", "energy_per_rotation"}
 }
 
 -- Furnace inventory sizes and rocket_result_inventory_size are cursed properties... don't randomize
@@ -283,6 +335,24 @@ prototype_tables.machine_classes = {
   "offshore-pump"
 }
 
+prototype_tables.machine_energy_keys = {
+  lamp = {"energy_usage_per_tick"},
+  ["programmable-speaker"] = {"energy_usage_per_tick"}
+}
+
+prototype_tables.machine_power_keys = {
+  beacon = {"energy_usage"},
+  ["arithmetic-combinator"] = {"active_energy_usage"},
+  ["decider-combinator"] = {"active_energy_usage"},
+  ["assembling-machine"] = {"energy_usage"},
+  ["rocket-silo"] = {"energy_usage"},
+  furnace = {"energy_usage"},
+  lab = {"energy_usage"},
+  ["mining-drill"] = {"energy_usage"},
+  pump = {"energy_usage"},
+  radar = {"energy_usage"}
+}
+
 prototype_tables.machines_with_module_slots = {
   "beacon",
   "assembling-machine",
@@ -291,6 +361,15 @@ prototype_tables.machines_with_module_slots = {
   "lab",
   "mining-drill"
 }
+prototype_tables.machines_with_module_slots_as_keys = {}
+for _, val in pairs(prototype_tables.machines_with_module_slots) do
+  prototype_tables.machines_with_module_slots_as_keys[val] = true
+end
+
+prototype_tables.machines_with_module_slots_as_keys = {}
+for _, val in pairs(prototype_tables.machines_with_module_slots) do
+  prototype_tables.machines_with_module_slots_as_keys[val] = true
+end
 
 -- Note: not everything that has an EnergySource property actually supports pollution
 prototype_tables.polluting_machine_classes = {
@@ -315,6 +394,7 @@ prototype_tables.power_property_names = {
   ["mining-drill"] = {"energy_usage"},
   pump = {"energy_usage"},
   --roboport = {"energy_usage"}, Don't randomize roboport energy properties now due to possible conflicts with bot charging
+  --                                Note: I seem to randomize them still, just in the entity randomizer, maybe still do this but with checks about bot charging
   --car = {"consumption"}, I think this just increases the car power
   ["belt-immunity-equipment"] = {"energy_consumption"},
   ["movement-bonus-equipment"] = {"energy_consumption"},
@@ -358,10 +438,26 @@ prototype_tables.vehicle_classes = {
   "spider-vehicle"
 }
 
+prototype_tables.vehicle_classes_as_keys = {}
+for _, val in pairs(prototype_tables.vehicle_classes) do
+  prototype_tables.vehicle_classes_as_keys[val] = true
+end
+
 prototype_tables.vehicle_speed_keys = {
   car = "consumption",
   ["spider-vehicle"] = "movement_energy_consumption",
   locomotive = "max_power"
 }
+
+-- More complex tables
+prototype_tables.intermediate_item_names = {}
+
+for _, recipe in pairs(data.raw.recipe) do
+  reformat.prototype.recipe(recipe)
+
+  for _, ingredient in pairs(recipe.ingredients) do
+    prototype_tables.intermediate_item_names[ingredient.name] = true
+  end
+end
 
 return prototype_tables

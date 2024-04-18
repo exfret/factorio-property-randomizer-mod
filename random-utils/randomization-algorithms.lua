@@ -132,8 +132,9 @@ local function nudge_properties (params, roll)
     end
 
     local nudge = sign * settings.startup["propertyrandomizer-chaos"].value * (1 / num_steps) * param_table_utils.find_inertia_function_value(inertia_function, tbl[property])
-    if math.abs(nudge / math.sqrt(1 + tbl[property] * tbl[property]) * num_steps) >= 150 then
-      nudge = sign * 150 * math.sqrt(1 + tbl[property] * tbl[property]) / num_steps
+    
+    if math.abs(nudge / math.sqrt(1 * 1 + tbl[property] * tbl[property]) * num_steps) >= 150 then
+      nudge = sign * 150 * math.sqrt(1 * 1 + tbl[property] * tbl[property]) / num_steps
     elseif inertia_function.type == "proportional" and settings.startup["propertyrandomizer-chaos"].value * inertia_function.slope >= 20 then
       -- Also limit so that proportional inertia functions don't cause things to go below zero
       nudge = sign / num_steps * 10 * tbl[property]
@@ -182,14 +183,14 @@ local function apply_property_info_changes(tbl, property, property_info, old_val
 
   -- Min/max it
   if property_info.min ~= nil then
-    if old_value <= property_info.min then
+    if old_value < property_info.min then
       tbl[property] = old_value
     else
       tbl[property] = math.max(tbl[property], property_info.min)
     end
   end
   if property_info.max ~= nil then
-    if tbl[property] >= property_info.max then
+    if tbl[property] > property_info.max then
       tbl[property] = old_value
     else
       tbl[property] = math.min(tbl[property], property_info.max)
@@ -257,9 +258,9 @@ function randomize_numerical_property (passed_params)
 
   -- Randomly increase or decrease bias to make a distribution that's less likely to sample from the middle (i.e.- make it so things change more often than not)
   if prg.int(params.prg_key, 2) == 1 then
-    params.walk_params.bias = params.walk_params.bias - SPLIT_BIAS_MODIFIER - 0.1 * settings.startup["propertyrandomizer-chaos"].value -- TODO: Isn't 0.1 a lot lol
+    params.walk_params.bias = params.walk_params.bias - SPLIT_BIAS_MODIFIER - 0.005 * settings.startup["propertyrandomizer-chaos"].value -- TODO: Isn't 0.1 a lot lol
   else
-    params.walk_params.bias = params.walk_params.bias + SPLIT_BIAS_MODIFIER + 0.1 * settings.startup["propertyrandomizer-chaos"].value
+    params.walk_params.bias = params.walk_params.bias + SPLIT_BIAS_MODIFIER + 0.005 * settings.startup["propertyrandomizer-chaos"].value
   end
 
   if params.walk_params.bias >= 0.5 + MAX_BIAS_CHANGE then
@@ -333,7 +334,7 @@ function randomize_points_in_space (passed_params)
   end
 end
 
--- prototype must be defined
+-- prototype must be defined for now
 function randnum(passed_params)
   local params = table.deepcopy(passed_params)
 
@@ -343,17 +344,20 @@ function randnum(passed_params)
   -- TODO: Move these to constants or globals
   local num_rolls = 25
   local steps_per_roll = 20
-  local split_bias = 0.2
+  local split_bias = SPLIT_BIAS_MODIFIER
 
   -- Note that prototoype, tbl, property, and key don't have defaults
   local defaults = {
+    sanitizer = function(x) return x end,
+    desanitizer = function(x) return x end,
     -- See str_to_cap for soft and hard caps
     range = "medium",
     -- Can be "same" or a range value
     range_min = "same",
     range_max = "same",
-    step_size = 5,
-    -- Extra bias to add/subtract
+    -- See str_to_step_size for values
+    variance = "medium",
+    -- Modifier for bias
     bias = 0,
     -- 1 or -1, defines whether the property is good (1) or bad (-1) to have
     dir = 1
@@ -365,7 +369,7 @@ function randnum(passed_params)
     end
   end
   
-  local tbl, property, key, step_size, bias, dir = params.tbl, params.property, params.key, params.step_size, params.bias, params.dir
+  local tbl, property, key, bias, dir = params.tbl, params.property, params.key, params.bias, params.dir
   local val = tbl[property]
   local old_val = val
 
@@ -389,12 +393,28 @@ function randnum(passed_params)
 
     local soft_factor = str_to_cap[cap_str][1]
     local hard_factor = str_to_cap[cap_str][2]
-    soft_min, soft_max = 1 / soft_factor * old_val, soft_factor * old_val
-    hard_min, hard_max = 1 / hard_factor * old_val, hard_factor * old_val
+    soft_min, soft_max = 1 / soft_factor * val, soft_factor * val
+    hard_min, hard_max = 1 / hard_factor * val, hard_factor * val
   end
 
-  local real_split_bias = 0.2 * (2 * prg.range(key, 0, 1) - 1)
+  local str_to_step_size = {
+    very_small = 1,
+    small = 2.5,
+    medium = 5,
+    big = 10,
+    very_big = 20
+  }
+  local step_size = str_to_step_size[params.variance] * settings.startup["propertyrandomizer-chaos"].value
+
+  local real_split_bias = split_bias * (2 * prg.range(key, 0, 1) - 1) -- Returns either negative or positive the split bias
   local real_bias = 0.5 + bias + real_split_bias
+
+  local sani_val = params.sanitizer(val)
+
+  -- Skip randomization for values that aren't positive
+  if sani_val <= 0 then
+    return
+  end
 
   for i = 1, num_rolls do
     local sign = dir
@@ -417,7 +437,9 @@ function randnum(passed_params)
   end
 
   -- Update table value
-  tbl[property] = val
+  tbl[property] = params.desanitizer(val)
+
+  -- TODO: Add old_val to some table
 end
 
 function test_new_randomize_numerical(passed_params)

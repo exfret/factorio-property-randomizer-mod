@@ -3,7 +3,7 @@ local inertia_function = require("randomizer-parameter-data/inertia-function-tab
 --local property_info = require("randomizer-parameter-data/property-info-tables")
 local walk_params = require("randomizer-parameter-data/walk-params-tables")
 
-local randomization_spec = {}
+local spec = {}
 
 -- TODO: util randomizer
 
@@ -23,16 +23,19 @@ local randomization_spec = {}
 --                      walk_params = WALK_PARAMS
 --                      *special_considerations = List of SPECIAL_CONSIDERATIONS
 --                  * means properties that can be overriden in the group spec. If all properties are overriden, they are no longer mandatory in the main table.
-randomization_spec.numerical_randomizations = {
+spec.basic_numerical = {
     ["ammo-magazine-size"] = {
         target_class = "ammo",
         property = "magazine_size",
-        walk_params = walk_params.magazine_size
+        pdf = "magazine_size",
+        fixes = "magazine_size"
     },
     ["attack-parameters-gun-cooldown"] = { -- NEW
         target_class = "gun",
-        target = "attack-parameters",
-        property = "cooldown"
+        target_type = "AttackParameters",
+        property = "cooldown",
+        pdf = "gun_cooldown",
+        fixes = "none"
     },
     ["attack-parameters-gun-range"] = { -- NEW
         target_class = "gun",

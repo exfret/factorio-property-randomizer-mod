@@ -1,3 +1,5 @@
+local spec = require("spec")
+
 seed_setting = settings.startup["propertyrandomizer-seed"].value
 
 rounding_mode = -1
@@ -10,6 +12,36 @@ elseif settings.startup["propertyrandomizer-rounding-mode"].value == "leave 'em 
 end
 
 sync_belt_tiers = settings.startup["propertyrandomizer-belt-sync"].value
+
+
+local config = {}
+config.properties = {}
+
+-- First, follow settings
+for _, randomization in pairs(spec) do
+  if randomization.setting == "none" then
+    config.properties[randomization.name] = false
+  elseif settings.startup[randomization.setting].value then
+    config.properties[randomization.name] = true
+  else
+    config.properties[randomization.name] = false
+  end
+end
+
+-- Now, follow overrides
+
+-- TODO: Don't error on mistypings, but do give message in control phase
+for override in string.gmatch(settings.startup["propertyrandomizer-custom-overrides"].value, "([^;]+)") do
+  local new_val = true
+  if string.sub(override, 1, 1) == "!" then
+    new_val = false
+    override = string.sub(override, 2, #override)
+  end
+
+  config.properties[override] = new_val
+end
+
+if false then
 
 -- Basic randomizations
 
@@ -79,7 +111,7 @@ rand_unit = settings.startup["propertyrandomizer-military-advanced"].value
 
 --blop.blop = nil
 
-for override in string.gmatch(settings.startup["propertyrandomizer-custom-overrides"].value, "([^;]+)") do
+--[[for override in string.gmatch(settings.startup["propertyrandomizer-custom-overrides"].value, "([^;]+)") do
   if string.find(override, ":") ~= nil then
     local equals_position = string.find(override, ":")
     if string.sub(override, 1, equals_position) == "randomize" then
@@ -87,10 +119,11 @@ for override in string.gmatch(settings.startup["propertyrandomizer-custom-overri
     if string.sub(override, 1, equals_position) == "no-randomize" then
     end
   end
-end
-
-
-
+end]]
 -- General overrides first
 
 --blop.blop = nil TODO: Overrides
+
+end
+
+return config

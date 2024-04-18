@@ -1,4 +1,4 @@
-require("config")
+--require("config")
 require("informatron")
 
 require("random-utils/random")
@@ -7,7 +7,7 @@ local util = require("util")
 
 -- TODO: Modify all forces, not just player force
 script.on_init(function ()
-  new_seed = seed_setting - 2
+  new_seed = settings.startup["propertyrandomizer-seed"].value - 2
 
   global.X1 = (new_seed * 2 + 11111) % D20
   global.X2 = (new_seed * 4 + 1) % D20
@@ -62,7 +62,7 @@ script.on_event(defines.events.on_tick, function(event)
     game.print("You are on the default seed. If you want things randomized differently for a new experience, change the \"seed\" setting under mod settings in the menu.")
   end
 
-  if event.tick % (30 * 60 * 60) == 0 and rand_character_properties_midgame then
+  if event.tick % (30 * 60 * 60) == 0 and settings.startup["propertyrandomizer-character-values-midgame"].value then
     --[[local old_force_modifications = util.table.deepcopy(global.force_modifications)
 
     local new_force_modifications = global.force_modifications

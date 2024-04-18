@@ -1,10 +1,11 @@
 1. Currently working on information
+2. Also separate randomization function and rand object
+3. Make randomization algorithm assume property is non-nil soon
+4. Account for control phase randomization and for autoplace/data-updates randomizations
 
-Rocket parts required!
-Changing rocket silo causing module changes?
 
 
-
+ - Steam engine temperature better randomized
  - Randomize things based on upgrade lines
  - Rewrite randomization to be prototype based
  - Fix rounding not working
@@ -17,6 +18,10 @@ Changing rocket silo causing module changes?
  - Randomize more properties
  - Organize todo
  - Group randomize things like crafting speed with power so that it doesn't "make both things better"
+ - Organize todo better
+ - Do things like property_info = "temperature", so not including the initial "property_info." part anymore (or needing to include property info in the files)
+ - Make rounding happen again after min/maxing
+ - Reorganize settings, combine logistics and production into one setting and remove settings that can just exist as overrides
 
 
 Add crafting cost to randomization
@@ -101,3 +106,4 @@ Properties:
   - Localizations
 
 Silly additions
+  - Tile map color randomization

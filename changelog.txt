@@ -7,9 +7,21 @@ Date: ?
     - Randomized underground pipe length (I hadn't done that yet!)
     - Randomized achievements (a misc. feature)
     - Randomized rocket parts required for the rocket (on with the "production" setting)
+  Changes:
+    - Updated the description
+  Organization:
+    - Refactored a good chunk of the mod to allow for more easily randomizing with a prototype-first method rather than property-first
+    - The refactoring will, if anything, probably end up in more errors in the short term, but in the long term development of the mod should be much better
   Balancing:
     - Tile walking speed modifier is less random for tiles that don't normally have a modifier
     - Random crafting/running speeds are now rolled with a simpler, more balanced formula
+    - Tweaked the lower/upper limits to be larger on several properties to allow more random experiences
+    - Increased the maximum/minimum internal bias
+  Bugfixes:
+    - Fixed that belt sync would still occur even if the option wasn't checked
+    - Beacons were previously lower-bounded by a supply area of radius 3 rather than 1 due to a misunderstanding of what the supply area distance represented
+    - Randomizations were not applied for values exactly at the minimum permissible
+    - Fixed typo that would cause greater than intended swinginess with higher chaos factor
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.8
 Date: 2024.03.19

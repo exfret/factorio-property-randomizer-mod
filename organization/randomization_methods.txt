@@ -4,3 +4,10 @@ Here are some ways to randomize the "factorio dependency graph"...
 
 The process is to look at what can be reached in the old dependency graph using things in the new one, and then choose something in the old one that can be reached and add that in some way with dependencies in the old. This way, the structure of "this comes before that" is somewhat kept.
 
+2. The Card Method
+
+Each thing is given a "card". The first element of a random card type is brought over at each step, with the same dependencies as what would have been in that position.
+
+3. The Cut and Paste Method
+
+The sets of in-edges of nodes are cut and pasted onto new nodes in a similar way as to the card method.

@@ -6,7 +6,7 @@ local prototype_tables = require("randomizer-parameter-data/prototype-tables")
 local reformat = require("utilities/reformat")
 
 local VOID_COST = 1
-local do_recipe_unlock_nodes = false
+local do_recipe_unlock_nodes = true
 local do_tech_node_randomization = false
 
 -- HOTFIX - Add certain tech unlocks twice just to make sure
@@ -560,206 +560,6 @@ table.insert(dependency_graph[prg.get_key({type = "itemorfluid_node", name = "wa
   amount = 1 / 1200
 })
 
--- Just for research
-
-if false then
-  dependency_graph = {
-    ["recipe_nodeaaarule_6_9"] = {
-      type = "recipe_node",
-      name = "rule_6_9",
-      prereqs = {
-        {
-          type = "itemorfluidnode",
-          name = "fact10",
-          amount = 1
-        },
-        {
-          type = "itemorfluidnode",
-          name = "fact21",
-          amount = 1
-        }
-      }
-    },
-    ["recipe_nodeaaarule_6_19"] = {
-      type = "recipe_node",
-      name = "rule_6_19",
-      prereqs = {
-        {
-          type = "recipe_node",
-          name = "fact20",
-          amount = 1
-        },
-        {
-          type = "recipe_node",
-          name = "fact21",
-          amount = 1
-        }
-      }
-    },
-    ["recipe_nodeaaarule_2_7"] = {
-      type = "recipe_node",
-      name = "rule_2_7",
-      prereqs = {
-        {
-          type = "itemorfluid_node",
-          name = "8",
-          amount = 1
-        },
-        {
-          type = "itemorfluid_node",
-          name = "fact12",
-          amount = 1
-        },
-        {
-          type = "itemorfluid_node",
-          name = "fact13",
-          amount = 1
-        }
-      }
-    },
-    ["recipe_nodeaaarule_2_17"] = {
-      type = "recipe_node",
-      name = "rule_2_17",
-      prereqs = {
-        {
-          type = "itemorfluid_node",
-          name = "18",
-          amount = 1
-        },
-        {
-          type = "itemorfluid_node",
-          name = "fact22",
-          amount = 1
-        },
-        {
-          type = "itemorfluid_node",
-          name = "fact23",
-          amount = 1
-        }
-      }
-    },
-    ["recipe_nodeaaarule_5_4"] = {
-      type = "recipe_node",
-      name = "rule_5_4",
-      prereqs = {
-        {
-          type = "itemorfluid_node",
-          name = "fact5",
-          amount = 1
-        },
-        {
-          type = "itemorfluid_node",
-          name = "6",
-          amount = 1
-        }
-      }
-    },
-    ["recipe_nodeaaarule_5_14"] = {
-      type = "recipe_node",
-      name = "rule_5_14",
-      prereqs = {
-        {
-          type = "itemorfluid_node",
-          name = "fact15",
-          amount = 1
-        },
-        {
-          type = "itemorfluid_node",
-          name = "16",
-          amount = 1
-        }
-      }
-    },
-    ["recipe_nodeaaarule_2_2"] = {
-      type = "recipe_node"
-    },
-    ["recipe_nodeaaafact10"] = {
-      type = "recipe_node"
-    },
-    ["recipe_nodeaaafact21"] = {
-      type = "recipe_node"
-    },
-    ["recipe_nodeaaafact20"] = {
-      type = "recipe_node"
-    },
-    ["recipe_nodeaaafact22"] = {
-      type = "recipe_node"
-    },
-    ["recipe_nodeaaafact23"] = {
-      type = "recipe_node"
-    },
-    ["recipe_nodeaaafact12"] = {
-      type = "recipe_node"
-    },
-    ["recipe_nodeaaafact13"] = {
-      type = "recipe_node"
-    },
-    ["recipe_nodeaaafact5"] = {
-      type = "recipe_node"
-    },
-    ["recipe_nodeaaafact15"] = {
-      type = "recipe_node"
-    },
-    ["recipe_nodeaaafact24"] = {
-      type = "recipe_node"
-    },
-    ["recipe_nodeaaafact25"] = {
-      type = "recipe_node"
-    },
-    ["itemorfluid_nodeaaa8"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaa18"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaa6"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaa16"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaa3"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaa1"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaafact10"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaafact21"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaafact20"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaafact22"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaafact23"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaafact12"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaafact13"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaafact5"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaafact15"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaafact24"] = {
-      type = "itemorfluid_node"
-    },
-    ["itemorfluid_nodeaaafact25"] = {
-      type = "itemorfluid_node"
-    },
-  }
-end
-
 --[[
 local new_node_for_ash = {
   type = "itemorfluid_node",
@@ -1127,11 +927,15 @@ for _, node in pairs(dependency_graph) do
         elseif recipe.category == "smelting" then
           recipe_tech_unlock_node_to_type[prg.get_key(node)] = "SMELT"
         else
+          log(serpent.block(result))
           local result_prototype
           for item_class, _ in pairs(defines.prototypes.item) do
             if data.raw[item_class][result.name] ~= nil then
               result_prototype = data.raw[item_class][result.name]
             end
+          end
+          if data.raw.fluid[result.name] ~= nil then
+            result_prototype = "fluid"
           end
 
           if result_prototype.type ~= "item" then
@@ -1588,7 +1392,7 @@ for _, tech in pairs(data.raw.technology) do
   tech.upgrade = false
 end
 
-table.insert(data.raw.technology["automation"].effects, {
+--[[table.insert(data.raw.technology["automation"].effects, {
   type = "unlock-recipe",
   recipe = "assembling-machine-1"
 })
@@ -1611,9 +1415,9 @@ table.insert(data.raw.technology["automation-2"].effects, {
 table.insert(data.raw.technology["steel-processing"].effects, {
   type = "unlock-recipe",
   recipe = "steel-plate"
-})
+})]]
 
---if false then
+if false then
 
 
 
@@ -1859,7 +1663,303 @@ log(serpent.block(costs))
 
 -- Shuffle within intermediates for item/recipes
 
---end
+end -- End of recipe cost evaluation
+
+local vanilla_costs = {
+  accumulator = 48,
+  ["advanced-circuit"] = 46,
+  ["arithmetic-combinator"] = 46,
+  ["artillery-shell"] = 208.5,
+  ["artillery-targeting-remote"] = 284.40000000000003,
+  ["artillery-turret"] = 1455,
+  ["artillery-wagon"] = 2931,
+  ["artillery-wagon-cannon"] = 0,
+  ["assembling-machine-1"] = 66.5,
+  ["assembling-machine-2"] = 137,
+  ["assembling-machine-3"] = 1349,
+  ["atomic-bomb"] = 6299.2142857142862,
+  ["automation-science-pack"] = 8,
+  battery = 8.5999999999999996,
+  ["battery-equipment"] = 154,
+  ["battery-mk2-equipment"] = 4879.5,
+  beacon = 1196,
+  ["belt-immunity-equipment"] = 341,
+  ["big-electric-pole"] = 78,
+  blueprint = 0,
+  ["blueprint-book"] = 0,
+  boiler = 19,
+  ["burner-generator"] = 0,
+  ["burner-inserter"] = 8,
+  ["burner-mining-drill"] = 28,
+  ["cannon-shell"] = 26.5,
+  car = 280,
+  ["cargo-wagon"] = 311,
+  centrifuge = 3641,
+  ["chemical-plant"] = 133.5,
+  ["chemical-science-pack"] = 59.899999999999999,
+  ["cliff-explosives"] = 35.5,
+  ["cluster-grenade"] = 210.5,
+  coal = 1,
+  coin = 0,
+  ["combat-shotgun"] = 1,
+  concrete = 1.9000000000000002,
+  ["constant-combinator"] = 23.5,
+  ["construction-robot"] = 108.19999999999999,
+  ["copper-cable"] = 1.5,
+  ["copper-ore"] = 1,
+  ["copper-plate"] = 2,
+  ["copy-paste-tool"] = 0,
+  ["crude-oil-barrel"] = 2,
+  ["cut-paste-tool"] = 0,
+  ["decider-combinator"] = 46,
+  ["deconstruction-planner"] = 0,
+  ["defender-capsule"] = 131.5,
+  ["destroyer-capsule"] = 2929.5,
+  ["discharge-defense-equipment"] = 5962.5,
+  ["discharge-defense-remote"] = 8.5,
+  ["distractor-capsule"] = 665,
+  ["dummy-steel-axe"] = 0,
+  ["effectivity-module"] = 268.5,
+  ["effectivity-module-2"] = 1754.5,
+  ["effectivity-module-3"] = 9893,
+  ["electric-energy-interface"] = 42.5,
+  ["electric-engine-unit"] = 41.699999999999996,
+  ["electric-furnace"] = 371,
+  ["electric-mining-drill"] = 68.5,
+  ["electronic-circuit"] = 7.5,
+  ["empty-barrel"] = 1,
+  ["energy-shield-equipment"] = 341,
+  ["energy-shield-mk2-equipment"] = 3650.5,
+  ["engine-unit"] = 23,
+  ["exoskeleton-equipment"] = 3435,
+  ["explosive-cannon-shell"] = 28,
+  ["explosive-rocket"] = 18,
+  ["explosive-uranium-cannon-shell"] = 29.507049345417926,
+  explosives = 1.5,
+  ["express-loader"] = 746,
+  ["express-splitter"] = 495.90000000000003,
+  ["express-transport-belt"] = 84.600000000000009,
+  ["express-underground-belt"] = 325.09999999999997,
+  ["fast-inserter"] = 35.5,
+  ["fast-loader"] = 322,
+  ["fast-splitter"] = 190.5,
+  ["fast-transport-belt"] = 30,
+  ["fast-underground-belt"] = 121,
+  ["filter-inserter"] = 66.5,
+  ["firearm-magazine"] = 9,
+  flamethrower = 106,
+  ["flamethrower-ammo"] = 156,
+  ["flamethrower-turret"] = 551,
+  ["fluid-wagon"] = 347,
+  ["flying-robot-frame"] = 92.199999999999989,
+  ["fusion-reactor-equipment"] = 43381,
+  gate = 54,
+  ["green-wire"] = 10,
+  grenade = 21,
+  ["gun-turret"] = 111,
+  ["hazard-concrete"] = 2,
+  ["heat-exchanger"] = 341,
+  ["heat-interface"] = 0,
+  ["heat-pipe"] = 151,
+  ["heavy-armor"] = 751,
+  ["heavy-oil-barrel"] = 2,
+  ["infinity-chest"] = 0,
+  ["infinity-pipe"] = 0,
+  inserter = 15.5,
+  ["iron-chest"] = 17,
+  ["iron-gear-wheel"] = 5,
+  ["iron-ore"] = 1,
+  ["iron-plate"] = 2,
+  ["iron-stick"] = 1.5,
+  ["item-unknown"] = 0,
+  ["item-with-inventory"] = 0,
+  ["item-with-label"] = 0,
+  ["item-with-tags"] = 0,
+  lab = 142,
+  ["land-mine"] = 3.75,
+  landfill = 21,
+  ["laser-turret"] = 474.20000000000005,
+  ["light-armor"] = 81,
+  ["light-oil-barrel"] = 2,
+  ["linked-belt"] = 0,
+  ["linked-chest"] = 0,
+  loader = 171,
+  locomotive = 866,
+  ["logistic-chest-active-provider"] = 158.5,
+  ["logistic-chest-buffer"] = 158.5,
+  ["logistic-chest-passive-provider"] = 158.5,
+  ["logistic-chest-requester"] = 158.5,
+  ["logistic-chest-storage"] = 158.5,
+  ["logistic-robot"] = 141.20000000000002,
+  ["logistic-science-pack"] = 20.5,
+  ["long-handed-inserter"] = 23.5,
+  ["low-density-structure"] = 123,
+  ["lubricant-barrel"] = 7,
+  ["medium-electric-pole"] = 33,
+  ["military-science-pack"] = 42.5,
+  ["modular-armor"] = 1931,
+  ["night-vision-equipment"] = 341,
+  ["nuclear-fuel"] = 154.85714285714286,
+  ["nuclear-reactor"] = 19451,
+  ["offshore-pump"] = 24,
+  ["oil-refinery"] = 351,
+  ["personal-laser-defense-equipment"] = 6710,
+  ["personal-roboport-equipment"] = 1048,
+  ["personal-roboport-mk2-equipment"] = 26591,
+  ["petroleum-gas-barrel"] = 2,
+  ["piercing-rounds-magazine"] = 31,
+  ["piercing-shotgun-shell"] = 51,
+  pipe = 3,
+  ["pipe-to-ground"] = 20.5,
+  pistol = 21,
+  ["plastic-bar"] = 12,
+  ["player-port"] = 0,
+  ["poison-capsule"] = 66.5,
+  ["power-armor"] = 9247,
+  ["power-armor-mk2"] = 103380,
+  ["power-switch"] = 33.5,
+  ["processing-unit"] = 199.89999999999998,
+  ["production-science-pack"] = 286,
+  ["productivity-module"] = 268.5,
+  ["productivity-module-2"] = 1754.5,
+  ["productivity-module-3"] = 9893,
+  ["programmable-speaker"] = 50.5,
+  pump = 38,
+  pumpjack = 173.5,
+  radar = 83.5,
+  rail = 7.25,
+  ["rail-chain-signal"] = 18.5,
+  ["rail-signal"] = 18.5,
+  ["raw-fish"] = 0,
+  ["red-wire"] = 10,
+  ["refined-concrete"] = 6.4000000000000004,
+  ["refined-hazard-concrete"] = 6.5,
+  ["repair-pack"] = 26,
+  roboport = 2791,
+  rocket = 14,
+  ["rocket-control-unit"] = 359.40000000000003,
+  ["rocket-fuel"] = 27,
+  ["rocket-launcher"] = 73.5,
+  ["rocket-part"] = 4385,
+  ["rocket-silo"] = 61101,
+  satellite = 50408.5,
+  ["selection-tool"] = 0,
+  shotgun = 1,
+  ["shotgun-shell"] = 9,
+  ["simple-entity-with-force"] = 0,
+  ["simple-entity-with-owner"] = 0,
+  ["slowdown-capsule"] = 43,
+  ["small-electric-pole"] = 0.5,
+  ["small-lamp"] = 15,
+  ["solar-panel"] = 178.5,
+  ["solar-panel-equipment"] = 326.5,
+  ["solid-fuel"] = 2.5999999999999996,
+  ["space-science-pack"] = 0,
+  ["speed-module"] = 268.5,
+  ["speed-module-2"] = 1754.5,
+  ["speed-module-3"] = 9893,
+  spidertron = 1,
+  ["spidertron-remote"] = 443.90000000000003,
+  ["spidertron-rocket-launcher-1"] = 0,
+  ["spidertron-rocket-launcher-2"] = 0,
+  ["spidertron-rocket-launcher-3"] = 0,
+  ["spidertron-rocket-launcher-4"] = 0,
+  splitter = 64.5,
+  ["stack-filter-inserter"] = 308.5,
+  ["stack-inserter"] = 270,
+  ["steam-engine"] = 76,
+  ["steam-turbine"] = 411,
+  ["steel-chest"] = 89,
+  ["steel-furnace"] = 97,
+  ["steel-plate"] = 11,
+  stone = 1,
+  ["stone-brick"] = 3,
+  ["stone-furnace"] = 6,
+  ["stone-wall"] = 16,
+  ["storage-tank"] = 96,
+  ["submachine-gun"] = 81,
+  substation = 351,
+  sulfur = 0.8,
+  ["sulfuric-acid-barrel"] = 2,
+  tank = 1822,
+  ["tank-cannon"] = 0,
+  ["tank-flamethrower"] = 0,
+  ["tank-machine-gun"] = 0,
+  ["train-stop"] = 92.5,
+  ["transport-belt"] = 4,
+  ["underground-belt"] = 20.5,
+  ["upgrade-planner"] = 0,
+  ["uranium-235"] = 142.85714285714286,
+  ["uranium-238"] = 1.0070493454179255,
+  ["uranium-cannon-shell"] = 28.257049345417926,
+  ["uranium-fuel-cell"] = 16.385714285714286,
+  ["uranium-ore"] = 0,
+  ["uranium-rounds-magazine"] = 33.007049345417926,
+  ["used-up-uranium-fuel-cell"] = 0,
+  ["utility-science-pack"] = 232.33333333333337,
+  ["vehicle-machine-gun"] = 0,
+  ["water-barrel"] = 2,
+  wood = 0,
+  ["wooden-chest"] = 1
+}
+
+local recipe_data = {}
+
+for _, recipe in pairs(data.raw.recipe) do
+    if recipe.normal ~= nil then
+        for key, val in pairs(recipe.normal) do
+            recipe[key] = val
+        end
+    end
+
+    if recipe.results == nil then
+        recipe.result_count = recipe.result_count or 1
+
+        recipe.results = {
+            {name = recipe.result, amount = recipe.result_count}
+        }
+    end
+
+    recipe.energy_required = recipe.energy_required or 0.5
+
+    for _, result in pairs(recipe.results) do
+        if result[1] ~= nil then
+            result.name = result[1]
+            result.amount = result[2]
+            result[1] = nil
+            result[2] = nil
+        end
+
+        local actual_amount = result.amount
+        if result.amount == nil then
+            actual_amount = (result.amount_min + result.amount_max) / 2
+        end
+
+        local probability = 1 or result.probability
+        actual_amount = probability * actual_amount
+    end
+
+    for _, ingredient in pairs(recipe.ingredients) do
+        if ingredient[1] ~= nil then
+            ingredient.name = ingredient[1]
+            ingredient.amount = ingredient[2]
+            ingredient[1] = nil
+            ingredient[2] = nil
+        end
+    end
+
+    recipe_data[recipe.name] = {
+        ["ingredients"] = recipe.ingredients,
+        ["results"] = recipe.results,
+        ["time"] = recipe.energy_required
+    }
+end
+
+-- Preserve how many recipes an item is used it, and how many to produce it
+-- Preserve number inputs/outputs of a recipe
+
+
+
 
 
 

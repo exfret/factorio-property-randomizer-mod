@@ -103,9 +103,11 @@ function randomize_belt_speed ()
     end
   end
 
-  for belt_tier_group_base_belt, belt_tier_group in pairs(belt_tier_groups) do
-    for _, other_belt in pairs(belt_tier_group) do
-      other_belt.speed = data.raw["transport-belt"][belt_tier_group_base_belt].speed
+  if sync_belt_tiers then
+    for belt_tier_group_base_belt, belt_tier_group in pairs(belt_tier_groups) do
+      for _, other_belt in pairs(belt_tier_group) do
+        other_belt.speed = data.raw["transport-belt"][belt_tier_group_base_belt].speed
+      end
     end
   end
 end
@@ -183,6 +185,10 @@ function randomize_character_respawn_time ()
     }
   end
 end
+
+---------------------------------------------------------------------------------------------------
+-- randomize_crafting_machine_productivity
+---------------------------------------------------------------------------------------------------
 
 -- Currently unused
 -- TODO: Guarantee this comes after all other recipe randomization
@@ -533,8 +539,9 @@ function randomize_gate_opening_speed ()
     }
 
     -- Modify approach distance so gate has enough time to open
-    -- opening speed will always be >0 after randomization due to this being included in property_info
-    prototype.activation_distance = prototype.activation_distance / (prototype.opening_speed / old_opening_speed)
+    if prototype.opening_speed > 0 then
+      prototype.activation_distance = prototype.activation_distance * old_opening_speed / prototype.opening_speed
+    end
   end
 end
 
@@ -626,14 +633,15 @@ function randomize_inserter_insert_dropoff_positions()
     end
   end
 
-  if data.raw.inserter["inserter"] ~= nil and data.raw.inserter["burner-inserter"] ~= nil then
+  -- TODO: Add back in check that inserters don't "softlock"
+  --[[if data.raw.inserter["inserter"] ~= nil and data.raw.inserter["burner-inserter"] ~= nil then
     local inserter_dropoff = data.raw.inserter["inserter"].insert_position
     local burner_dropoff = data.raw.inserter["burner-inserter"].insert_position
 
     if inserter_dropoff[1] == 0 and inserter_dropoff[2] == -1.2 and burner_dropoff[1] == 0 and burner_dropoff[2] == -1.2 then
       data.raw.inserter["inserter"].insert_position = {0, 1.2}
     end
-  end
+  end]]
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -772,15 +780,16 @@ function randomize_mining_drill_dropoff_location ()
         tbl = prototype.vector_to_place_result,
         property = 1,
         inertia_function = inertia_function.mining_drill_dropoff,
-        property_info = property_info.mining_drill_dropoff
+        property_info = property_info.mining_drill_dropoff_horizontal
       }
 
+      -- TODO: How to deal with mining drill offsets being near original dropoff vertically a lot
       randomize_numerical_property{
         prototype = prototype,
         tbl = prototype.vector_to_place_result,
         property = 2,
         inertia_function = inertia_function.mining_drill_dropoff,
-        property_info = property_info.mining_drill_dropoff
+        property_info = property_info.mining_drill_dropoff_vertical
       }
     end
   end
@@ -1283,7 +1292,7 @@ function randomize_underground_belt_distance()
       prototype = prototype,
       property = "max_distance",
       inertia_function = inertia_function.underground_belt_length,
-      property_info = property_info.underground_belt_length,
+      property_info = property_info.underground_length,
       walk_params = walk_params.underground_belt_length
     }
   end
@@ -1304,7 +1313,7 @@ function randomize_underground_pipe_distance()
           prototype = prototype,
           tbl = conn,
           property = "max_underground_distance",
-          property_info = property_info.discrete_positive
+          property_info = property_info.underground_length
         })
       end
     end

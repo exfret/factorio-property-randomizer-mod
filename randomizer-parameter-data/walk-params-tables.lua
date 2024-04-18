@@ -6,6 +6,10 @@ walk_params.autoplace_control = {
   bias = 0.53
 }
 
+walk_params.bot_speed = {
+  bias = 0.53
+}
+
 -- Make drain usually much higher since it's usually not even a factor in vanilla
 walk_params.electric_energy_drain = {
   bias = 0.47
@@ -23,6 +27,10 @@ walk_params.equipment_grid_size = {
 -- Make equipment sizes err towards smaller so that poking holes doesn't increase size as much
 walk_params.equipment_size = {
   bias = 0.53
+}
+
+walk_params.fuel_inventory_size = {
+  bias = 0.52
 }
 
 walk_params.gun_damage_modifier = {

@@ -112,7 +112,7 @@ inertia_function.productivity_effect = {
 
 inertia_function.energy_source_inventory_sizes = {
   ["type"] = "constant",
-  value = 40
+  value = 4
 }
 
 inertia_function.entity_interaction_mining_speed = {

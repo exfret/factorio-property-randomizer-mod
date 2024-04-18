@@ -4,7 +4,7 @@
 	"title": "exfret's randomizer",
 	"author": "exfret",
 	"factorio_version": "1.1",
-	"description": "Randomizes as many things in the game as possible.",
+	"description": "Randomizes game properties, like belt speeds, inserter speeds, and more. Over a hundred game properties are touched. Download for the ultimate randomization experience that will force you to think in different new ways!",
 	"dependencies": [
 		"base",
 		"(?) all-the-overhaul-modpack",

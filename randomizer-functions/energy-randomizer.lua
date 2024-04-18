@@ -161,7 +161,7 @@ function randomize_power_production_properties ()
     energy_consumption_as_number = randomize_numerical_property{
       dummy = energy_consumption_as_number,
       prg_key = prg.get_key(prototype),
-      property_info = property_info.power
+      property_info = property_info.power_generation
     }
     prototype.energy_consumption = energy_consumption_as_number .. "W"
 
@@ -226,7 +226,7 @@ function randomize_power_production_properties ()
       property_info = property_info.temperature
     }
 
-    if prototype.max_power_output then
+    if prototype.max_power_output ~= nil then
       local max_power_output_as_number = 60 * util.parse_energy(prototype.max_power_output)
       max_power_output_as_number = randomize_numerical_property{
         dummy = max_power_output_as_number,

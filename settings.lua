@@ -1,5 +1,3 @@
--- TODO: Make these ordered correctly in menu
-
 data:extend({
   {
     setting_type = "startup",
@@ -35,12 +33,12 @@ data:extend({
     setting_type = "startup",
     type = "double-setting",
     name = "propertyrandomizer-chaos",
-    localised_name = "Chaos",
-    localised_description = "Higher numbers result in more swinginess/chaos. Numbers past 2 not tested and may break the game.",
+    localised_name = "Chaos [0.1 - 4]",
+    localised_description = "Higher numbers result in more swinginess/chaos. Numbers past 2 not tested for balance.",
     default_value = 1,
     minimum_value = 0.1,
     maximum_value = 4,
-    order = "ab-bias"
+    order = "ab-chaos"
   },
   {
     setting_type = "startup",
@@ -71,7 +69,7 @@ data:extend({
     type = "bool-setting",
     name = "propertyrandomizer-character-values-midgame",
     localised_name = "Randomize character values",
-    localised_description = "Randomize character crafting speed and walking speed every 30 minutes",
+    localised_description = "Randomize character crafting speed and walking speed every 30 minutes.",
     default_value = true,
     order = "b-basic-character-values"
   },
@@ -80,7 +78,7 @@ data:extend({
     type = "bool-setting",
     name = "propertyrandomizer-crafting-times",
     localised_name = "Randomize recipe crafting times",
-    localised_description = "Turn this off if you're using something else that randomizes recipes",
+    localised_description = "Turn this off if you're using something else that randomizes recipes.",
     default_value = true,
     order = "b-basic-crafting-times"
   },
@@ -107,7 +105,7 @@ data:extend({
     type = "bool-setting",
     name = "propertyrandomizer-military",
     localised_name = "Randomize military",
-    localised_description = "Randomize gun shooting speeds, bonus damage, armor, enemy health, etc. Turn this off if you're having troubles with biter difficulty.",
+    localised_description = "Randomize gun shooting speeds, bonus damage, etc. Turn this off if you're having troubles with biter difficulty.",
     default_value = true,
     order = "b-basic-military"
   },
@@ -140,11 +138,11 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
-    name = "propertyrandomizer-entity-sizes",
-    localised_name = "Randomize entity sizes",
-    localised_description = "Currently only works on some entities.",
+    name = "propertyrandomizer-cliff-sizes",
+    localised_name = "Randomize cliff sizes",
+    localised_description = "Different cliffs will have different sizes.",
     default_value = false,
-    order = "c-advanced-entity-sizes"
+    order = "c-advanced-cliff-sizes"
   },
   {
     setting_type = "startup",
@@ -179,7 +177,8 @@ data:extend({
     localised_name = "Advanced: Randomize mining drill productivity",
     localised_description = "This also turns down the chance of a resource being successfully mined to balance the increased machine productivity.",
     default_value = false,
-    order = "c-advanced-mining-drill-productivity"
+    order = "c-advanced-mining-drill-productivity",
+    hidden = true -- TODO: Make just an override
   },
   {
     setting_type = "startup",
@@ -211,12 +210,12 @@ data:extend({
     setting_type = "startup",
     type = "string-setting",
     name = "propertyrandomizer-custom-overrides",
-    localised_name = "Custom override",
+    localised_name = "Custom overrides",
     localised_description = "You can get more specific with the randomizations you'd like here. See mod page for details.",
-    default_value = "blop,foo",
+    default_value = "",
     allow_blank = true,
     order = "z-custom-override",
-    hidden = true
+    hidden = false
   }
   --[[TODO:
   {

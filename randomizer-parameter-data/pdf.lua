@@ -1,5 +1,16 @@
 local pdf = {}
 
+pdf.gun_cooldown = {
+    -- Default
+}
+
+pdf.magazine_size = {
+    sanitizer = function(x) return x - 1 end -- Use sanitizer to not randomize stack sizes of 1
+    desanitizer = function(x) return x + 1 end
+    range_min = "small",
+    range_max = "medium"
+}
+
 -- TODO: To be used for what was previously inertia functions
 
 -- Still do walk-based?
