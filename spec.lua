@@ -2,13 +2,15 @@ require("randomize/master")
 
 -- TODO: character-values midgame
 -- TODO: mining-drill-productivity
+-- TODO: Alert misspellings
+-- TODO: Redo tag system
 
 -- In the form {func = [function to do randomization], name = [user-friendly name of function], tags = [list of tags]}
 -- Later will be populated with list of allowed prototypes to randomize
 local spec = {
     {
         func = rand.heat_buffer_max_transfer,
-        name = "heat-transfer-rate", -- TODO: Doesn't seem to be working
+        name = "heat-transfer-rate",
         setting = "none",
         tags = {"heat", "power"},
         default = false
@@ -159,7 +161,14 @@ local spec = {
         setting = "propertyrandomizer-production",
         tags = {"power"},
         default = true
-    }, -- Excluded: fluid heat capacity
+    },
+    { -- NEW
+        func = rand.fluid_heat_capacity,
+        name = "fluid-heat-capacity",
+        setting = "none",
+        tags = {},
+        default = false
+    },
     {
         func = rand.item_fuel_value,
         name = "item-fuel-value",
@@ -195,8 +204,7 @@ local spec = {
         tags = {"modules", "production"},
         default = true
     },
-    { -- TODO: This lags the startup process more than it should, investigate
-        -- TODO: This leads to belt speeds that are way too varied, figure out why
+    {
         func = rand.belt_speed,
         name = "belt-speed",
         setting = "propertyrandomizer-logistic",
@@ -324,7 +332,35 @@ local spec = {
         setting = "propertyrandomizer-production",
         tags = {"production"},
         default = true
-    }, -- TODO: Landmines
+    },
+    { -- NEW
+        func = rand.landmine_damage,
+        name = "landmine-damage",
+        setting = "propertyrandomizer-military",
+        tags = {},
+        default = true
+    },
+    { -- NEW
+        func = rand.landmine_effect_radius,
+        name = "landmine-effect-radius",
+        setting = "propertyrandomizer-military",
+        tags = {},
+        default = true
+    },
+    { -- NEW
+        func = rand.landmine_trigger_radius,
+        name = "landmine-trigger-radius",
+        setting = "propertyrandomizer-military",
+        tags = {},
+        default = true
+    },
+    { -- NEW
+        func = rand.landmine_timeout,
+        name = "landmine-timeout",
+        setting = "propertyrandomizer-military",
+        tags = {},
+        default = true
+    },
     {
         func = rand.machine_pollution,
         name = "machine-pollution",
@@ -387,7 +423,14 @@ local spec = {
         setting = "propertyrandomizer-production",
         tags = {"power-production", "power"},
         default = true
-    }, -- Excluded: roboport inventory slots for repair packs/bots
+    },
+    {
+        func = rand.roboport_inventory,
+        name = "roboport-inventory",
+        setting = "none",
+        tags = {},
+        default = false
+    },
     {
         func = rand.roboport_charging_energy,
         name = "roboport-charging-speed",
@@ -571,7 +614,7 @@ local spec = {
         setting = "propertyrandomizer-tech-costs",
         tags = {"tech", "production-speed", "production"},
         default = true
-    } -- TODO: util-randomizer (probably needs a rewrite of the file)
+    }
 }
 
 -- TODO: Hardcode "all" tag which applies to everything

@@ -1,4 +1,5 @@
 require("randomize/energy")
+require("randomize/types")
 
 require("globals")
 require("linking-utils")
@@ -497,6 +498,42 @@ rand.lab_research_speed = function(prototype)
     end
 end
 
+rand.landmine_damage = function(prototype)
+    if prototype.type == "land-mine" and prototype.action ~= nil then
+        rand.trigger(prototype, prototype.action, "randomize-damage")
+    end
+end
+
+rand.landmine_effect_radius = function(prototype)
+    if prototype.type == "land-mine" and prototype.action ~= nil then
+        rand.trigger(prototype, prototype.action, "randomize-effect-radius")
+    end
+end
+
+rand.landmine_trigger_radius = function(prototype)
+    if prototype.type == "land-mine" then
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "trigger_radius",
+            property_info = property_info.limited_range
+        })
+    end
+end
+
+rand.landmine_timeout = function(prototype)
+    if prototype.type == "land-mine" then
+        if prototype.timeout == nil then
+            prototype.timeout = 120
+        end
+
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "timeout",
+            property_info = property_info.limited_range
+        })
+    end
+end
+
 rand.machine_pollution = function(prototype)
     if prototype_tables.polluting_machine_classes[prototype.type] ~= nil then
         -- TODO: This can probably just be a single property and not a table
@@ -641,6 +678,24 @@ rand.reactor_neighbour_bonus = function(prototype) -- TODO: Move this to energy 
             property = "neighbour_bonus",
             property_info = property_info.neighbour_bonus
         }
+    end
+end
+
+rand.roboport_inventory = function(prototype)
+    if prototype.type == "roboport" then
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "material_slots_count",
+            inertia_function = inertia_function.inventory_slots,
+            property_info = property_info.inventory_slots
+        })
+        
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "robot_slots_count",
+            inertia_function = inertia_function.inventory_slots,
+            property_info = property_info.inventory_slots
+        })
     end
 end
 

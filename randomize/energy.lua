@@ -367,6 +367,22 @@ rand.fluid_fuel_value = function(prototype)
     end
 end
 
+rand.fluid_heat_capacity = function(prototype)
+    if prototype.type == "fluid" then
+        if prototype.heat_capacity == nil then
+            prototype.heat_capacity = "1KJ"
+        end
+
+        rand.energy({
+            prototype = prototype,
+            tbl = prototype,
+            property = "heat_capacity",
+            inertia_function = inertia_function.sensitive,
+            property_info = property_info.energy
+        })
+    end
+end
+
 rand.item_fuel_value = function(prototype)
     if defines.prototypes.item[prototype.type] then
         if prototype.fuel_value ~= nil then

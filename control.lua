@@ -62,6 +62,10 @@ script.on_event(defines.events.on_tick, function(event)
     game.print("You are on the default seed. If you want things randomized differently for a new experience, change the \"seed\" setting under mod settings in the menu.")
   end
 
+  if event.tick == 10 then
+    game.print("[color=yellow]Future versions of the randomizer (not this one) will require the informatron mod. You might need to install and enable it manually for these future versions to work.[/color]")
+  end
+
   if event.tick % (30 * 60 * 60) == 0 and settings.startup["propertyrandomizer-character-values-midgame"].value then
     --[[local old_force_modifications = util.table.deepcopy(global.force_modifications)
 
