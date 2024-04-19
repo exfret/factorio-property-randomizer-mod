@@ -49,22 +49,32 @@ property_info.ammo_type_range_modifier = {
   }
 }
 
-property_info.attack_parameters_cooldown = {
+property_info.attack_parameters_cooldown = { -- TODO: Merge with gun property info
   min_factor = 1 / 3,
   max_factor = 3,
-  --[[round = {
-    [2] = {
-      modulus = 6
-    },
-    [3] = {
-      left_digits_to_keep = 0,
-      modulus = 6
-    }
-  }]] -- Since the display value is *inversely proportional* to the actual value, rounding properly will be a little harder
   lower_is_better = true
 }
 
+property_info.attack_parameters_cooldow_unit = { -- TODO: Merge with gun property info
+  min_factor = 1 / 3,
+  max_factor = 3
+}
+
 property_info.attack_parameters_range = {
+  min = 1,
+  min_factor = 1 / 3,
+  max_factor = 3,
+  round = {
+    [2] = {
+      modulus = 0.1
+    },
+    [3] = {
+      modulus = 1
+    }
+  }
+}
+
+property_info.attack_parameters_range_unit = {
   min = 1,
   min_factor = 1 / 3,
   max_factor = 3,
@@ -184,11 +194,6 @@ property_info.consumption_effect = {
 property_info.consumption_modifier = {
   min = -0.5,
   max = 4
-}
-
-property_info.damage_modifier = {
-  min = -0.5,
-  max = 2.5
 }
 
 property_info.discrete = {
@@ -412,14 +417,31 @@ property_info.large_inventory = {
 
 -- Used for things that would just be broken if the factor was changed too much
 -- TODO: Turn this off for chaos mode
+property_info.limited_range_loose = {
+  min_factor = 1 / 20,
+  max_factor = 20
+}
+
 property_info.limited_range = {
   min_factor = 1 / 5,
   max_factor = 5
 }
 
+property_info.limited_range_inverse = {
+  min_factor = 1 / 5,
+  max_factor = 5,
+  lower_is_better = true
+}
+
 property_info.limited_range_strict = {
   min_factor = 1 / 2,
   max_factor = 2
+}
+
+property_info.limited_range_strict_inverse = {
+  min_factor = 1 / 2,
+  max_factor = 2,
+  lower_is_better = true
 }
 
 property_info.limited_range_very_strict = {
@@ -903,6 +925,12 @@ property_info.underground_length = {
       modulus = 1
     }
   }
+}
+
+property_info.unit_vision_distance = {
+  min_factor = 1 / 3,
+  max_factor = 2,
+  max = 50 -- Above 50 can cause undocumented issues according to API docs
 }
 
 property_info.wire_distance = {

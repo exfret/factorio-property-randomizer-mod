@@ -80,8 +80,6 @@ rand.belt_speed = function()
                 bias_to_use = bias_to_use + 0.03
             end
 
-            log(serpent.block(property_info.belt_speed))
-
             randomize_numerical_property({
                 prototype = prototype,
                 property = "speed",
@@ -573,6 +571,57 @@ rand.mining_drill_dropoff_location = function(prototype)
     end
 end
 
+rand.mining_results_tree_rock = function(prototype)
+    -- Assume it's a rock if it's a simple entity and its autoplace is non-nil
+    -- TODO: Is there a better way to do this? Maybe keep this setting off in case of mod incompatibilities
+    -- TODO: Hard code rocks in the future, but I'll need to do this for alien biomes too
+    if (prototype.type == "tree" or prototype.type == "simple-entity") and prototype.autoplace ~= nil and prototype.minable ~= nil then
+        local minable = prototype.minable
+    
+        -- TODO: Do a reformat on minable properties
+        if minable.results ~= nil then
+            for _, result in pairs(minable.results) do
+                reformat.type.product_prototyte(result)
+      
+                randomize_numerical_property({
+                    prototype = prototype,
+                    tbl = result,
+                    property = "amount",
+                    property_info = property_info.limited_range
+                })
+      
+                randomize_numerical_property({
+                    group_params = {
+                        {
+                            prototype = prototype,
+                            tbl = result,
+                            property = "amount_min",
+                            property_info = property_info.limited_range
+                        },
+                        {
+                            prototype = prototype,
+                            tbl = result,
+                            property = "amount_max",
+                            property_info = property_info.limited_range
+                        }
+                    }
+                })
+            end
+        else
+            if minable.count == nil then
+                minable.count = 1
+            end
+    
+            randomize_numerical_property({
+                prototype = prototype,
+                tbl = minable,
+                property = "count",
+                property_info = property_info.limited_range
+            })
+        end
+    end
+end
+
 rand.mining_speeds = function(prototype)
     if prototype.type == "mining-drill" then
         -- Note: No more burner machine bias for now
@@ -678,6 +727,66 @@ rand.reactor_neighbour_bonus = function(prototype) -- TODO: Move this to energy 
             property = "neighbour_bonus",
             property_info = property_info.neighbour_bonus
         }
+    end
+end
+
+rand.rocket_parts_required = function(prototype)
+    if prototype.type == "rocket-silo" then
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "rocket_parts_required",
+            property_info = property_info.rocket_silo_rockets_required
+        })
+    end
+end
+
+rand.rocket_silo_launch_time = function(prototype)
+    if prototype.type == "rocket-silo" then
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "times_to_blink",
+            inertia_function = inertia_function.rocket_launch_length,
+            walk_params = walk_params.rocket_launch_length,
+            property_info = property_info.rocket_launch_length
+        })
+      
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "light_blinking_speed",
+            inertia_function = inertia_function.rocket_launch_length,
+            walk_params = walk_params.rocket_launch_speed,
+            property_info = property_info.rocket_launch_speed
+        })
+      
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "door_opening_speed",
+            inertia_function = inertia_function.rocket_launch_length,
+            walk_params = walk_params.rocket_launch_speed,
+            property_info = property_info.rocket_launch_speed
+        })
+      
+        if prototype.rocket_rising_delay == nil then
+            prototype.rocket_rising_delay = 30
+        end
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "rocket_rising_delay",
+            inertia_function = inertia_function.rocket_launch_length,
+            walk_params = walk_params.rocket_launch_length,
+            property_info = property_info.rocket_launch_length
+        })
+      
+        if prototype.launch_wait_time == nil then
+            prototype.launch_wait_time = 120
+        end
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "launch_wait_time",
+            inertia_function = inertia_function.rocket_launch_length,
+            walk_params = walk_params.rocket_launch_length,
+            property_info = property_info.rocket_launch_length
+        })
     end
 end
 
@@ -788,6 +897,113 @@ rand.storage_tank_capacity = function(prototype)
     end
 end
 
+rand.turret_damage_modifier = function(prototype)
+    if prototype_tables.turret_classes_as_keys[prototype.type] then
+        local attack_parameters = prototype.attack_parameters
+
+        if attack_parameters.damage_modifier == nil then
+            attack_parameters.damage_modifier = 1
+        end
+
+        randomize_numerical_property({
+            prototype = prototype,
+            tbl = attack_parameters,
+            property = "damage_modifier",
+            inertia_function = inertia_function.turret_damage_modifier,
+            property_info = property_info.limited_range
+        })
+    end
+end
+
+rand.turret_min_attack_distance = function(prototype)
+    if prototype_tables.turret_classes_as_keys[prototype.type] then
+        local attack_parameters = prototype.attack_parameters
+
+        if attack_parameters.min_attack_distance ~= nil and attack_parameters.min_attack_distance ~= 0 then
+            local old_min_attack_distance = attack_parameters.min_attack_distance
+
+            randomize_numerical_property({
+                prototype = prototype,
+                tbl = attack_parameters,
+                property = "min_attack_distance",
+                inertia_function = inertia_function.sensitive_very,
+                property_info = property_info.attack_parameters_range
+            })
+
+            -- Scale range by min attack distance increase
+            -- Notice that this essentially results in range/min attack distance being scaled twice
+            attack_parameters.range = attack_parameters.range * attack_parameters.min_attack_distance / old_min_attack_distance
+            if attack_parameters.min_range ~= nil then
+                attack_parameters.min_range = attack_parameters.min_range * attack_parameters.min_attack_distance / old_min_attack_distance
+            end
+        end
+    end
+end
+
+rand.turret_range = function(prototype)
+    if prototype_tables.turret_classes_as_keys[prototype.type] then
+        local attack_parameters = prototype.attack_parameters
+
+        local old_range = attack_parameters.range
+
+        randomize_numerical_property({
+            prototype = prototype,
+            tbl = attack_parameters,
+            property = "range",
+            inertia_function = inertia_function.sensitive_very,
+            property_info = property_info.attack_parameters_range
+        })
+        -- Randomize minimum range by a proportional amount if it exists
+        -- TODO: Make this a "scaled" group randomization
+        if attack_parameters.min_range ~= nil and old_range ~= 0 then
+            attack_parameters.min_range = attack_parameters.min_range * attack_parameters.range / old_range
+        end
+        if attack_parameters.min_attack_distance ~= nil and old_range ~= 0 then
+            attack_parameters.min_attack_distance = attack_parameters.min_attack_distance * attack_parameters.range / old_range
+        end
+    end
+end
+
+rand.turret_rotation_speed = function(prototype)
+    if prototype_tables.turret_classes_as_keys[prototype.type] then
+        -- TODO: Fix with reformatting
+        if prototype.rotation_speed == nil then
+            prototype.rotation_speed = 1
+        end
+
+        randomize_numerical_property({ -- TODO: Custom inertia function?
+            prototype = prototype,
+            property = "rotation_speed",
+            property_info = property_info.turret_turning_speed
+        })
+    end
+
+    -- Car turret rotation speed
+    if prototype.type == "car" then
+        -- For some reason the default here is 0.01 and the default on "normal" turrets is 1, I've double checked this so this isn't an error
+        if prototype.turret_rotation_speed == nil then
+            prototype.turret_rotation_speed = 0.01
+        end
+        
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "turret_rotation_speed",
+            property_info = property_info.turret_turning_speed
+        })
+    end
+end
+
+rand.turret_shooting_speed = function(prototype)
+    if prototype_tables.turret_classes_as_keys[prototype.type] then
+        randomize_numerical_property({
+            prototype = prototype,
+            tbl = prototype.attack_parameters,
+            property = "cooldown",
+            property_info = property_info.attack_parameters_cooldown
+        })
+    end
+end
+
 rand.underground_belt_distance = function(prototype)
     if prototype.type == "underground-belt" then
         randomize_numerical_property({
@@ -796,6 +1012,115 @@ rand.underground_belt_distance = function(prototype)
             inertia_function = inertia_function.underground_belt_length,
             property_info = property_info.underground_length,
             walk_params = walk_params.underground_belt_length
+        })
+    end
+end
+
+rand.pipe_to_ground_distance = function(prototype)
+    if prototype.type == "pipe-to-ground" then
+        for _, pipe_connection in pairs(prototype.fluid_box.pipe_connections) do
+            if pipe_connection.max_underground_distance ~= nil and pipe_connection.max_underground_distance > 0 then
+                randomize_numerical_property({
+                    prototype = prototype,
+                    tbl = pipe_connection,
+                    property = "max_underground_distance",
+                    inertia_function = inertia_function.underground_belt_length,
+                    property_info = property_info.underground_length,
+                    walk_params = walk_params.underground_belt_length
+                })
+            end
+        end
+    end
+end
+
+rand.unit_attack_speed = function(prototype)
+    if prototype.type == "unit" then
+        randomize_numerical_property({
+            prototype = prototype,
+            tbl = prototype.attack_parameters,
+            property = "cooldown",
+            property_info = property_info.attack_parameters_cooldown_unit
+        })
+    end
+end
+
+rand.unit_melee_damage = function(prototype)
+    if prototype.type == "unit" then
+        local attack_parameters = prototype.attack_parameters
+
+        if attack_parameters.damage_modifier == nil then
+            attack_parameters.damage_modifier = 1
+        end
+
+        randomize_numerical_property({
+            prototype = prototype,
+            tbl = attack_parameters,
+            property = "damage_modifier",
+            property_info = property_info.limited_range_inverse
+        })
+    end
+end
+
+rand.unit_movement_speed = function(prototype)
+    if prototype.type == "unit" then
+        local old_movement_speed = prototype.movement_speed
+
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "movement_speed",
+            inertia_function = inertia_function.sensitive,
+            property_info = property_info.limited_range_strict_inverse
+        })
+
+        if prototype.old_movement_speed ~= 0 then
+            prototype.distance_per_frame = prototype.distance_per_frame * prototype.movement_speed / old_movement_speed
+        end
+    end
+end
+
+rand.unit_pollution_to_join_attack = function(prototype)
+    if prototype.type == "unit" then
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "pollution_to_join_attack",
+            property_info = property_info.limited_range
+        })
+    end
+end
+
+rand.unit_range = function(prototype)
+    if prototype.type == "unit" then
+        -- TODO: attack_parameters randomization function so I don't have to duplicate code
+        -- Note that this is difficult atm since I have to use different property infos
+        -- Maybe hold off until new randomization methods
+        local attack_parameters = prototype.attack_parameters
+
+        local old_range = attack_parameters.range
+
+        randomize_numerical_property({
+            prototype = prototype,
+            tbl = attack_parameters,
+            property = "range",
+            inertia_function = inertia_function.sensitive_very,
+            property_info = property_info.attack_parameters_range_unit
+        })
+        -- Randomize minimum range by a proportional amount if it exists
+        -- TODO: Make this a "scaled" group randomization
+        if attack_parameters.min_range ~= nil and old_range ~= 0 then
+            attack_parameters.min_range = attack_parameters.min_range * attack_parameters.range / old_range
+        end
+        if attack_parameters.min_attack_distance ~= nil and old_range ~= 0 then
+            attack_parameters.min_attack_distance = attack_parameters.min_attack_distance * attack_parameters.range / old_range
+        end
+    end
+end
+
+rand.unit_vision_distance = function(prototype)
+    if prototype.type == "unit" then
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "vision_distance",
+            property_info = property_info.unit_vision_distance
         })
     end
 end

@@ -1,6 +1,15 @@
+info = {}
+info.warnings = {}
+
 require("gather-randomizations")
+require("analysis/karma")
+
+-- TODO: Do I need to seed the randomizer?
+prg.seed(seed_setting)
 
 randomize()
+
+--local dependency_utils = require("dependency-graph/dependency-utils")
 
 if false then
 
@@ -308,6 +317,8 @@ if data.raw["generator"]["steam-engine"] ~= nil and data.raw["boiler"]["boiler"]
   data.raw["generator"]["steam-engine"].maximum_temperature = math.max(boiler_temp, steam_engine_temp)
 end
 
+end
+
 --log(serpent.dump(karma.values))
 
 local new_table = {}
@@ -347,7 +358,7 @@ table.insert(new_table, serpent.dump({
 data:extend({
   {
     type = "selection-tool",
-    name = "prototype-data",
+    name = "prototype-data", -- TODO: prefix with "propertyrandomizer"
     icon = "__base__/graphics/icons/iron-plate.png",
     icon_size = 64,
     stack_size = 1,
@@ -361,9 +372,24 @@ data:extend({
   }
 })
 
+data:extend({
+  {
+    type = "selection-tool",
+    name = "propertyrandomizer-warnings",
+    icon = "__base__/graphics/icons/iron-plate.png",
+    icon_size = 64,
+    stack_size = 1,
+    selection_mode = {"blueprint"},
+    alt_selection_mode = {"blueprint"},
+    selection_color = {},
+    alt_selection_color = {},
+    selection_cursor_box_type = "entity",
+    alt_selection_cursor_box_type = "entity",
+    entity_type_filters = {serpent.dump(info.warnings)}
+  }
+})
+
 -- TEST
 -- require("randomizer-functions/keybind-randomizer-prototypes")
 
 -- TODO: Locale
-
-end

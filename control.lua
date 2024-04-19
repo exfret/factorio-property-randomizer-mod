@@ -59,11 +59,20 @@ end)
 
 script.on_event(defines.events.on_tick, function(event)
   if event.tick == 10 and settings.startup["propertyrandomizer-seed"].value == 528 then
-    game.print("You are on the default seed. If you want things randomized differently for a new experience, change the \"seed\" setting under mod settings in the menu.")
+    game.print("[exfret's Randomizer] [color=yellow]Warning:[/color] You are on the default seed. If you want things randomized differently for a new experience, change the \"seed\" setting under mod settings in the menu.")
   end
 
   if event.tick == 10 then
-    game.print("[color=yellow]Future versions of the randomizer (not this one) will require the informatron mod. You might need to install and enable it manually for these future versions to work.[/color]")
+    game.print("[exfret's Randomizer] [color=blue]Info:[/color] Future versions of the randomizer (not this one) will require the informatron mod. You might need to install and enable it manually for these future versions to work.")
+
+    local table_to_load
+    for load_value, _ in pairs(game.item_prototypes["propertyrandomizer-warnings"].entity_type_filters) do
+      table_to_load = load_value
+    end
+    local _, warnings = serpent.load(table_to_load)
+    for _, warning in pairs(warnings) do
+      game.print(warning)
+    end
   end
 
   if event.tick % (30 * 60 * 60) == 0 and settings.startup["propertyrandomizer-character-values-midgame"].value then
@@ -89,15 +98,13 @@ script.on_event(defines.events.on_tick, function(event)
     player_force.character_running_speed_modifier = player_force.character_running_speed_modifier - old_force_modifications.running_speed + new_force_modifications.running_speed
     player_force.manual_crafting_speed_modifier = player_force.manual_crafting_speed_modifier - old_force_modifications.manual_crafting_speed + new_force_modifications.manual_crafting_speed
 
-    game.print("Running speed is now " .. math.ceil(100 * (1 + player_force.character_running_speed_modifier)) .. "%")
-    game.print("Crafting speed is now " .. math.ceil(100 * (1 + player_force.manual_crafting_speed_modifier)) .. "%")
+    game.print("[exfret's Randomizer] [color=blue]Info:[/color] Running speed is now " .. math.ceil(100 * (1 + player_force.character_running_speed_modifier)) .. "%")
+    game.print("[exfret's Randomizer] [color=blue]Info:[/color] Crafting speed is now " .. math.ceil(100 * (1 + player_force.manual_crafting_speed_modifier)) .. "%")
     --game.forces.player.character_running_speed_modifier = 
     -- TODO: Print new values when they come
   end
 end)
 
 script.on_configuration_changed(function()
-  game.print("[color=red]Warning:[/color] Mod configuration was changed... if you just updated exfret's randomizer, keep in mind that things may break in pre-existing runs.")
-  game.print("To change back, you can select the version via a drop-down in the in-game mod portal or download old versions from the factorio mod website.")
-  game.print("If you need any help, message exfret on discord or on the factorio mod website (mods.factorio.com/mod/propertyrandomizer).")
+  game.print("[exfret's Randomizer] [color=red]Warning:[/color] Mod configuration was changed... if you just updated exfret's randomizer, keep in mind that things may break in pre-existing runs.\nTo change back, you can select the version via a drop-down in the in-game mod portal or download old versions from the factorio mod website.\nIf you need any help, message exfret on discord or on the factorio mod website (mods.factorio.com/mod/propertyrandomizer).")
 end)

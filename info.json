@@ -11,6 +11,7 @@
 		"(?) even-distribution",
 		"(?) space-exploration-postprocess",
 		"(?) ZRecipeRandomizer",
-		"(?) pypostprocessing"
+		"(?) pypostprocessing",
+		"(?) galdocs-manufacturing"
 	]
 }

@@ -125,14 +125,18 @@ function find_sign (roll, property_params)
   return sign
 end
 
-local function nudge_properties (params, roll)
+-- Needs to be global for upgrade line preservation code in gather-randomizations
+-- TODO: Refactor
+-- TODO: We don't actually use it in gather-randomizations now so we could make it back to local, but I might change this if the thing I'm about to do doesn't work
+function nudge_properties (params, roll)
   local function nudge_individual_property (tbl, property, sign, num_steps, inertia_function)
     if tbl[property] == nil then
       return
     end
 
     local nudge = sign * settings.startup["propertyrandomizer-chaos"].value * (1 / num_steps) * param_table_utils.find_inertia_function_value(inertia_function, tbl[property])
-    
+    nudge = nudge * NUDGE_MODIFIER -- TODO: Remove nudge modifier
+
     if math.abs(nudge / math.sqrt(1 * 1 + tbl[property] * tbl[property]) * num_steps) >= 150 then
       nudge = sign * 150 * math.sqrt(1 * 1 + tbl[property] * tbl[property]) / num_steps
     elseif inertia_function.type == "proportional" and settings.startup["propertyrandomizer-chaos"].value * inertia_function.slope >= 20 then

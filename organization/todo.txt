@@ -1,3 +1,19 @@
+0.2.11
+ - New randomization function
+ - Rolls-first then property setting?
+
+0.2.10
+ - Upgrade line preservation
+ - Reformatting
+
+0.2.9
+ - Mostly done, just finish porting things over and making sure things work
+
+
+BROKEN:
+ * Class and property karma (broken by update line preservation in gather-randomizations.lua)
+
+
 1. Currently working on information
 2. Also separate randomization function and rand object
 3. Make randomization algorithm assume property is non-nil soon
@@ -22,6 +38,10 @@
  - Do things like property_info = "temperature", so not including the initial "property_info." part anymore (or needing to include property info in the files)
  - Make rounding happen again after min/maxing
  - Reorganize settings, combine logistics and production into one setting and remove settings that can just exist as overrides
+ - Separate entity.lua into more files, but what should categorization be? Maybe a folder
+ - Rename rand_energy and the types rando functions to something to suggest they are different from normal rand (like rand_util)
+ - Fix in inertia functions for new randomizations
+ - Galdoc's manufacturing randomization compatibility? Maybe compatibility with special things from mods?
 
 
 Add crafting cost to randomization

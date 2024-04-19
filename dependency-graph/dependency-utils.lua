@@ -157,7 +157,7 @@ for _, recipe in pairs(recipes_not_added) do
     local recipe_ingredients = {}
 
     for _, ingredient in pairs(recipe.ingredients) do
-      if ingredient[1] then
+      if ingredient[1] and ingredient[2] then
         table.insert(recipe_ingredients, {name = ingredient[1], amount = ingredient[2]})
       else
         table.insert(recipe_ingredients, {name = ingredient.name, amount = ingredient.amount}) -- TODO: probabilities and such
@@ -684,7 +684,9 @@ end
 for _, node in pairs(dependency_graph) do
   for _, prereq in pairs(node.prereqs) do
     if dependency_graph[prg.get_key(prereq)] == nil then
+      log(node.type)
       log(node.name)
+      log(prereq.type)
       log(prereq.name)
     else
       table.insert(dependency_graph[prg.get_key(prereq)].dependents, {
@@ -1331,7 +1333,9 @@ for _, tech in pairs(data.raw.technology) do
 end
 local top_sort = find_reachable_tech_unlock_nodes_top(all_techs).top_sort
 
---log(serpent.block(top_sort))
+for _, thing in pairs(top_sort) do
+  log(thing.name)
+end
 
 local tech_sort = {}
 for _, node in pairs(top_sort) do
@@ -1665,6 +1669,8 @@ log(serpent.block(costs))
 
 end -- End of recipe cost evaluation
 
+if false then
+
 local vanilla_costs = {
   accumulator = 48,
   ["advanced-circuit"] = 46,
@@ -1958,7 +1964,7 @@ end
 -- Preserve how many recipes an item is used it, and how many to produce it
 -- Preserve number inputs/outputs of a recipe
 
-
+end
 
 
 

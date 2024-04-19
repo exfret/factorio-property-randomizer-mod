@@ -419,6 +419,10 @@ prototype_tables.turret_classes = {
   "fluid-turret",
   "turret"
 }
+prototype_tables.turret_classes_as_keys = {}
+for _, val in pairs(prototype_tables.turret_classes) do
+  prototype_tables.turret_classes_as_keys[val] = true
+end
 
 prototype_tables.transport_belt_classes = {
   "transport-belt",

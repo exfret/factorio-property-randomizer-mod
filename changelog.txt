@@ -8,6 +8,7 @@ Date: ?
     - Randomized achievements (a misc. feature)
     - Randomized rocket parts required for the rocket (on with the "production" setting)
     - Note that many randomizations may not yet be ported over to the new refactored code; they will be added back in the next version
+    - Custom randomization with override settings; You can now pick and choose from among >100 different individual randomizations
   Changes:
     - Updated the description
   Organization:

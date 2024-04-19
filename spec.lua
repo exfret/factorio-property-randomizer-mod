@@ -1,12 +1,13 @@
 require("randomize/master")
 
--- TODO: character-values midgame
--- TODO: mining-drill-productivity
--- TODO: Alert misspellings
--- TODO: Redo tag system
+-- TODO: character-values midgame (later version)
+-- TODO: mining-drill-productivity (later version)
 
--- In the form {func = [function to do randomization], name = [user-friendly name of function], tags = [list of tags]}
--- Later will be populated with list of allowed prototypes to randomize
+-- TODO: Redo tag system
+-- TODO: drain
+-- TODO: check lower_is_better on NEW properties
+
+-- In the form {func = [function to do randomization], name = [user-friendly name of function], setting = [setting this is tied to], tags = [list of tags], default = [whether on by default], grouped = [whether it does all prototypes at once]}
 local spec = {
     {
         func = rand.heat_buffer_max_transfer,
@@ -188,6 +189,13 @@ local spec = {
         name = "inserter-power",
         setting = "propertyrandomizer-production",
         tags = {"power-consumption", "power"},
+        default = true
+    },
+    { -- NEW
+        func = rand.turret_energy_usage,
+        name = "turret-energy-usage",
+        setting = "propertyrandomizer-production",
+        tags = {},
         default = true
     },
     {
@@ -375,7 +383,14 @@ local spec = {
         tags = {"logistic"},
         default = true
     },
-    { -- TODO: Mining results
+    { -- NEW
+        func = rand.mining_results_tree_rock,
+        name = "tree-rock-mining-results",
+        setting = "none",
+        tags = {},
+        default = false
+    },
+    {
         func = rand.mining_speeds,
         name = "mining-speed",
         setting = "propertyrandomizer-production",
@@ -458,21 +473,124 @@ local spec = {
         setting = "propertyrandomizer-logistic",
         tags = {"bots"},
         default = true
-    }, -- TODO: Rocket silo randomization
+    },
+    { -- NEW
+        func = rand.rocket_parts_required,
+        name = "rocket-parts-required",
+        setting = "propertyrandomizer-production",
+        tags = {},
+        default = true
+    },
+    { -- NEW
+        func = rand.rocket_silo_launch_time,
+        name = "rocket-time-to-launch",
+        setting = "propertyrandomizer-misc-properties",
+        tags = {},
+        default = false
+    },
     {
         func = rand.storage_tank_capacity,
         name = "tank-capacity",
         setting = "propertyrandomizer-storage",
         tags = {"fluid", "storage"},
         default = true
+    }, -- TODO: Turret
+    { -- NEW
+        func = rand.turret_damage_modifier,
+        name = "turret-damage-modifier",
+        setting = "propertyrandomizer-military",
+        tags = {},
+        default = true
     },
-    { -- TODO: Turret
+    { -- NEW
+        func = rand.turret_min_attack_distance,
+        name = "turret-min-attack-distance",
+        setting = "propertyrandomizer-military",
+        tags = {},
+        default = true
+    },
+    { -- NEW
+        -- TODO: Separate this out more into worm and player turret range
+        func = rand.turret_range,
+        name = "turret-range",
+        setting = "propertyrandomizer-military",
+        tags = {},
+        default = true
+    },
+    { -- NEW
+    -- TODO: This affects car "turrets" as well, but I think that should be its own thing
+        func = rand.turret_rotation_speed,
+        name = "turret-rotation-speed",
+        setting = "propertyrandomizer-military",
+        tags = {},
+        default = true
+    },
+    { -- NEW
+        func = rand.turret_shooting_speed,
+        name = "turret-shooting-speed",
+        setting = "propertyrandomizer-military",
+        tags = {},
+        default = true
+    },
+    {
         func = rand.underground_belt_distance,
         name = "underground-belt-distance",
         setting = "propertyrandomizer-logistic",
         tags = {"logistic"},
         default = true
-    }, -- TODO: Underground pipe distance, Unit
+    },
+    { -- NEW
+        func = rand.pipe_to_ground_distance,
+        name = "pipe-to-ground-distance",
+        setting = "propertyrandomizer-logistic",
+        tags = {},
+        default = true
+    },
+    -- TODO: Unit
+    -- other unit specific, movement speed
+    {
+        func = rand.unit_attack_speed,
+        name = "unit-attack-speed",
+        setting = "propertyrandomizer-military",
+        tags = {},
+        default = false
+    },
+    { -- NEW
+        func = rand.unit_melee_damage,
+        name = "unit-melee-damage",
+        setting = "propertyrandomizer-military",
+        tags = {},
+        default = false
+    },
+    { -- NEW
+        func = rand.unit_movement_speed,
+        name = "unit-movement-speed",
+        setting = "propertyrandomizer-military-advanced",
+        tags = {},
+        default = false
+    },
+    { -- NEW
+        func = rand.unit_pollution_to_join_attack,
+        name = "unit-pollution-to-join-attack",
+        setting = "propertyrandomizer-military-advanced",
+        tags = {},
+        default = false
+    },
+    { -- NEW
+        func = rand.unit_range,
+        name = "unit-range",
+        setting = "propertyrandomizer-military-advanced",
+        tags = {},
+        default = false
+    }, -- TODO: Unit pursue distance, pursue time, figure out what spawning time modifier does
+    {
+        func = rand.unit_vision_distance,
+        name = "unit-vision-distance",
+        setting = "propertyrandomizer-military-advanced",
+        tags = {},
+        default = false
+    },
+    -- Excluded: Unit turn radius (it's just visual)
     {
         func = rand.vehicle_crash_damage,
         name = "crash-damage",
@@ -492,9 +610,10 @@ local spec = {
         name = "icons",
         setting = "propertyrandomizer-icons",
         tags = {"visual"}, -- TODO: Separate this out more
-        default = false
-    }, --TODO: Achievement
-    { -- TODO
+        default = false,
+        grouped = true
+    },
+    { -- TODO: The following randomization isn't implemented yet
         func = rand.capsule_throw_range,
         name = "capsule-throw-range",
         setting = "none",
@@ -508,7 +627,7 @@ local spec = {
         tags = {"military"},
         default = true
     }, -- TODO: ammo damage?
-    {
+    { -- TODO: Check to see if anything else from attack_parameters makes sense to add to gun
         func = rand.gun_damage_modifier,
         name = "gun-damage-modifier",
         setting = "propertyrandomizer-military",
@@ -551,9 +670,9 @@ local spec = {
         default = false
     },
     {
-        func = rand.sounds,
-        name = "sounds",
-        setting = "propertyrandomizer-sounds",
+        func = rand.achievements,
+        name = "achievements",
+        setting = "propertyrandomizer-misc-properties",
         tags = {},
         default = false,
         grouped = true
@@ -586,6 +705,14 @@ local spec = {
         tags = {"military"},
         default = true
     }, -- TODO: Utility constants properties
+    {
+        func = rand.sounds,
+        name = "sounds",
+        setting = "propertyrandomizer-sounds",
+        tags = {},
+        default = false,
+        grouped = true
+    },
     { -- TODO: Stickers
         func = rand.tile_walking_speed_modifier,
         name = "tile-speeds",
@@ -833,4 +960,26 @@ for randomization_num, randomization in pairs(spec) do
     end
 end
 
-return spec
+-- Low level groupings that only contain individual randomizations
+local spec_groups = { -- TODO
+    ["landmines"] = {
+        "landmine-damage",
+        "landmine-effect-radius",
+        "landmine-trigger-radius",
+        "landmine-timeout"
+    },
+    ["tech"] = {
+        "tech-costs",
+        "tech-times"
+    },
+    ["visual"] = {
+        "icons",
+        "map-colors"
+    }
+}
+
+-- Higher level groupings that can also contain groups
+local spec_categories = {
+}
+
+return spec, spec_groups, spec_categories

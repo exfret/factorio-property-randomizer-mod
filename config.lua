@@ -39,6 +39,19 @@ for override in string.gmatch(settings.startup["propertyrandomizer-custom-overri
   end
 
   config.properties[override] = new_val
+
+  -- Check that this is in the spec
+  local is_in_spec = false
+  for _, randomization in pairs(spec) do
+    if randomization.name == override then
+      is_in_spec = true
+    end
+  end
+  if not is_in_spec then
+    if info ~= nil then
+      table.insert(info.warnings, "[exfret's Randomizer] [color=red]Error:[/color] Override randomization with ID \"[color=blue]" .. override .. "[/color]\" does not exist; this randomization was skipped.\nMake sure the overrides are spelled and formatted correctly without spaces!")
+    end
+  end
 end
 
 if false then

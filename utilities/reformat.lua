@@ -15,7 +15,7 @@ reformat.common = {}
 reformat.test = {}
 
 function reformat.type.ingredient_prototyte(ingredient)
-    if ingredient[1] then
+    if ingredient.name == nil or ingredient.amount == nil then
         ingredient.name = ingredient[1]
         ingredient[1] = nil
         ingredient.amount = ingredient[2]

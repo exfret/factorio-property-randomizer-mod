@@ -427,4 +427,19 @@ rand.inserter_energy = function(prototype)
     end
 end
 
+rand.turret_energy_usage = function(prototype)
+    if prototype.type == "electric-turret" then
+        if prototype.attack_parameters.ammo_type ~= nil then
+            local ammo_type = prototype.attack_parameters.ammo_type
+
+            rand.energy({
+                prototype = prototype,
+                tbl = ammo_type,
+                property = "energy_consumption",
+                property_info = property_info.limited_range
+            })
+        end
+    end
+end
+
 return energy

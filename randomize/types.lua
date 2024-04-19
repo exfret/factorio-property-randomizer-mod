@@ -46,8 +46,6 @@ end
 rand.trigger_item = function(prototype, tbl, target)
     -- TODO: Main body
 
-    log(serpent.block(tbl))
-
     local delivery = tbl.action_delivery
     if delivery ~= nil then
         if delivery.type ~= nil then

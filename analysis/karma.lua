@@ -59,4 +59,22 @@ function karma.update_values(roll, prototype, property)
     karma.values.property_values[property_key].num_steps = karma.values.property_values[property_key].num_steps + 1
     karma.values.property_values[property_key].num_good_steps = karma.values.property_values[property_key].num_good_steps + goodness
   end
+  if karma.values.prototype_values[prg.get_key(prototype)] ~= nil then
+    karma.values.prototype_values[prg.get_key(prototype)].num_steps = karma.values.prototype_values[prg.get_key(prototype)].num_steps + 1
+    karma.values.prototype_values[prg.get_key(prototype)].num_good_steps = karma.values.prototype_values[prg.get_key(prototype)].num_good_steps + goodness
+  end
+  if karma.values.class_values[prg.get_key(prototype.type, "class")] ~= nil then
+    karma.values.class_values[prg.get_key(prototype.type, "class")].num_steps = karma.values.class_values[prg.get_key(prototype.type, "class")].num_steps + 1
+    karma.values.class_values[prg.get_key(prototype.type, "class")].num_good_steps = karma.values.class_values[prg.get_key(prototype.type, "class")].num_good_steps + goodness
+  end
+  karma.values.overall[prg.get_key(nil, "dummy")].num_steps = karma.values.overall[prg.get_key(nil, "dummy")].num_steps + 1
+  karma.values.overall[prg.get_key(nil, "dummy")].num_good_steps = karma.values.overall[prg.get_key(nil, "dummy")].num_good_steps + goodness
+end
+
+karma.util = {}
+
+karma.util.get_goodness = function(karma_prototype_table)
+  -- TODO: Maybe warning if num_steps = 0
+  -- Right now this just skips fixes in this case due to how it's coded, which is good, but we'll need to be careful in the future
+  return karma.update_params.prototype_update_step * (karma_prototype_table.num_good_steps / karma_prototype_table.num_steps)
 end
