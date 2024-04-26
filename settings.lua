@@ -67,6 +67,15 @@ data:extend({
   {
     setting_type = "startup",
     type = "bool-setting",
+    name = "propertyrandomizer-upgrade-line-preservation",
+    localised_name = "Preserve upgrade lines",
+    localised_description = "Generally attempt to make better things actually better. For example, assembling machine 2's will be guaranteed higher crafting speeds than assembling machine 1's.",
+    default_value = "true",
+    order = "ae-upgrade-line-preservation"
+  },
+  {
+    setting_type = "startup",
+    type = "bool-setting",
     name = "propertyrandomizer-character-values-midgame",
     localised_name = "Randomize character values",
     localised_description = "Randomize character crafting speed and walking speed every 30 minutes.",
@@ -114,7 +123,7 @@ data:extend({
     type = "bool-setting",
     name = "propertyrandomizer-production",
     localised_name = "Randomize production",
-    localised_description = "Randomize production capabilities of machines, like speed and pollution.",
+    localised_description = "Randomize production capabilities of machines, like speed and module slots.",
     default_value = true,
     order = "b-basic-production"
   },
@@ -135,29 +144,29 @@ data:extend({
     default_value = true,
     order = "b-basic-tech"
   },
-  {
+  --[[{
     setting_type = "startup",
     type = "bool-setting",
     name = "propertyrandomizer-cliff-sizes",
-    localised_name = "Randomize cliff sizes",
+    localised_name = "Advanced: Randomize cliff sizes",
     localised_description = "Different cliffs will have different sizes.",
     default_value = false,
     order = "c-advanced-cliff-sizes"
-  },
-  {
+  },]] -- Going to be override only
+  --[[{
     setting_type = "startup",
     type = "bool-setting",
     name = "propertyrandomizer-icons",
     localised_name = "Advanced: Randomize icons",
     default_value = false,
     order = "c-advanced-icons"
-  },
+  },]] -- Icons is going to be override only from now on
   {
     setting_type = "startup",
     type = "bool-setting",
     name = "propertyrandomizer-inserter-position",
     localised_name = "Advanced: Randomize inserter positions",
-    localised_description = "Any given inserter has a small chance to become a long inserter, side inserter, or a variety of other cursed options.",
+    localised_description = "Any given inserter has a chance to become a long inserter, side inserter, or a variety of other cursed options.",
     default_value = false,
     order = "c-advanced-inserter-offsets"
   },
@@ -166,11 +175,20 @@ data:extend({
     type = "bool-setting",
     name = "propertyrandomizer-military-advanced",
     localised_name = "Advanced: Randomize military more",
-    localised_description = "Makes some more questionable randomizations to the military side of the game that may wreck balance or are untested.",
+    localised_description = "Makes some more questionable randomizations to the military side of the game, like biter speed and more.",
     default_value = false,
     order = "c-advanced-military"
   },
   {
+    setting_type = "startup",
+    type = "bool-setting",
+    name = "propertyrandomizer-production-advanced",
+    localised_name = "Advanced: Randomize production more",
+    localised_description = "Randomize more production-based features. Especially impacts power generation/consumption.",
+    default_value = false,
+    order = "c-advanced-production"
+  },
+  --[[{
     setting_type = "startup",
     type = "bool-setting",
     name = "propertyrandomizer-mining-drill-productivity",
@@ -179,8 +197,8 @@ data:extend({
     default_value = false,
     order = "c-advanced-mining-drill-productivity",
     hidden = true -- TODO: Make just an override
-  },
-  {
+  },]]
+  --[[{
     setting_type = "startup",
     type = "bool-setting",
     name = "propertyrandomizer-mining-offsets",
@@ -188,15 +206,15 @@ data:extend({
     localised_description = "Randomize where the mining drills drop off their ore.",
     default_value = false,
     order = "c-advanced-mining-offsets"
-  },
-  {
+  },]]
+  --[[{
     setting_type = "startup",
     type = "bool-setting",
     name = "propertyrandomizer-sounds",
     localised_name = "Advanced: Randomize all the sounds... Good luck",
     default_value = false,
     order = "c-advanced-sounds"
-  },
+  },]] -- Override only
   {
     setting_type = "startup",
     type = "bool-setting",

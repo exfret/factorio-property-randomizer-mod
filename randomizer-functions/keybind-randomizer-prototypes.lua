@@ -1,9 +1,17 @@
+-- Just do keyboard
+
+
+-- TODO: Map, pipette, inventory, movement
 local inputs_table = {
-    "build",
-    --"clear-cursor",
+    --"build",
     --"confirm-gui",
     --"confirm-message",
-    "mine"
+    --"mine",
+    "clear-cursor",
+    "move-down",
+    "move-left",
+    "move-right",
+    "move-up"
 }
 
 for _, input in pairs(inputs_table) do

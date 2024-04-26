@@ -1,39 +1,35 @@
+Future
+  - New randomization function
+  - Rolls-first then property setting?
+
+0.2.12
+  - Technology randomization
+
 0.2.11
- - New randomization function
- - Rolls-first then property setting?
+  - More informatron info
+  - Finish dependency graph building
 
 0.2.10
- - Upgrade line preservation
- - Reformatting
-
-0.2.9
- - Mostly done, just finish porting things over and making sure things work
+  - Upgrade line preservation
+    * For now, just preserve just predetermined property lines like crafting speed for machines
+        * I think that even if this is actually less random, this is the "expected behavior" and I should just do this
+  - Finish properties missed during refactoring and adding new properties
+  - Add informatron basic info
 
 
 BROKEN:
- * Class and property karma (broken by update line preservation in gather-randomizations.lua)
+ * Class and property karma (broken by upgrade line preservation in gather-randomizations.lua)
 
 
-1. Currently working on information
 2. Also separate randomization function and rand object
 3. Make randomization algorithm assume property is non-nil soon
 4. Account for control phase randomization and for autoplace/data-updates randomizations
 
 
-
- - Steam engine temperature better randomized
- - Randomize things based on upgrade lines
- - Rewrite randomization to be prototype based
- - Fix rounding not working
- - Compile and fix various bug reports
- - Make essential technologies sooner
- - Customization additions
- - Rewrite randomization algorithm
  - Randomize more parts of the dependency graph (like recipes)
  - Go through and compile TODO's in this note and throughout program
  - Randomize more properties
  - Organize todo
- - Group randomize things like crafting speed with power so that it doesn't "make both things better"
  - Organize todo better
  - Do things like property_info = "temperature", so not including the initial "property_info." part anymore (or needing to include property info in the files)
  - Make rounding happen again after min/maxing
@@ -44,7 +40,6 @@ BROKEN:
  - Galdoc's manufacturing randomization compatibility? Maybe compatibility with special things from mods?
 
 
-Add crafting cost to randomization
 Add power level normalizer to keep power levels similar to what they were at start
 
 Clean up data-final-fixes
@@ -52,26 +47,18 @@ Clean up data-final-fixes
 Next releases:
   - Make mining drill dropoff and other similar properties not influenced by bias/chaos factor
 
-  - Use serpent.block or dump and such rather than prg.get_key
 
   - Have simply including reformat do the reformatting so I don't have to call any of its functions
   - Add chaos mode
 
-  - Test mod compatibility
   - Do special evaluation of the "importance" of items to randomize their crafting times more effectively
   - In-game tutorial/tooltips for more obscure randomizations
   - Refactor so that each function called in data-final-fixes uses each prototype exactly once
   - Randomly randomized mode where which settings are randomized is randomized
   - Add "separation function"
 
-  - Get random map settings working with modded game
   - Randomize collision masks
-  - Learn about fluid boxes and randomize those
-  - Randomize collision boxes (do more carefully than before, like also changing graphics)
-  - Shuffle damage types (advanced randomization)
-  - Recipes randomly require water
   - Crafting times less variance for items needed for science
-  - Sample from gamma distribution for simpler properties
   - Use local functions instead of globals
   - Randomize research tree
   - Link inserters (specifically, filter inserters/fast inserters, for example, should be hard linked)
@@ -98,16 +85,38 @@ Next releases:
   - Extract building the dependency graph out into a separate file
   - Add smart collision box logic to power poles again
   - Modify inserter rotation speed based on the new randomized position
-  - Inerter power requirements higher variance?
+  - Inserter power requirements higher variance?
   - In compatibilities, make sure burner or regular inserters aren't cursed (or maybe at least not all those and long inserters)
   - Make setting to make things biased toward the player
-  - Check that I make sure inserters aren't too slow for belts
   - Randomize technology bonus amounts (like bullet damage increase)
   - Randomize reach distance mid-game
   - Randomize ore/basic resource gathering (Loup&Snoop idea)
   - Ores produce "random" sideproducts
 
+Ideas
+  - Make "overhaul" to demonstrate randomizer better
+  - Define some common tables like actions before hand/semi-automatically make variations and choose between those
+  - "Storylines" - Instead of each property being randomized separately, somehow combine them all into a "narrative"
+  - Random *combinations* of prototypes
+  - Option to keep non-randomized versions for comparison and to choose those ones if they happen to be better (make these interesting choices?)
+
+Major Features
+  - In-game tool for randomization customization
+  - New randomization function and spec
+
+Features
+  - Randomize *costs* of recipes, even after recipe randomization (since this also preserves cost)
+
+Fixes
+  - Steam engine temperature better randomized
+  - Make essential technologies sooner in technology randomization
+  - Use randomize_numerical_property properly in map preset generation
+  - Group randomize things like crafting speed with power so that it doesn't "make both things better" (if crafting speed is higher on its own, it actually makes power better as a side effect)
+
 Organization
+  - Massive file renaming/refactoring
+  - Move map preset generation to data-final-fixes?
+  - Remove remnants of rounding (just don't do it for now)
 
 Random maps
   - Randomize enemy evolution parameters
@@ -115,10 +124,10 @@ Random maps
 
 Support
   - Space Exploration support
+  - Test mod compatibility with various mods
+  - Check that random map settings working with modded game
 
 Properties:
-  - Gun shooting speed and range
-  - Biter pollution absorbed
   - emissions_per_second
   - healing_per_tick
   - fuel_acceleration/top-speed multiplier (randomize with vehicles)
@@ -127,3 +136,5 @@ Properties:
 
 Silly additions
   - Tile map color randomization
+  - Randomize collision boxes
+  - Shuffle damage types

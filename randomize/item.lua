@@ -5,8 +5,28 @@ local property_info = require("randomizer-parameter-data/property-info-tables")
 local prototype_tables = require("randomizer-parameter-data/prototype-tables")
 local walk_params = require("randomizer-parameter-data/walk-params-tables")
 
+rand.capsule_healing = function(prototype)
+    if prototype.type == "capsule" then
+        -- TODO
+    end
+end
+
 rand.capsule_throw_range = function(prototype)
-    -- TODO
+    if prototype.type == "capsule" then
+        local capsule_action = prototype.capsule_action
+
+        if capsule_action.type == "throw" then
+            local attack_parameters = capsule_action.attack_parameters
+
+            -- TODO: Modify radius visualization circle too (it's in the Entity prototype properties, not capsule)
+            randomize_numerical_property({
+                prototype = prototype,
+                tbl = attack_parameters,
+                property = "range",
+                property_info = property_info.limited_range
+            })
+        end
+    end
 end
 
 rand.ammo_magazine_size = function(prototype)

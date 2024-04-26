@@ -7,513 +7,378 @@ require("randomize/master")
 -- TODO: drain
 -- TODO: check lower_is_better on NEW properties
 
+-- TODO: Balancing
+
 -- In the form {func = [function to do randomization], name = [user-friendly name of function], setting = [setting this is tied to], tags = [list of tags], default = [whether on by default], grouped = [whether it does all prototypes at once]}
 local spec = {
     {
         func = rand.heat_buffer_max_transfer,
         name = "heat-transfer-rate",
-        setting = "none",
-        tags = {"heat", "power"},
-        default = false
+        setting = "none"
     },
     {
         func = rand.heat_buffer_specific_heat,
         name = "specific-heat",
-        setting = "none",
-        tags = {"heat", "power"},
-        default = false
+        setting = "none"
     },
     {
         func = rand.heat_buffer_temperatures,
         name = "heat-temperature",
-        setting = "none",
-        tags = {"temperature", "heat", "power"},
-        default = false
+        setting = "none"
     },
     { -- Technically could be applied to other entities, like roboports, but just applies to accumulators now
         func = rand.energy_source_electric_buffer_capacity,
         name = "electric-capacity",
-        setting = "propertyrandomizer-production",
-        default = true,
-        tags = {"electric", "power"}
+        setting = "propertyrandomizer-production"
     },
     {
         func = rand.energy_source_electric_input_flow_limit,
         name = "electric-input-limit",
-        setting = "propertyrandomizer-production",
-        tags = {"electric", "power"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     {
         func = rand.energy_source_electric_output_flow_limit,
         name = "electric-output-limit",
-        setting = "propertyrandomizer-production",
-        tags = {"electric", "power"},
-        default = true
+        setting = "propertyrandomizer-production"
+    },
+    { -- NEW
+        func = rand.energy_source_electric_drain,
+        name = "electric-min-consumption",
+        setting = "propertyrandomizer-production-advanced"
     },
     {
         func = rand.energy_source_burner_effectivity,
         name = "burner-effectivity",
-        setting = "none",
-        tags = {"burner", "power"},
-        default = false
+        setting = "propertyrandomizer-production-advanced"
     },
     { -- Not tested
         func = rand.energy_source_fluid_effectivity,
         name = "fluid-power-effectivity",
-        setting = "propertyrandomizer-production",
-        tags = {"fluid-power", "power"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     { -- Not tested
         func = rand.energy_source_fluid_maximum_temperature,
         name = "fluid-power-max-temperature",
-        setting = "none",
-        tags = {"temperature", "fluid-power", "power"},
-        default = false
+        setting = "none"
     },
     {
         func = rand.boiler_energy_consumption,
         name = "boiler-power",
-        setting = "propertyrandomizer-production",
-        tags = {"power"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     {
         func = rand.boiler_target_temperature,
         name = "boiler-temperature",
-        setting = "none",
-        tags = {"temperature", "power"},
-        default = false,
+        setting = "none"
     },
     {
         func = rand.burner_generator_max_power_output,
         name = "burner-generator-production",
-        setting = "propertyrandomizer-production",
-        tags = {"power-production", "burner-power", "electric-power", "power"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     { -- Not tested
         func = rand.electric_energy_interface_energy_production,
         name = "energy-interface-production",
-        setting = "none",
-        tags = {"power-production", "electric", "power"},
-        default = false
+        setting = "none"
     },
     { -- Not tested
         func = rand.electric_energy_interface_energy_usage,
         name = "energy-interface-consumption",
-        setting = "none",
-        tags = {"power-consumption", "electric", "power"},
-        default = false
+        setting = "none"
     },
     {
         func = rand.generator_effectivity,
         name = "fluid-generator-effectivity",
-        setting = "none",
-        tags = {"power-production", "electric", "power"},
-        default = false
+        setting = "none"
     },
     {
         func = rand.generator_fluid_usage,
         name = "fluid-generator-production",
-        setting = "propertyrandomizer-production",
-        tags = {"power-production", "electric", "power"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     {
         func = rand.generator_maximum_temperature,
         name = "fluid-generator-max-temperature",
-        setting = "none",
-        tags = {"power-production", "temperature", "power"},
-        default = false
+        setting = "none"
     }, -- Excluded: generator_max_production
     {
         func = rand.reactor_consumption,
         name = "reactor-consumption",
-        setting = "propertyrandomizer-production",
-        tags = {"power-production", "power"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     {
         func = rand.solar_panel_production,
         name = "solar-panel-production",
-        setting = "propertyrandomizer-production",
-        tags = {"power-production", "electric", "power"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     {
         func = rand.machine_energy_usage,
         name = "machine-energy-usage",
-        setting = "propertyrandomizer-production",
-        tags = {"power-consumption", "power"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     {
         func = rand.equipment_energy_usage,
         name = "equipment-energy-usage",
-        setting = "propertyrandomizer-military-advanced",
-        tags = {"equipment"},
-        default = true
+        setting = "propertyrandomizer-military-advanced"
     },
     { -- Not tested
         func = rand.fluid_fuel_value,
         name = "fluid-fuel-value",
-        setting = "propertyrandomizer-production",
-        tags = {"power"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     { -- NEW
         func = rand.fluid_heat_capacity,
         name = "fluid-heat-capacity",
-        setting = "none",
-        tags = {},
-        default = false
+        setting = "none"
     },
     {
         func = rand.item_fuel_value,
         name = "item-fuel-value",
-        setting = "propertyrandomizer-production",
-        tags = {"power"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     { -- This is technically two things: over time and movement, but we should do a group randomization of them
         func = rand.bot_energy,
         name = "bot-power",
-        setting = "propertyrandomizer-production",
-        default = true,
-        tags = {"power-consumption", "bots", "power"} -- TODO: Does bot energy have to be electric? Also in general how do we sense electric stuff versus not?
+        setting = "propertyrandomizer-production" -- TODO: Does bot energy have to be electric? Also in general how do we sense electric stuff versus not?
     },
     { -- This is technically two things: per rotation and per movement, but they should be group randomized
         func = rand.inserter_energy,
         name = "inserter-power",
-        setting = "propertyrandomizer-production",
-        tags = {"power-consumption", "power"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     { -- NEW
         func = rand.turret_energy_usage,
         name = "turret-energy-usage",
-        setting = "propertyrandomizer-production",
-        tags = {},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     {
         func = rand.beacon_supply_area_distance,
         name = "beacon-supply-area",
-        setting = "propertyrandomizer-production",
-        tags = {"modules", "production"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     {
         func = rand.beacon_distribution_effectivity,
         name = "beacon-effectivity",
-        setting = "propertyrandomizer-production",
-        tags = {"modules", "production"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     {
         func = rand.belt_speed,
         name = "belt-speed",
         setting = "propertyrandomizer-logistic",
-        tags = {"logistic"},
-        default = true,
         grouped = true
     },
     {
         func = rand.bot_speed,
         name = "bot-speed",
-        setting = "propertyrandomizer-logistic",
-        tags = {"bots", "logistic"},
-        default = true
+        setting = "propertyrandomizer-logistic"
     },
     {
         func = rand.car_rotation_speed,
         name = "car-turn-radius",
-        setting = "propertyrandomizer-logistic",
-        tags = {"vehicle"},
-        default = true
+        setting = "propertyrandomizer-logistic"
     },
     {
         func = rand.character_corpse_time_to_live,
         name = "corpse-time",
-        setting = "propertyrandomizer-misc-properties",
-        tags = {"misc"},
-        default = false
+        setting = "propertyrandomizer-misc-properties"
     },
     {
         func = rand.respawn_time,
         name = "respawn-time",
-        setting = "propertyrandomizer-misc-properties",
-        tags = {"misc"},
-        default = false
+        setting = "propertyrandomizer-misc-properties"
     },
     {
         func = rand.crafting_machine_speed,
         name = "crafting-machine-speed",
-        setting = "propertyrandomizer-production",
-        tags = {"production"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     { -- TODO: Break up into wire distance and supply area
         -- TODO: Possibly make sure that medium poles or big poles at least have decent supply area so that life isn't too awful?
         func = rand.electric_poles,
         name = "electric-poles",
         setting = "propertyrandomizer-logistic",
-        tags = {"logistic"},
-        default = true,
         grouped = true
     },
     {
         func = rand.non_resource_mining_speeds,
         name = "non-resource-mining-speeds",
-        setting = "propertyrandomizer-misc-properties",
-        tags = {"misc"},
-        default = false
+        setting = "propertyrandomizer-misc-properties"
     },
     { -- Not tested
         func = rand.repair_speed_modifiers,
         name = "repair-speed-modifiers",
-        setting = "propertyrandomizer-misc-properties",
-        tags = {"misc"},
-        default = false
+        setting = "propertyrandomizer-misc-properties"
     },
     {
         func = rand.cliff_sizes,
         name = "cliff-sizes",
-        setting = "propertyrandomizer-cliff-sizes",
-        default = true,
-        tags = {"sizes"}
+        setting = "propertyrandomizer-misc-properties"
     },
     {
         func = rand.fuel_inventory_slots,
         name = "fuel-slots",
-        setting = "propertyrandomizer-misc-properties",
-        tags = {"inventory-slots", "storage"},
-        default = false
+        setting = "propertyrandomizer-misc-properties"
     },
     {
         func = rand.gate_opening_speed,
         name = "gate-speed",
-        setting = "propertyrandomizer-misc-properties",
-        tags = {"misc"},
-        default = false
+        setting = "propertyrandomizer-misc-properties"
     },
     {
         func = rand.non_sensitive_max_health,
         name = "non-sensitive-max-health",
-        setting = "propertyrandomizer-misc-properties",
-        tags = {"misc"},
-        default = false
+        setting = "propertyrandomizer-misc-properties"
     },
     {
         func = rand.sensitive_max_health,
         name = "sensitive-max-health",
-        setting = "propertyrandomizer-military-advanced",
-        tags = {"military"},
-        default = true
+        setting = "propertyrandomizer-military-advanced"
     },
     {
         func = rand.inserter_offsets,
         name = "inserter-offsets",
-        setting = "propertyrandomizer-inserter-position",
-        tags = {"logistic"},
-        default = true
+        setting = "propertyrandomizer-inserter-position"
     },
     {
         func = rand.inserter_speed,
         name = "inserter-speed",
-        setting = "propertyrandomizer-logistic",
-        tags = {"logistic-speed", "logistic"},
-        default = true
+        setting = "propertyrandomizer-logistic"
     },
     {
         func = rand.inventory_sizes,
         name = "inventory-sizes", -- TODO: Randomize small/big inventories separately
-        setting = "propertyrandomizer-storage",
-        tags = {"inventory-slots", "storage"},
-        default = true
+        setting = "propertyrandomizer-storage"
     },
     {
         func = rand.lab_research_speed,
         name = "research-speed",
-        setting = "propertyrandomizer-production",
-        tags = {"production"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     { -- NEW
         func = rand.landmine_damage,
         name = "landmine-damage",
-        setting = "propertyrandomizer-military",
-        tags = {},
-        default = true
+        setting = "propertyrandomizer-military"
     },
     { -- NEW
         func = rand.landmine_effect_radius,
         name = "landmine-effect-radius",
-        setting = "propertyrandomizer-military",
-        tags = {},
-        default = true
+        setting = "propertyrandomizer-military-advanced"
     },
     { -- NEW
         func = rand.landmine_trigger_radius,
         name = "landmine-trigger-radius",
-        setting = "propertyrandomizer-military",
-        tags = {},
-        default = true
+        setting = "propertyrandomizer-military-advanced"
     },
     { -- NEW
         func = rand.landmine_timeout,
         name = "landmine-timeout",
-        setting = "propertyrandomizer-military",
-        tags = {},
-        default = true
+        setting = "propertyrandomizer-military-advanced"
     },
     {
         func = rand.machine_pollution,
         name = "machine-pollution",
-        setting = "propertyrandomizer-military",
-        tags = {"production", "military"},
-        default = true
+        setting = "propertyrandomizer-military"
     },
     {
         func = rand.mining_drill_dropoff_location,
         name = "drill-offsets",
-        setting = "propertyrandomizer-mining-offsets",
-        tags = {"logistic"},
-        default = true
+        setting = "propertyrandomizer-misc-properties"
     },
     { -- NEW
         func = rand.mining_results_tree_rock,
         name = "tree-rock-mining-results",
-        setting = "none",
-        tags = {},
-        default = false
+        setting = "propertyrandomizer-misc-properties"
     },
     {
         func = rand.mining_speeds,
         name = "mining-speed",
-        setting = "propertyrandomizer-production",
-        tags = {"production"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     {
         func = rand.module_slots,
         name = "module-slots",
-        setting = "propertyrandomizer-production",
-        tags = {"modules", "production"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     {
         func = rand.offshore_pump_speed,
         name = "offshore-pump-speed",
-        setting = "propertyrandomizer-production",
-        tags = {"production"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     {
         func = rand.pump_pumping_speed,
         name = "pump-speed",
-        setting = "propertyrandomizer-logistic",
-        tags = {"fluid", "logistic"}, -- TODO: Add fluid as a tag to other places?
-        default = true
+        setting = "propertyrandomizer-logistic" -- TODO: Add fluid as a tag to other places?
     },
     {
         func = rand.radar_search_area,
         name = "radar-search-area",
-        setting = "none",
-        tags = {"misc"},
-        default = false
+        setting = "propertyrandomizer-misc-properties"
     },
     {
         func = rand.radar_reveal_area,
         name = "radar-reveal-area",
-        setting = "none",
-        tags = {"misc"},
-        default = false
+        setting = "propertyrandomizer-misc-properties"
     },
     {
         func = rand.reactor_neighbour_bonus,
         name = "reactor-bonus",
-        setting = "propertyrandomizer-production",
-        tags = {"power-production", "power"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     {
         func = rand.roboport_inventory,
         name = "roboport-inventory",
-        setting = "none",
-        tags = {},
-        default = false
+        setting = "propertyrandomizer-misc-properties"
     },
     {
         func = rand.roboport_charging_energy,
         name = "roboport-charging-speed",
-        setting = "propertyrandomizer-logistic",
-        tags = {"bots", "power"},
-        default = true
+        setting = "propertyrandomizer-logistic"
     },
     {
         func = rand.roboport_charging_station_count,
         name = "roboport-charging-count",
-        setting = "propertyrandomizer-logistic",
-        tags = {"bots", "power"},
-        default = true
+        setting = "propertyrandomizer-logistic"
     },
     {
         func = rand.roboport_logistic_radius,
         name = "roboport-logistic-radius",
-        setting = "propertyrandomizer-logistic",
-        tags = {"bots", "logistic"},
-        default = true
+        setting = "propertyrandomizer-logistic"
     },
     {
         func = rand.roboport_construction_radius,
         name = "roboport-construction-radius",
-        setting = "propertyrandomizer-logistic",
-        tags = {"bots"},
-        default = true
+        setting = "propertyrandomizer-logistic"
     },
     { -- NEW
         func = rand.rocket_parts_required,
         name = "rocket-parts-required",
-        setting = "propertyrandomizer-production",
-        tags = {},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     { -- NEW
         func = rand.rocket_silo_launch_time,
         name = "rocket-time-to-launch",
-        setting = "propertyrandomizer-misc-properties",
-        tags = {},
-        default = false
+        setting = "propertyrandomizer-misc-properties"
     },
     {
         func = rand.storage_tank_capacity,
         name = "tank-capacity",
-        setting = "propertyrandomizer-storage",
-        tags = {"fluid", "storage"},
-        default = true
+        setting = "propertyrandomizer-storage"
     }, -- TODO: Turret
     { -- NEW
         func = rand.turret_damage_modifier,
         name = "turret-damage-modifier",
-        setting = "propertyrandomizer-military",
-        tags = {},
-        default = true
+        setting = "propertyrandomizer-military"
     },
     { -- NEW
         func = rand.turret_min_attack_distance,
         name = "turret-min-attack-distance",
-        setting = "propertyrandomizer-military",
-        tags = {},
-        default = true
+        setting = "propertyrandomizer-military-advanced"
     },
     { -- NEW
         -- TODO: Separate this out more into worm and player turret range
         func = rand.turret_range,
         name = "turret-range",
-        setting = "propertyrandomizer-military",
+        setting = "propertyrandomizer-military-advanced",
         tags = {},
         default = true
     },
@@ -521,9 +386,7 @@ local spec = {
     -- TODO: This affects car "turrets" as well, but I think that should be its own thing
         func = rand.turret_rotation_speed,
         name = "turret-rotation-speed",
-        setting = "propertyrandomizer-military",
-        tags = {},
-        default = true
+        setting = "propertyrandomizer-military-advanced"
     },
     { -- NEW
         func = rand.turret_shooting_speed,
@@ -535,32 +398,22 @@ local spec = {
     {
         func = rand.underground_belt_distance,
         name = "underground-belt-distance",
-        setting = "propertyrandomizer-logistic",
-        tags = {"logistic"},
-        default = true
+        setting = "propertyrandomizer-logistic"
     },
     { -- NEW
         func = rand.pipe_to_ground_distance,
         name = "pipe-to-ground-distance",
-        setting = "propertyrandomizer-logistic",
-        tags = {},
-        default = true
+        setting = "propertyrandomizer-logistic"
     },
-    -- TODO: Unit
-    -- other unit specific, movement speed
-    {
+    { -- NEW
         func = rand.unit_attack_speed,
         name = "unit-attack-speed",
-        setting = "propertyrandomizer-military",
-        tags = {},
-        default = false
+        setting = "propertyrandomizer-military-advanced"
     },
     { -- NEW
         func = rand.unit_melee_damage,
         name = "unit-melee-damage",
-        setting = "propertyrandomizer-military",
-        tags = {},
-        default = false
+        setting = "propertyrandomizer-military-advanced"
     },
     { -- NEW
         func = rand.unit_movement_speed,
@@ -572,175 +425,161 @@ local spec = {
     { -- NEW
         func = rand.unit_pollution_to_join_attack,
         name = "unit-pollution-to-join-attack",
-        setting = "propertyrandomizer-military-advanced",
-        tags = {},
-        default = false
+        setting = "propertyrandomizer-military-advanced"
     },
     { -- NEW
         func = rand.unit_range,
         name = "unit-range",
-        setting = "propertyrandomizer-military-advanced",
-        tags = {},
-        default = false
-    }, -- TODO: Unit pursue distance, pursue time, figure out what spawning time modifier does
-    {
+        setting = "propertyrandomizer-military-advanced"
+    },
+    { -- NEW
         func = rand.unit_vision_distance,
         name = "unit-vision-distance",
-        setting = "propertyrandomizer-military-advanced",
-        tags = {},
-        default = false
+        setting = "propertyrandomizer-military-advanced"
     },
     -- Excluded: Unit turn radius (it's just visual)
+    -- Excluded: Unit following properties (I don't think they'll be noticed)
     {
         func = rand.vehicle_crash_damage,
         name = "crash-damage",
-        setting = "propertyrandomizer-logistic",
-        tags = {"vehicle"},
-        default = true
+        setting = "propertyrandomizer-logistic"
     },
     {
         func = rand.vehicle_power,
         name = "vehicle-speed",
-        setting = "propertyrandomizer-logistic",
-        tags = {"vehicle", "player-transport"},
-        default = true
+        setting = "propertyrandomizer-logistic"
     },
     {
         func = rand.icons,
         name = "icons",
-        setting = "propertyrandomizer-icons",
-        tags = {"visual"}, -- TODO: Separate this out more
-        default = false,
+        setting = "none", -- TODO: Separate this out more
         grouped = true
     },
-    { -- TODO: The following randomization isn't implemented yet
+    { -- NEW
+        func = rand.recipe_groups,
+        name = "recipe-order",
+        setting = "none",
+        grouped = true
+    },
+    { -- NEW (not implemented though)
+        func = rand.capsule_healing,
+        name = "capsule-healing",
+        setting = "propertyrandomizer-military"
+    },
+    { -- NEW (implemented)
         func = rand.capsule_throw_range,
         name = "capsule-throw-range",
-        setting = "none",
-        tags = {"misc"},
-        default = false
+        setting = "propertyrandomizer-military-advanced"
     },
     {
         func = rand.ammo_magazine_size,
         name = "magazine-size",
-        setting = "propertyrandomizer-military",
-        tags = {"military"},
-        default = true
+        setting = "propertyrandomizer-military"
     }, -- TODO: ammo damage?
     { -- TODO: Check to see if anything else from attack_parameters makes sense to add to gun
         func = rand.gun_damage_modifier,
         name = "gun-damage-modifier",
-        setting = "propertyrandomizer-military",
-        tags = {"military"},
-        default = true
+        setting = "propertyrandomizer-military"
     },
     {
         func = rand.gun_range,
         name = "gun-range",
-        setting = "propertyrandomizer-military",
-        tags = {"military-range", "military"},
-        default = true
+        setting = "propertyrandomizer-military"
     },
     {
         func = rand.gun_speed,
         name = "gun-speed",
-        setting = "propertyrandomizer-military",
-        tags = {"military-speed", "military"},
-        default = true
+        setting = "propertyrandomizer-military"
     },
     {
         func = rand.item_stack_sizes,
         name = "stack-sizes",
-        setting = "propertyrandomizer-storage",
-        tags = {"inventory", "storage", "logistic"},
-        default = true
+        setting = "propertyrandomizer-storage"
     },
     {
         func = rand.module_effects,
         name = "module-effects",
-        setting = "propertyrandomizer-production",
-        tags = {"modules", "production"},
-        default = true
+        setting = "propertyrandomizer-production"
     },
     {
         func = rand.repair_tool_speeds,
         name = "repair-speeds",
-        setting = "propertyrandomizer-misc-properties",
-        tags = {"military", "misc"},
-        default = false
+        setting = "propertyrandomizer-misc-properties"
     },
     {
         func = rand.achievements,
         name = "achievements",
         setting = "propertyrandomizer-misc-properties",
-        tags = {},
-        default = false,
         grouped = true
     },
+    { -- NEW
+        func = rand.equipment_active_defense_cooldown,
+        name = "active-defense-equipment-cooldown",
+        setting = "propertyrandomizer-military"
+    },
+    { -- NEW
+        func = rand.equipment_active_defense_damage,
+        name = "active-defense-equipment-damage",
+        setting = "propertyrandomizer-military"
+    },
+    { -- NEW
+        func = rand.equipment_active_defense_radius,
+        name = "active-defense-equipment-effect-radius",
+        setting = "propertyrandomizer-military"
+    },
     {
-        func = rand.equipment_grids,
+        func = rand.equipment_grids, -- TODO: Shouldn't this specify sizes?
         name = "equipment-grids",
-        setting = "propertyrandomizer-military",
-        tags = {"equipment", "military"},
-        default = true
+        setting = "propertyrandomizer-military"
     }, -- TODO: equipment shapes and properties
     { -- TODO: Equipment properties
         func = rand.fluid_emissions_multiplier,
         name = "fluid-emissions-multiplier",
-        setting = "propertyrandomizer-military",
-        tags = {"fluid"},
-        default = true
+        setting = "propertyrandomizer-military"
     }, -- TODO: icon shifts
+    { -- NEW
+        func = rand.inventory_widths,
+        name = "inventory-widths",
+        setting = "propertyrandomizer-misc-properties",
+        grouped = true
+    },
     {
         func = rand.map_colors,
         name = "map-colors",
-        setting = "propertyrandomizer-misc-properties",
-        tags = {"visual"},
-        default = false
+        setting = "propertyrandomizer-misc-properties"
     },
-    { -- TODO: Yep it's broken, doesn't do anything
-        func = rand.projectile_damage, -- Might be buggy?
+    { -- NEW (Okay not new, but FIXED)
+        func = rand.projectile_damage,
         name = "projectile-damage",
-        setting = "propertyrandomizer-military",
-        tags = {"military"},
-        default = true
+        setting = "propertyrandomizer-military"
     }, -- TODO: Utility constants properties
     {
         func = rand.sounds,
         name = "sounds",
-        setting = "propertyrandomizer-sounds",
-        tags = {},
-        default = false,
+        setting = "none",
         grouped = true
     },
     { -- TODO: Stickers
         func = rand.tile_walking_speed_modifier,
         name = "tile-speeds",
         setting = "propertyrandomizer-misc-properties",
-        tags = {"player-transport", "misc"},
-        default = false,
         grouped = true
     },
     {
         func = rand.crafting_times,
         name = "recipe-times",
-        setting = "propertyrandomizer-crafting-times",
-        tags = {"production"},
-        default = true
+        setting = "propertyrandomizer-crafting-times"
     },
     {
         func = rand.tech_costs,
         name = "tech-costs",
-        setting = "propertyrandomizer-tech-costs",
-        tags = {"production"},
-        default = true
+        setting = "propertyrandomizer-tech-costs"
     },
     {
         func = rand.tech_times,
         name = "tech-times",
         setting = "propertyrandomizer-tech-costs",
-        tags = {"tech", "production-speed", "production"},
-        default = true
+        tags = {"tech", "production-speed", "production"}
     }
 }
 
@@ -953,10 +792,10 @@ for randomization_num, randomization in pairs(spec) do
         error("setting undefined for randomization named " .. randomization.name)
     end
     if randomization.tags == nil then
-        error("tags undefined for randomization named " .. randomization.name)
+        --error("tags undefined for randomization named " .. randomization.name)
     end
     if randomization.default == nil then
-        error("default undefined for randomization named " .. randomization.name)
+        --error("default undefined for randomization named " .. randomization.name)
     end
 end
 

@@ -4,7 +4,18 @@ info.warnings = {}
 require("gather-randomizations")
 require("analysis/karma")
 
--- TODO: Do I need to seed the randomizer?
+local old_data_raw = {}
+for _, class in pairs(data.raw) do
+  for _, prototype in pairs(class) do
+    table.insert(old_data_raw, serpent.dump({
+      type = prototype.type,
+      name = prototype.name,
+      prototype = prototype
+    }))
+  end
+end
+
+-- TODO: Do I actually need to seed the randomizer or is this line of code extraneous?
 prg.seed(seed_setting)
 
 randomize()
@@ -375,6 +386,28 @@ data:extend({
 data:extend({
   {
     type = "selection-tool",
+    name = "propertyrandomizer-old-prototype-data",
+    icon = "__base__/graphics/icons/iron-plate.png",
+    icon_size = 64,
+    stack_size = 1,
+    selection_mode = {"blueprint"},
+    alt_selection_mode = {"blueprint"},
+    selection_color = {},
+    alt_selection_color = {},
+    selection_cursor_box_type = "entity",
+    alt_selection_cursor_box_type = "entity",
+    entity_type_filters = old_data_raw
+  }
+})
+
+data.raw["gui-style"].default["propertyrandomizer-bigger-text"] = {
+  type = "label_style",
+  size = 200
+}
+
+data:extend({
+  {
+    type = "selection-tool",
     name = "propertyrandomizer-warnings",
     icon = "__base__/graphics/icons/iron-plate.png",
     icon_size = 64,
@@ -388,8 +421,5 @@ data:extend({
     entity_type_filters = {serpent.dump(info.warnings)}
   }
 })
-
--- TEST
--- require("randomizer-functions/keybind-randomizer-prototypes")
 
 -- TODO: Locale

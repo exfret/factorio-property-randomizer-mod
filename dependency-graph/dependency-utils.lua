@@ -6,8 +6,89 @@ local prototype_tables = require("randomizer-parameter-data/prototype-tables")
 local reformat = require("utilities/reformat")
 
 local VOID_COST = 1
-local do_recipe_unlock_nodes = true
+local do_recipe_unlock_nodes = false
 local do_tech_node_randomization = false
+local do_recipe_category_randomization = true
+
+if do_recipe_category_randomization then
+    -- Form recipes for each item
+    local recipe_to_old_category = {}
+    local category_to_old_recipes = {}
+    for _, category in pairs(data.raw["recipe-category"]) do
+      category_to_old_recipes[category.name] = {}
+    end
+
+
+
+    -- Temporarily remove other categories so they don't get randomized
+
+    recipe_categories = table.deepcopy(data.raw["recipe-category"])
+    data.raw["recipe-category"] = {}
+
+    local new_cats = {}
+    for _, recipe in pairs(data.raw.recipe) do
+
+      -- blacklist rocket silo manually for now
+
+      if recipe.name ~= "rocket-part" then
+        -- blacklist recipes with fluid products or ingredients
+        reformat.prototype.recipe(recipe)
+        local to_blacklist = false
+        for _, ingredient in pairs(recipe.ingredients) do
+          if ingredient.type == "fluid" then
+            to_blacklist = true
+          end
+        end
+        for _, result in pairs(recipe.results) do
+          if result.type == "fluid" then
+            to_blacklist = true
+          end
+        end
+
+        if not to_blacklist then
+
+      recipe_to_old_category[recipe.name] = recipe.category or "crafting"
+      table.insert(category_to_old_recipes[recipe.category or "crafting"], recipe)
+      new_cats["exfret-" .. recipe.name] = true
+      recipe.category = "exfret-" .. recipe.name
+      data:extend({
+        {
+          type = "recipe-category",
+          name = "exfret-" .. recipe.name
+        }
+      })
+    end
+      end
+    end
+
+    for _, machine in pairs(data.raw["assembling-machine"]) do
+      for _, category in pairs(machine.crafting_categories) do
+        if not new_cats[category] then
+        for _, recipe in pairs(category_to_old_recipes[category]) do
+          table.insert(machine.crafting_categories, "exfret-" .. recipe.name)
+        end
+      end
+      end
+    end
+    for _, machine in pairs(data.raw["furnace"]) do
+      for _, category in pairs(machine.crafting_categories) do
+        if not new_cats[category] then
+        for _, recipe in pairs(category_to_old_recipes[category]) do
+          table.insert(machine.crafting_categories, "exfret-" .. recipe.name)
+        end
+      end
+      end
+    end
+    for _, character in pairs(data.raw["character"]) do
+      for _, category in pairs(character.crafting_categories) do
+        if not new_cats[category] then
+          for _, recipe in pairs(category_to_old_recipes[category]) do
+          table.insert(character.crafting_categories, "exfret-" .. recipe.name)
+          end
+        end
+      end
+    end
+end
 
 -- HOTFIX - Add certain tech unlocks twice just to make sure
 -- NOT WORKING!
@@ -684,10 +765,10 @@ end
 for _, node in pairs(dependency_graph) do
   for _, prereq in pairs(node.prereqs) do
     if dependency_graph[prg.get_key(prereq)] == nil then
-      log(node.type)
+      --[[log(node.type)
       log(node.name)
       log(prereq.type)
-      log(prereq.name)
+      log(prereq.name)]]
     else
       table.insert(dependency_graph[prg.get_key(prereq)].dependents, {
         type = node.type,
@@ -1353,8 +1434,6 @@ end]]
 local tech_shuffle = table.deepcopy(tech_sort)
 prg.shuffle("pls_shuffle", tech_shuffle)
 
--- tech_sort empty here
-
 local new_new_dependency_graph = table.deepcopy(dependency_graph)
 local added_techs = {}
 local stripped_nodes = {}
@@ -1420,6 +1499,306 @@ table.insert(data.raw.technology["steel-processing"].effects, {
   type = "unlock-recipe",
   recipe = "steel-plate"
 })]]
+
+if do_recipe_category_randomization then
+
+  local function find_reachable_recipe_category_nodes(added_categories)
+    local top_sort = {}
+    local source_nodes = {}
+    local source_nodes_went_through_table = {1}
+    local nodes_left = table.deepcopy(dependency_graph)
+  
+    -- Remove tech unlock nodes except for ones in list
+    for _, node in pairs(nodes_left) do
+      if node.type == "recipe_category_node" and (not added_categories[prg.get_key(node)]) then
+        nodes_left[prg.get_key(node)] = nil
+      end
+    end
+  
+    for _, node in pairs(dependency_graph) do
+      if node_type_operation[node.type] == "AND" and #node.prereqs == 0 then
+        add_to_source(node, top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+      end
+    end
+    
+    local num_nodes = 0
+    for _, _ in pairs(dependency_graph) do
+      num_nodes = num_nodes + 1
+    end
+    
+    for i=1,num_nodes do
+      if #top_sort >= i then
+        local next_node = top_sort[i]
+    
+        for _, dependent in pairs(next_node.dependents) do
+          if node_type_operation[dependent.type] == "OR" then
+            add_to_source(table.deepcopy(dependency_graph[prg.get_key(dependent)]), top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+          else
+            local satisfied = true
+            for _, prereq in pairs(dependency_graph[prg.get_key(dependent)].prereqs) do
+              if not source_nodes[prg.get_key(prereq)] or (prereq.type == "recipe_category_node" and (not added_categories[prg.get_key(prereq)])) then
+                satisfied = false
+              end
+            end
+            if satisfied then
+              add_to_source(table.deepcopy(dependency_graph[prg.get_key(dependent)]), top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+            end
+          end
+        end
+      end
+    end
+  
+    local reachable_category_nodes = {}
+    for _, node in pairs(top_sort) do
+      if node.type == "recipe_category_node" then
+        reachable_category_nodes[prg.get_key(node)] = true
+      end
+    end
+
+    local reachable_machine_nodes = {}
+    for _, node in pairs(top_sort) do
+      if node.type == "crafting_entity_node" then
+        reachable_machine_nodes[prg.get_key(node)] = true
+      end
+    end
+  
+    return {top_sort = top_sort, reachable = reachable_category_nodes, reachable_machine = reachable_machine_nodes}
+  end
+
+  local all_categories = {}
+for _, category in pairs(data.raw["recipe-category"]) do
+  all_categories[prg.get_key({type = "recipe_category_node", name = category.name})] = true
+end
+local top_sort = find_reachable_recipe_category_nodes(all_categories).top_sort
+
+
+local machine_sort = {}
+table.insert(machine_sort, dependency_graph[prg.get_key({type = "character_crafting_node", name = "character"})])
+for _, node in pairs(top_sort) do
+  if node.type == "crafting_entity_node" then
+    table.insert(machine_sort, table.deepcopy(node))
+  end
+end
+
+local cat_machine_sort = {}
+local machines_per_cat_sort = {}
+for _, machine in pairs(machine_sort) do
+  local class
+  if data.raw["assembling-machine"][machine.name] then
+    class = "assembling-machine"
+  elseif data.raw["furnace"][machine.name] then
+    class = "furnace"
+  elseif data.raw.character[machine.name] then
+    class = "character"
+  end
+
+  for _, cat in pairs(data.raw[class][machine.name].crafting_categories) do
+    table.insert(cat_machine_sort, dependency_graph[prg.get_key({type = "recipe_category_node", name = cat})])
+    table.insert(machines_per_cat_sort, machine)
+  end
+
+  --[[
+  for _, machine in pairs(data.raw["assembling-machine"]) do
+    local is_in_categories = false
+    for _, cat in pairs(machine.crafting_categories) do
+      if cat == node.name then
+        table.insert(cat_machine_sort, cat)
+        table.insert(machines_per_cat_sort, machine)
+      end
+    end
+  end
+  for _, machine in pairs(data.raw.furnace) do
+    local is_in_categories = false
+    for _, cat in pairs(machine.crafting_categories) do
+      if cat == node.name then
+        table.insert(cat_machine_sort, cat)
+        table.insert(machines_per_cat_sort, machine)
+      end
+    end
+  end
+  for _, machine in pairs(data.raw.character) do
+    local is_in_categories = false
+    for _, cat in pairs(machine.crafting_categories) do
+      if cat == node.name then
+        table.insert(cat_machine_sort, cat)
+        table.insert(machines_per_cat_sort, machine)
+      end
+    end
+  end]]
+end
+
+-- Need a way to tell what's reachable *with the modified connections*
+
+-- We're rewiring the recipe-building connections
+
+-- Recipe categories hold buildings, not the other way around!
+
+-- Test if a building can be reached and add that!
+
+--cat_machine_sort_shuffled = table.deepcopy(cat_machine_sort)
+machines_per_cat_sort_shuffled = table.deepcopy(machines_per_cat_sort)
+
+-- Just need if a *machine* is reachable with a set of categories
+-- How do we stop all of a machine's "slots" from being used up for unnecessary things?
+-- Just shuffle machines for now
+
+prg.shuffle("pls_shuffle", machines_per_cat_sort_shuffled)
+
+-- TODO: REMOVE
+prg.shuffle("pls_shuffle", cat_machine_sort)
+
+--[[for _, machine in pairs(machines_per_cat_sort_shuffled) do
+  log(machine.name)
+end]]
+
+local used_machine_indices = {}
+
+local added_categories = {}
+local machines_in_order = {}
+local cats_to_machines = {}
+for _, cat in pairs(cat_machine_sort) do
+  cats_to_machines[cat.name] = {}
+end
+for i, cat in pairs(cat_machine_sort) do
+  local reachable_machines = find_reachable_recipe_category_nodes(added_categories).reachable_machine
+
+  for j = 1, #machines_per_cat_sort_shuffled do
+
+    if not used_machine_indices[j] and (reachable_machines[prg.get_key(machines_per_cat_sort_shuffled[j])] or machines_per_cat_sort_shuffled[j].type == "character_crafting_node") and not cats_to_machines[cat.name][prg.get_key(machines_per_cat_sort_shuffled[j])] then
+      used_machine_indices[j] = true
+      -- This stops the same machine from being used multiple times for a single category
+      cats_to_machines[cat.name][prg.get_key(machines_per_cat_sort_shuffled[j])] = true
+      table.insert(machines_in_order, machines_per_cat_sort_shuffled[j])
+      added_categories[prg.get_key(cat)] = true
+    end
+  end
+end
+
+--[[for _, machine in pairs(machines_in_order) do
+  log(machine.name)
+end]]
+
+-- Clear old crafting categories
+for i, machine in pairs(machines_in_order) do
+  local class
+  if data.raw["assembling-machine"][machine.name] then
+    class = "assembling-machine"
+  elseif data.raw["furnace"][machine.name] then
+    class = "furnace"
+  elseif data.raw.character[machine.name] then
+    class = "character"
+  end
+
+  data.raw[class][machine.name].crafting_categories = {}
+end
+
+for i, machine in pairs(machines_in_order) do
+  local class
+  if data.raw["assembling-machine"][machine.name] then
+    class = "assembling-machine"
+  elseif data.raw["furnace"][machine.name] then
+    class = "furnace"
+  elseif data.raw.character[machine.name] then
+    class = "character"
+  end
+
+  table.insert(data.raw[class][machine.name].crafting_categories, cat_machine_sort[i].name)
+end
+
+-- Add back rocket silo recipe and things with fluid
+
+for _, category in pairs(recipe_categories) do
+  data:extend({
+    category
+  })
+end
+
+local stone_furnace = table.deepcopy(data.raw.furnace["stone-furnace"])
+stone_furnace.name = "stupid-thing"
+
+for name, furnace in pairs(data.raw.furnace) do
+  furnace.type = "assembling-machine"
+
+  data:extend({
+    furnace
+  })
+
+  data.raw.furnace[name] = nil
+end
+
+data:extend({
+  stone_furnace
+})
+
+-- TODO: Don't change what can be handcrafted!
+
+
+
+
+
+
+if false then
+
+--[[for _, node in pairs(top_sort) do
+  log(node.name)
+end]]
+
+local cat_sort = {}
+for _, node in pairs(top_sort) do
+  if node.type == "recipe_category_node" then
+    table.insert(cat_sort, table.deepcopy(node))
+  end
+end
+
+local cat_shuffle = table.deepcopy(cat_sort)
+prg.shuffle("pls_shuffle", cat_shuffle)
+
+local added_cats = {}
+local cats_in_order = {}
+for i = 1, #cat_sort do
+  local reachable = find_reachable_recipe_category_nodes(added_cats).reachable
+
+  for _, cat in pairs(cat_shuffle) do
+    if reachable[prg.get_key(cat)] and not added_cats[prg.get_key(cat)] then
+      added_cats[prg.get_key(cat)] = true
+      table.insert(cats_in_order, cat)
+    end
+  end
+end
+
+--[[for _, node in pairs(cat_sort) do
+  log(node.name)
+end
+for _, node in pairs(cats_in_order) do
+  log(node.name)
+end]]
+
+for i, category_original in pairs(cat_sort) do
+  local category_new = cats_in_order[i]
+
+  for _, recipe in pairs(data.raw.recipe) do
+    if recipe.category == category_original.name then
+      log(category_original.name)
+      log(category_new.name)
+      recipe.category = category_new.name
+    end
+  end
+end
+
+-- Add back rocket silo recipe and things with fluid
+
+for _, category in pairs(recipe_categories) do
+  data:extend({
+    category
+  })
+end
+
+
+
+end
+
+end
+
 
 if false then
 

@@ -1,6 +1,10 @@
-AI's Science Shuffle, forked an maintained by chembot, by Alrecenk and Chembot
+AI's Science Shuffle, forked and maintained by chembot, by Alrecenk and Chembot
     - https://mods.factorio.com/mod/zChemsScienceShuffle
     - Randomizes science pack ingredients like Science-Randomizer. I haven't tried it enough to know the differences.
+
+Balanced Recipe Randomizer, by Alrecenk
+    - https://mods.factorio.com/mod/zBalancedRecipeRandomizer
+    - A recently introduced randomizer, makes a lot of simplifications in the cost calculation
 
 Archipelago Randomizer, by ?
     - I've heard of a multi-game randomizer from streamers but haven't looked into it too much

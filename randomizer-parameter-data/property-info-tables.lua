@@ -55,7 +55,7 @@ property_info.attack_parameters_cooldown = { -- TODO: Merge with gun property in
   lower_is_better = true
 }
 
-property_info.attack_parameters_cooldow_unit = { -- TODO: Merge with gun property info
+property_info.attack_parameters_cooldown_unit = { -- TODO: Merge with gun property info
   min_factor = 1 / 3,
   max_factor = 3
 }
@@ -420,6 +420,12 @@ property_info.large_inventory = {
 property_info.limited_range_loose = {
   min_factor = 1 / 20,
   max_factor = 20
+}
+
+property_info.limited_range_loose_inverse = {
+  min_factor = 1 / 20,
+  max_factor = 20,
+  lower_is_better = true
 }
 
 property_info.limited_range = {
@@ -905,6 +911,17 @@ property_info.trigger_damage = {
     },
     [3] = {
       modulus = 1
+    }
+  }
+}
+
+property_info.trigger_damage_loose = {
+  min_factor = 1 / 3,
+  max_factor = 5,
+  round = {
+    [2] = {
+      modulus = 1,
+      left_digits_to_keep = 2
     }
   }
 }

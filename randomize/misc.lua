@@ -271,6 +271,45 @@ rand.achievements = function(prototype)
     end
 end
 
+rand.equipment_active_defense_cooldown = function(prototype)
+    if prototype.type == "active-defense-equipment" then
+        local attack_parameters = prototype.attack_parameters
+
+        randomize_numerical_property({
+            prototype = prototype,
+            tbl = attack_parameters,
+            property = "cooldown",
+            property_info = property_info.attack_parameters_cooldown
+        })
+    end
+end
+
+-- Randomizes through damage modifier
+rand.equipment_active_defense_damage = function(prototype)
+    if prototype.type == "active-defense-equipment" then
+        local attack_parameters = prototype.attack_parameters
+
+        if attack_parameters.damage_modifier == nil then
+            attack_parameters.damage_modifier = 1
+        end
+
+        randomize_numerical_property({
+            prototype = prototype,
+            tbl = attack_parameters,
+            property = "damage_modifier",
+            property_info = property_info.trigger_damage_loose -- Not a trigger damage, but close enough to the same things
+        })
+    end
+end
+
+rand.equipment_active_defense_radius = function(prototype)
+    if prototype.type == "active-defense-equipment" then
+        local attack_parameters = prototype.attack_parameters
+
+        rand.trigger(prototype, attack_parameters, "randomize-effect-radius")
+    end
+end
+
 rand.equipment_grids = function(prototype)
     if prototype.type == "equipment-grid" then
         randomize_numerical_property({
@@ -300,6 +339,15 @@ rand.fluid_emissions_multiplier = function(prototype)
     end
 end
 
+rand.inventory_widths = function()
+    local utility_constants = data.raw["utility-constants"].default
+
+    log("ran")
+
+    -- Randomly decrement, increment or keep inventory width the same
+    utility_constants.inventory_width = utility_constants.inventory_width + prg.range("utility-constants-inventory-width-randomization", -1, 1)
+end
+
 rand.map_colors = function()
     for entity_class, _ in pairs(defines.prototypes.entity) do
         for _, entity in pairs(data.raw[entity_class]) do
@@ -318,59 +366,9 @@ rand.map_colors = function()
 end
 
 rand.projectile_damage = function(prototype)
-    local function randomize_action(action)
-        local function randomize_action_delivery_damage(action_delivery)
-            local function randomize_target_effects_damage(target_effect)
-                if target_effect.type == "damage" then
-                    randomize_numerical_property({
-                        tbl = target_effect.damage,
-                        property = "amount",
-                        inertia_function = inertia_function.projectile_damage,
-                        walk_params = walk_params.projectile_damage,
-                        property_info = property_info.projectile_damage
-                    })
-                end
-            end
-
-            if action_delivery.target_effects ~= nil then
-                local target_effects_table = action_delivery.target_effects
-
-                if target_effects_table.type ~= nil then
-                    randomize_target_effects_damage(target_effects_table)
-                else
-                    for _, target_effect in pairs(target_effects_table) do
-                        randomize_target_effects_damage(target_effect)
-                    end
-                end
-            end
-        end
-
-        if action ~= nil then
-            local action_delivery_table = action.action_delivery
-    
-            if action_delivery_table ~= nil then
-                if action_delivery_table.type ~= nil then
-                    randomize_action_delivery_damage(action_delivery_table)
-                else
-                    for _, action_delivery in pairs(action_delivery_table) do
-                        randomize_action_delivery_damage(action_delivery)
-                    end
-                end
-            end
-        end
-    end
-
-    if prototype.type == "projectile" and prototype.action ~= nil then
-        local action_table = prototype.action
-  
-        if action_table ~= nil then
-            if action_table.type ~= nil then
-                randomize_action(action_table)
-            else
-                for _, action in pairs(action_table) do
-                    randomize_action(action)
-                end
-            end
+    if prototype.type == "projectile" then
+        if prototype.action ~= nil then
+            rand.trigger(prototype, prototype.action, "randomize-damage-loose")
         end
     end
 end

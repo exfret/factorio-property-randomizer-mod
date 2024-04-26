@@ -13,7 +13,6 @@ end
 
 sync_belt_tiers = settings.startup["propertyrandomizer-belt-sync"].value
 
-
 local config = {}
 config.properties = {}
 

@@ -498,7 +498,7 @@ end
 
 rand.landmine_damage = function(prototype)
     if prototype.type == "land-mine" and prototype.action ~= nil then
-        rand.trigger(prototype, prototype.action, "randomize-damage")
+        rand.trigger(prototype, prototype.action, "randomize-damage-loose")
     end
 end
 

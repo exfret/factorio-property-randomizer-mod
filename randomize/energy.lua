@@ -129,6 +129,19 @@ rand.energy_source_electric_output_flow_limit = function(prototype)
     end
 end
 
+rand.energy_source_electric_drain = function(prototype)
+    -- TODO: Later, we'll be able to test if it has an electric energy source directly, but for now need to just see if the drain property is there
+    -- Burner energy sources sometimes have a different key ("burner"), but electric energy sources are always "energy_source", so we don't need to worry about that
+    if prototype.energy_source ~= nil and prototype.energy_source.drain ~= nil then
+        rand.energy({
+            prototype = prototype,
+            tbl = prototype.energy_source,
+            property = "drain",
+            property_info = property_info.limited_range_loose_inverse
+        })
+    end
+end
+
 rand.energy_source_burner_effectivity = function(prototype)
     -- TODO: Check assumption that only "burner" property can be forced to burner energy source type is true
     local energy_sources = {}

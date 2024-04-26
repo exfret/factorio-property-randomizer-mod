@@ -12,8 +12,17 @@ rand.trigger_effect_item = function(prototype, tbl, target)
             tbl = tbl.damage,
             property = "amount",
             inertia_function = inertia_function.trigger_damage,
-            property_info = property_info.trigger_damage,
-            walk_params = walk_params.trigger_damage
+            walk_params = walk_params.trigger_damage,
+            property_info = property_info.trigger_damage
+        })
+    end
+
+    if tbl.type == "damage" and target == "randomize-damage-loose" then
+        randomize_numerical_property({
+            prototype = prototype,
+            tbl = tbl.damage,
+            property = "amount",
+            property_info = property_info.trigger_damage_loose
         })
     end
 

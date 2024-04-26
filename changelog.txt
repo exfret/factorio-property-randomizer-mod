@@ -1,14 +1,21 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.2.9
-Date: ?
+Version: 0.2.10
+Date: 2024.04.22
   Features:
+    - Added upgrade line preservation option (on by default)
+  Changes:
+    - Reorganized settings
+---------------------------------------------------------------------------------------------------
+Version: 0.2.9
+Date: 2024.04.22
+  Features:
+    - Custom randomization with override settings; You can now pick and choose from among almost 100 different individual randomizations, with more on the way!
     - Randomized rocket launch times (a misc. feature)
     - Randomized a couple equipment properties I hadn't touched yet
     - Randomized underground pipe length (I hadn't done that yet!)
     - Randomized achievements (a misc. feature)
     - Randomized rocket parts required for the rocket (on with the "production" setting)
     - Note that many randomizations may not yet be ported over to the new refactored code; they will be added back in the next version
-    - Custom randomization with override settings; You can now pick and choose from among >100 different individual randomizations
   Changes:
     - Updated the description
   Organization:
@@ -44,7 +51,7 @@ Version: 0.2.7
 Date: 2024.03.14
   Features:
     - Got important progress on tech tree and unlock randomizations
-    - Reload time is now randomized to be between its old value and half of its old value doubled, thanks sassxolotl!
+    - Ammo reload time is now randomized to be between its old value and half of its old value doubled, thanks sassxolotl! (Sorry, this is an inside joke).
     - When "the rest" is checked, icon shifts are randomized
   Changes:
     - Some bonuses for being a burner energy source will be removed in future versions

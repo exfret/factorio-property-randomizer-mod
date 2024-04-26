@@ -1,12 +1,13 @@
 {
 	"name": "propertyrandomizer",
-	"version": "0.2.9",
+	"version": "0.2.10",
 	"title": "exfret's randomizer",
 	"author": "exfret",
 	"factorio_version": "1.1",
 	"description": "Randomizes game properties, like belt speeds, inserter speeds, and more. Over a hundred game properties are touched. Download for the ultimate randomization experience that will force you to think in different new ways!",
 	"dependencies": [
 		"base",
+		"informatron",
 		"(?) all-the-overhaul-modpack",
 		"(?) even-distribution",
 		"(?) space-exploration-postprocess",

@@ -58,26 +58,65 @@ end
 -- This just uses next_upgrade to find entities of the same "type" right now
 -- In the future I may need to check things like crafting categories, etc. depending on the class
 -- TODO: Fix that this just checks things in the same class
-function find_upgrade_groups (class_name)
+function find_upgrade_groups(class_name)
+  -- Find loops
+  local is_in_loop = {}
+  for _, prototype in pairs(data.raw[class_name]) do
+    local is_cyclic
+    curr_prototype = prototype.name
+    local prototypes_seen = {
+      curr_prototype = true
+    }
+    while true do
+      for other_class_name, _ in pairs(defines.prototypes.entity) do
+        if data.raw[other_class_name][curr_prototype] ~= nil then
+          local old_prototype = curr_prototype
+          curr_prototype = data.raw[other_class_name][curr_prototype].next_upgrade
+          if curr_prototype == nil then
+            is_cyclic = false
+          elseif curr_prototype == old_prototype then
+            data.raw[other_class_name][old_prototype].next_upgrade = nil
+            is_cyclic = false
+          elseif prototypes_seen[data.raw[other_class_name][curr_prototype].next_upgrade] then
+            is_cyclic = true
+          end
+          if curr_prototype ~= nil then
+            prototypes_seen[curr_prototype] = true
+          end
+          break
+        end
+      end
+      if is_cyclic ~= nil then
+        break
+      end
+    end
+
+    if is_cyclic then
+      is_in_loop[prototype.name] = true
+    end
+  end
+
   local entity_downgrades = {}
 
   for _, prototype in pairs(data.raw[class_name]) do
-    if entity_downgrades[prototype.name] == nil then
-      entity_downgrades[prototype.name] = {}
-    end
+    if not is_in_loop[prototype.name] then
+      if entity_downgrades[prototype.name] == nil then
+        entity_downgrades[prototype.name] = {}
+      end
 
-    table.insert(entity_downgrades[prototype.name], prototype)
+      table.insert(entity_downgrades[prototype.name], prototype)
 
-    if prototype.next_upgrade ~= nil then
-      for other_class_name, _ in pairs(defines.prototypes["entity"]) do
-        for entity_name, entity in pairs(data.raw[other_class_name]) do
-          if entity_name == prototype.next_upgrade then
-            if entity_downgrades[entity_name] == nil then
-              entity_downgrades[entity_name] = {}
-            end
+      if prototype.next_upgrade ~= nil then
+        for other_class_name, _ in pairs(defines.prototypes["entity"]) do
+          for entity_name, entity in pairs(data.raw[other_class_name]) do
+            if entity_name == prototype.next_upgrade then
+              if entity_downgrades[entity_name] == nil then
+                entity_downgrades[entity_name] = {}
+              end
 
-            for _, prototype_in_group in pairs(entity_downgrades[prototype.name]) do
-              table.insert(entity_downgrades[entity_name], prototype_in_group)
+              for _, prototype_in_group in pairs(entity_downgrades[prototype.name]) do
+                table.insert(entity_downgrades[entity_name], prototype_in_group)
+              end
             end
           end
         end

@@ -379,10 +379,10 @@ function randnum(passed_params)
 
   local soft_min, soft_max, hard_min, hard_max
   local str_to_cap = {
-    very_small = {1.1, 1.3},
-    small = {2, 3},
+    very_small = {1.2, 1.5},
+    small = {1.5, 3},
     medium = {4, 6},
-    big = {10, 20},
+    big = {10, 15},
     very_big = {25, 50},
     none = {0, REALLY_BIG_FLOAT_NUM}
   }
