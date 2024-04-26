@@ -29,6 +29,14 @@ rand.capsule_throw_range = function(prototype)
     end
 end
 
+rand.ammo_damage = function(prototype)
+    if prototype.type == "ammo" then
+        if prototype.ammo_type.action ~= nil then
+            rand.trigger(prototype, prototype.ammo_type.action, "randomize-damage")
+        end
+    end
+end
+
 rand.ammo_magazine_size = function(prototype)
     if prototype.type == "ammo" then
         -- Don't randomize magazine sizes of 1, they probably don't need to be randomized
@@ -56,6 +64,23 @@ rand.gun_damage_modifier = function(prototype)
             walk_params = walk_params.gun_damage_modifier,
             property_info = property_info.gun_damage_modifier
         })
+    end
+end
+
+rand.gun_movement_slowdown_factor = function(prototype)
+    if prototype.type == "gun" then
+        local attack_parameters = prototype.attack_parameters
+
+        -- Don't randomize things that don't have a slowdown
+        -- TODO: Is 0 the actual non-slowdown factor number? I'm confused how to interpret this number
+        if attack_parameters.movement_slow_down_factor ~= nil and attack_parameters.movement_slow_down_factor ~= 1 then
+            randomize_numerical_property({
+                prototype = prototype,
+                tbl = attack_parameters,
+                property = "movement_slow_down_factor",
+                property_info = property_info.limited_range_very_strict
+            })
+        end
     end
 end
 

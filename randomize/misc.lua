@@ -302,15 +302,169 @@ rand.equipment_active_defense_damage = function(prototype)
     end
 end
 
-rand.equipment_active_defense_radius = function(prototype)
+-- Doesn't work as intended since the electric active defense creates a projectile rather than doing AOE directly
+--[[rand.equipment_active_defense_radius = function(prototype)
     if prototype.type == "active-defense-equipment" then
         local attack_parameters = prototype.attack_parameters
 
         rand.trigger(prototype, attack_parameters, "randomize-effect-radius")
     end
+end]]
+
+rand.equipment_active_defense_range = function(prototype)
+    if prototype.type == "active-defense-equipment" then
+        local attack_parameters = prototype.attack_parameters
+
+        randomize_numerical_property({
+            prototype = prototype,
+            tbl = attack_parameters,
+            property = "range",
+            property_info = property_info.limited_range
+        })
+    end
 end
 
-rand.equipment_grids = function(prototype)
+rand.equipment_battery_buffer = function(prototype) -- TODO: Check if accumulator buffer capacity is checked for nil
+    if prototype.type == "battery-equipment" then
+        if prototype.energy_source.buffer_capacity ~= nil then
+            rand.energy({
+                prototype = prototype,
+                tbl = prototype.energy_source,
+                property = "buffer_capacity",
+                property_info = property_info.limited_range
+            })
+        end
+    end
+end
+
+rand.equipment_battery_input_limit = function(prototype)
+    if prototype.type == "battery-equipment" then
+        if prototype.energy_source.input_flow_limit ~= nil then
+            rand.energy({
+                prototype = prototype,
+                tbl = prototype.energy_source,
+                property = "input_flow_limit",
+                property_info = property_info.limited_range
+            })
+        end
+    end
+end
+
+rand.equipment_battery_output_limit = function(prototype)
+    if prototype.type == "battery-equipment" then
+        if prototype.energy_source.output_flow_limit ~= nil then
+            rand.energy({
+                prototype = prototype,
+                tbl = prototype.energy_source,
+                property = "output_flow_limit",
+                property_info = property_info.limited_range
+            })
+        end
+    end
+end
+
+rand.equipment_energy_shield_max_shield = function(prototype)
+    if prototype.type == "energy-shield-equipment" then
+        randomize_numerical_property({
+            prototype = prototype,
+            property = max_shield_value,
+            property_info = property_info.limited_range
+        })
+    end
+end
+
+rand.equipment_generator_power = function(prototype)
+    if prototype.type == "generator-equipment" then
+        rand.energy({
+            is_power = true,
+            prototype = prototype,
+            tbl = prototype,
+            property = "power",
+            property_info = property_info.limited_range
+        })
+    end
+end
+
+rand.equipment_movement_bonus = function(prototype)
+    if prototype.type == "movement-bonus-equipment" then
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "movement_bonus",
+            property_info = property_info.limited_range
+        })
+    end
+end
+
+rand.equipment_personal_roboport_charging_speed = function(prototype)
+    if prototype.type == "roboport-equipment" then
+        -- TODO: Add checks to make sure roboport charging energy isn't too low for engine to complain
+        rand.energy({
+            is_power = true,
+            prototype = prototype,
+            tbl = prototype,
+            property = "charging_energy",
+            property_info = property_info.limited_range
+        })
+    end
+end
+
+rand.equipment_personal_roboport_charging_station_count = function(prototype)
+    if prototype.type == "roboport-equipment" then -- Basically stolen from the corresponding function roboport_charging_station_count in entity-roboport randomization
+        -- TODO: Keep the charging offsets instead of discarding these vectors entirely (or just make them charge in a circle)
+        if prototype.charging_station_count == nil or prototype.charging_station_count == 0 then
+            if prototype.charging_offsets ~= nil then
+                prototype.charging_station_count = #prototype.charging_offsets
+            else
+                prototype.charging_station_count = 0
+            end
+        end
+
+        if prototype.charging_station_count ~= 0 then
+            randomize_numerical_property({
+                prototype = prototype,
+                property = "charging_station_count",
+                inertia_function = inertia_function.charging_station_count,
+                property_info = property_info.charging_station_count
+            })
+        end
+    end
+end
+
+rand.equipment_personal_roboport_construction_radius = function(prototype)
+    if prototype.type == "roboport-equipment" then
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "construction_radius",
+            property_info = property_info.roboport_radius
+        })
+    end
+end
+
+rand.equipment_personal_roboport_max_robots = function(prototype)
+    if prototype.type == "roboport-equipment" then
+        if prototype.robot_limit ~= nil then
+            randomize_numerical_property({
+                prototype = prototype,
+                property = "robot_limit",
+                property_info = property_info.limited_range
+            })
+        end
+    end
+end
+
+rand.equipment_solar_panel_production = function(prototype)
+    if prototype.type == "solar-panel-equipment" then
+        rand.energy({
+            is_power = true,
+            prototype = prototype,
+            tbl = prototype,
+            property = "power",
+            property_info = property_info.power_generation -- TODO: Maybe have a separate property_info just for equipmenet power
+        })
+    end
+end
+
+rand.equipment_grid_sizes = function(prototype)
     if prototype.type == "equipment-grid" then
         randomize_numerical_property({
             prototype = prototype,
@@ -339,13 +493,24 @@ rand.fluid_emissions_multiplier = function(prototype)
     end
 end
 
-rand.inventory_widths = function()
-    local utility_constants = data.raw["utility-constants"].default
-
-    log("ran")
-
-    -- Randomly decrement, increment or keep inventory width the same
-    utility_constants.inventory_width = utility_constants.inventory_width + prg.range("utility-constants-inventory-width-randomization", -1, 1)
+rand.icon_shifts = function()
+    for item_class, _ in pairs(defines.prototypes.item) do
+        for _, item in pairs(data.raw[item_class]) do
+            if item.icon ~= nil and item.icons == nil then
+                item.icons = {
+                    {
+                        icon = item.icon,
+                        icon_size = item.icon_size,
+                        shift = {
+                            (prg.value("icon_shift_" .. item.name) - 0.4) * 0.2 * item.icon_size,
+                            (prg.value("icon_shift_" .. item.name) - 0.4) * 0.2 * item.icon_size
+                        }
+                    }
+                }
+                item.icon = nil
+            end
+        end
+    end
 end
 
 rand.map_colors = function()
@@ -482,4 +647,31 @@ rand.tile_walking_speed_modifier = function()
             walk_params = walk_params.tile_walking_speed_modifier
         })
     end
+end
+
+rand.utility_constants_inventory_widths = function()
+    local utility_constants = data.raw["utility-constants"].default
+
+    -- Randomly decrement, increment or keep inventory width the same
+    utility_constants.inventory_width = utility_constants.inventory_width + prg.range("utility-constants-inventory-width-randomization", -1, 1)
+end
+
+rand.utility_constants_misc = function()
+    randomize_numerical_property({
+        prototype = data.raw["utility-constants"].default,
+        property = "train_temporary_stop_wait_time",
+        property_info = property_info.limited_range_loose
+    })
+
+    randomize_numerical_property({
+        prototype = data.raw["utility-constants"].default,
+        property = "train_time_wait_condition_default",
+        property_info = property_info.limited_range_loose
+    })
+
+    randomize_numerical_property({
+        prototype = data.raw["utility-constants"].default,
+        property = "train_inactivity_wait_condition_default",
+        property_info = property_info.limited_range_loose
+    })
 end

@@ -3,6 +3,8 @@ local property_info = require("randomizer-parameter-data/property-info-tables")
 local prototype_tables = require("randomizer-parameter-data/prototype-tables")
 local walk_params = require("randomizer-parameter-data/walk-params-tables")
 
+-- TODO: Put rand.energy into a utilities file
+
 -- is_power (optional)
 -- prototype
 -- tbl

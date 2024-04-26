@@ -4,11 +4,12 @@ require("simplex")
 
 local prototype_tables = require("randomizer-parameter-data/prototype-tables")
 local reformat = require("utilities/reformat")
+local build_graph = require("dependency-graph/build-graph.lua")
 
 local VOID_COST = 1
 local do_recipe_unlock_nodes = false
-local do_tech_node_randomization = false
-local do_recipe_category_randomization = true
+local do_tech_node_randomization = true
+local do_recipe_category_randomization = false
 
 if do_recipe_category_randomization then
     -- Form recipes for each item
@@ -830,6 +831,9 @@ for _, node in pairs(dependency_graph) do
     end
   end
 end
+
+-- DEPENDENCY GRAPH BUILDING DONE
+--dependency_graph = build_graph.construct()
 
 -- Apply swaps if one doesn't depend on the other idea
 

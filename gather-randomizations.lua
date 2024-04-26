@@ -23,6 +23,7 @@ local prototype_groups = {
 -- TODO: Smaller things that are just for modded
 -- TODO: Pipe-to-grounds and distance
 -- TOOD: Beacons
+-- TODO: Equipment! Like batteries and roboports!
 local class_to_upgrade_property = {
     ["assembling-machine"] = "crafting_speed",
     ["furnace"] = "crafting_speed",

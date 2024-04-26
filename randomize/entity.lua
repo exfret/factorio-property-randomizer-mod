@@ -834,12 +834,12 @@ rand.roboport_charging_station_count = function(prototype)
 
         -- Don't randomize roboports that can't charge bots anyways
         if prototype.charging_station_count ~= 0 then
-            randomize_numerical_property{
+            randomize_numerical_property({
                 prototype = prototype,
                 property = "charging_station_count",
                 inertia_function = inertia_function.charging_station_count,
                 property_info = property_info.charging_station_count
-            }
+            })
         end
     end
 end

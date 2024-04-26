@@ -2,6 +2,9 @@ Future
   - New randomization function
   - Rolls-first then property setting?
 
+0.2.13
+  - Some todo items throughout the code
+
 0.2.12
   - Technology randomization
 
@@ -99,6 +102,7 @@ Ideas
   - "Storylines" - Instead of each property being randomized separately, somehow combine them all into a "narrative"
   - Random *combinations* of prototypes
   - Option to keep non-randomized versions for comparison and to choose those ones if they happen to be better (make these interesting choices?)
+  - Use color lookup tables to randomize all colors
 
 Major Features
   - In-game tool for randomization customization

@@ -3,8 +3,14 @@ Version: 0.2.10
 Date: 2024.04.22
   Features:
     - Added upgrade line preservation option (on by default)
+    - Added a couple informatron entries for how you rolled on select things
+    - Randomized more equipment properties
+    - Randomized some miscellaneous things
+    - Randomized ammo damage again
   Changes:
     - Reorganized settings
+  Bugfixes:
+    - Types randomization was missing a "for" loop and therefore didn't randomize some things
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.9
 Date: 2024.04.22

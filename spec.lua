@@ -4,10 +4,16 @@ require("randomize/master")
 -- TODO: mining-drill-productivity (later version)
 
 -- TODO: Redo tag system
--- TODO: drain
 -- TODO: check lower_is_better on NEW properties
+-- TODO: movement_slowdown_factor on gun
 
 -- TODO: Balancing
+
+-- Common randomizations...
+--   attack_parameters:
+--       * range
+--       * cooldown (fire rate)
+--       * damage_modifier
 
 -- In the form {func = [function to do randomization], name = [user-friendly name of function], setting = [setting this is tied to], tags = [list of tags], default = [whether on by default], grouped = [whether it does all prototypes at once]}
 local spec = {
@@ -455,12 +461,20 @@ local spec = {
         setting = "none", -- TODO: Separate this out more
         grouped = true
     },
+    -- TODO: Other icon randomization!
+    { -- NEW
+        func = rand.biter_images,
+        name = "biter-images",
+        setting = "none",
+        grouped = true
+    },
     { -- NEW
         func = rand.recipe_groups,
         name = "recipe-order",
         setting = "none",
         grouped = true
     },
+    -- TODO: Implement
     { -- NEW (not implemented though)
         func = rand.capsule_healing,
         name = "capsule-healing",
@@ -471,15 +485,25 @@ local spec = {
         name = "capsule-throw-range",
         setting = "propertyrandomizer-military-advanced"
     },
+    { -- NEW
+        func = rand.ammo_damage,
+        name = "ammo-damage",
+        setting = "propertyrandomizer-military"
+    },
     {
         func = rand.ammo_magazine_size,
         name = "magazine-size",
         setting = "propertyrandomizer-military"
-    }, -- TODO: ammo damage?
+    },
     { -- TODO: Check to see if anything else from attack_parameters makes sense to add to gun
         func = rand.gun_damage_modifier,
         name = "gun-damage-modifier",
         setting = "propertyrandomizer-military"
+    },
+    { -- NEW
+        func = rand.gun_movement_slowdown_factor,
+        name = "gun-shooting-slowdown",
+        setting = "none"
     },
     {
         func = rand.gun_range,
@@ -514,7 +538,7 @@ local spec = {
     },
     { -- NEW
         func = rand.equipment_active_defense_cooldown,
-        name = "active-defense-equipment-cooldown",
+        name = "active-defense-equipment-fire-rate",
         setting = "propertyrandomizer-military"
     },
     { -- NEW
@@ -522,24 +546,86 @@ local spec = {
         name = "active-defense-equipment-damage",
         setting = "propertyrandomizer-military"
     },
-    { -- NEW
+    -- The electric defense actually creates a projectile rather than being AOE based directly, so this doesn't work as intended
+    -- TODO: Fix once I come up with a more general way to deal with attack parameters
+    --[[{ -- NEW
         func = rand.equipment_active_defense_radius,
         name = "active-defense-equipment-effect-radius",
         setting = "propertyrandomizer-military"
+    },]]
+    { -- NEW
+        func = rand.equipment_active_defense_range,
+        name = "active-defense-equipment-range",
+        setting = "propertyrandomizer-military-advanced"
     },
-    {
-        func = rand.equipment_grids, -- TODO: Shouldn't this specify sizes?
-        name = "equipment-grids",
+    { -- NEW
+        func = rand.equipment_battery_buffer,
+        name = "battery-equipment-buffer",
+        setting = "propertyrandomizer-production" -- TODO: Change other non-military equipment to be more in line with production setting (even if it is technically more military based)
+    },
+    { -- NEW
+        func = rand.equipment_battery_input_limit,
+        name = "battery-equipment-input-limit",
+        setting = "propertyrandomizer-production"
+    },
+    { -- NEW
+        func = rand.equipment_battery_output_limit,
+        name = "battery-equipment-output-limit",
+        setting = "propertyrandomizer-production"
+    },
+    { -- NEW
+        func = rand.equipment_energy_shield_max_shield,
+        name = "energy-shield-equipment-max-shield",
         setting = "propertyrandomizer-military"
-    }, -- TODO: equipment shapes and properties
-    { -- TODO: Equipment properties
+    }, -- energy-shield power usage is covered by equipment power usage
+    { -- NEW
+        func = rand.equipment_generator_power,
+        name = "generator-equipment-power-production",
+        setting = "propertyrandomizer-production"
+    },
+    { -- NEW
+        func = rand.equipment_movement_bonus,
+        name = "movement-equipment-bonus",
+        setting = "propertyrandomizer-logistic" -- Since it just has to do with moving around, I'm making it logistics
+    },
+    { -- NEW
+        func = rand.equipment_personal_roboport_charging_speed,
+        name = "personal-roboport-charging-speed",
+        setting = "propertyrandomizer-logistic"
+    },
+    { -- NEW
+        func = rand.equipment_personal_roboport_charging_station_count,
+        name = "personal-roboport-max-charging-robots",
+        setting = "none" -- Advanced logistic setting
+    },
+    { -- NEW
+        func = rand.equipment_personal_roboport_construction_radius,
+        name = "personal-roboport-construction-radius",
+        setting = "propertyrandomizer-logistic"
+    },
+    { -- NEW
+        func = rand.equipment_personal_roboport_max_robots,
+        name = "personal-roboport-max-robots",
+        setting = "propertyrandomizer-logistic"
+    },
+    { -- NEW
+        func = rand.equipment_solar_panel_production,
+        name = "solar-panel-equipment-power-production",
+        setting = "propertyrandomizer-production"
+    },
+    { -- NEW: Changed name
+        func = rand.equipment_grid_sizes, -- TODO: Shouldn't this specify sizes in the name?
+        name = "equipment-grid-sizes",
+        setting = "propertyrandomizer-military"
+    }, -- TODO: equipment shapes
+    {
         func = rand.fluid_emissions_multiplier,
         name = "fluid-emissions-multiplier",
         setting = "propertyrandomizer-military"
-    }, -- TODO: icon shifts
+    },
     { -- NEW
-        func = rand.inventory_widths,
-        name = "inventory-widths",
+        func = rand.icon_shifts,
+        name = "icon-shifts",
         setting = "propertyrandomizer-misc-properties",
         grouped = true
     },
@@ -565,6 +651,19 @@ local spec = {
         setting = "propertyrandomizer-misc-properties",
         grouped = true
     },
+    { -- NEW
+        func = rand.utility_constants_inventory_widths,
+        name = "inventory-widths",
+        setting = "propertyrandomizer-misc-properties",
+        grouped = true
+    },
+    { -- NEW
+        -- Currently just does some train wait times
+        func = rand.utility_constants_misc,
+        name = "misc-constants",
+        setting = "propertyrandomizer-misc-properties",
+        grouped = true
+    }, -- TODO: Utility constants map colors
     {
         func = rand.crafting_times,
         name = "recipe-times",

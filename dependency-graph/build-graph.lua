@@ -26,6 +26,8 @@ function build_graph.find_product_amounts(recipe, name, type)
             
             if result.amount ~= nil then
                 result_amount = result_amount + result.amount
+            elseif result.count ~= nil then
+                result_amount = result_amount + result.count
             else
                 result_amount = (result.amount_min + result.amount_max) / 2
             end
@@ -42,7 +44,7 @@ function build_graph.find_product_amounts(recipe, name, type)
 end
 
 -- TODO: Power for the machine
-local function build_graph.add_building_prereqs(building_node, building)
+function build_graph.add_building_prereqs(building_node, building)
     for item_class, _ in pairs(defines.prototypes.item) do
         for _, item in pairs(data.raw[item_class]) do
             if item.place_result ~= nil and item.place_result == building.name then
@@ -123,17 +125,18 @@ end
 
 -- For trees and rocks in vanilla
 function build_graph.add_non_resource_autoplace(dependency_graph)
-    for entity_class, _ in pairs(defines.prototypes.entities) do
+    for entity_class, _ in pairs(defines.prototypes.entity) do
         for _, entity in pairs(data.raw[entity_class]) do
             if entity.type ~= "resource" then
                 if entity.autoplace ~= nil then
                     -- It's too difficult to tell from noise expressions what the cost will be like, so ignore that for now
                     if entity.minable ~= nil then
-                        if entity.minable.results == nil then -- TODO: Do this in reformatting
+                        if entity.minable.results == nil and entity.minable.result ~= nil then -- TODO: Do this in reformatting
                             entity.minable.results = {
-                                {name = entity.minable.result, count = entity.minable.count}
+                                {name = entity.minable.result, amount = entity.minable.count or 1}
                             }
                             entity.minable.result = nil
+                            entity.minable.count = nil
                         end
 
                         -- Don't add nodes that don't produce anything anyways
@@ -229,7 +232,7 @@ function build_graph.add_items_and_fluids(dependency_graph)
     local function add_item_or_fluid(dependency_graph, name, type)
         local node = {
             type = type .. "_node",
-            name = name
+            name = name,
             prereqs = {}
         }
 
@@ -251,14 +254,16 @@ function build_graph.add_items_and_fluids(dependency_graph)
 
         -- Add minable results for resources
         for _, resource in pairs(data.raw.recipe) do
-            if resource.autoplace ~= nil
+            if resource.autoplace ~= nil then
                 -- Resources may have to be minable, but I'm checking just in case
+                -- TODO: This is duplicate code, refactor
                 if resource.minable ~= nil then
                     if resource.minable.results == nil then -- TODO: Do this in reformatting
                         resource.minable.results = {
-                            {name = resource.minable.result, count = resource.minable.count}
+                            {name = resource.minable.result, amount = resource.minable.count or 1}
                         }
                         resource.minable.result = nil
+                        resource.minable.count = nil
                     end
 
                     -- TODO: I may need to rename this function since it's supporting minable now too
@@ -279,15 +284,16 @@ function build_graph.add_items_and_fluids(dependency_graph)
 
         -- Add minable results for non-resource autoplaced entities TODO
         for entity_class in pairs(defines.prototypes.entity) do
-            if entity_class ~= "resource" do
+            if entity_class ~= "resource" then
                 for _, entity in pairs(data.raw[entity_class]) do
-                    if entity.autoplace ~= nil
+                    if entity.autoplace ~= nil then
                         if entity.minable ~= nil then
                             if entity.minable.results == nil then -- TODO: Do this in reformatting
                                 entity.minable.results = {
-                                    {name = entity.minable.result, count = entity.minable.count}
+                                    {name = entity.minable.result, amount = entity.minable.count}
                                 }
                                 entity.minable.result = nil
+                                entity.minable.count = nil
                             end
 
                             -- TODO: I may need to rename this function since it's supporting minable now too
@@ -318,13 +324,13 @@ function build_graph.add_items_and_fluids(dependency_graph)
             add_item_or_fluid(dependency_graph, item.name, "item")
         end
     end
-    for _, fluid in pairs(data.raw.fulid) do
+    for _, fluid in pairs(data.raw.fluid) do
         add_item_or_fluid(dependency_graph, fluid.name, "fluid")
 
         -- Offshore pumps
         for _, offshore_pump in pairs(data.raw["offshore-pump"]) do
             if offshore_pump.fluid == fluid.name then
-                table.insert(dependency_graph[prg.get_key(fluid)].prereqs, {
+                table.insert(dependency_graph[prg.get_key({type = "fluid_node", name = fluid.name})].prereqs, {
                     type = "offshore_pump_node",
                     name = offshore_pump.name,
                     amount = 1 / offshore_pump.pumping_speed
@@ -364,6 +370,26 @@ function build_graph.add_fuel_categories(dependency_graph)
     end
 end
 
+function build_graph.add_fluid_fuel(dependency_graph)
+    local fluid_fuel_node = { -- OR
+        type = "fluid_fuel_node",
+        name = "fluid_fuel",
+        prereqs = {}
+    }
+    
+    for _, fluid in pairs(data.raw.fluid) do
+        if fluid.fuel_value ~= nil and util.parse_energy(fluid.fuel_value) > 0 then
+            table.insert(fluid_fuel_node.prereqs, {
+                type = "fluid_node",
+                name = fluid.name,
+                amount = 1 / util.parse_energy(fluid.fuel_value)
+            })
+        end
+    end
+
+    dependency_graph[fluid_fuel_node] = fluid_fuel_node
+end
+
 -- Hacked together electricity node
 function build_graph.add_electricity_node(dependency_graph)
     local electricity_node = { -- AND
@@ -377,6 +403,7 @@ function build_graph.add_electricity_node(dependency_graph)
         name = "electricity_distribution",
         prereqs = {}
     }
+
     for _, electric_pole in pairs(data.raw["electric-pole"]) do
         local electric_pole_node = {
             type = "electric_pole_node",
@@ -384,20 +411,22 @@ function build_graph.add_electricity_node(dependency_graph)
             prereqs = {}
         }
 
-        add_building_prereqs(electric_pole_node, electric_pole)
+        build_graph.add_building_prereqs(electric_pole_node, electric_pole)
 
         dependency_graph[prg.get_key(electric_pole_node)] = electric_pole_node
 
         table.insert(electricity_distribution_node.prereqs, {
-            type = "electric_pole_node",
+            type = electric_pole_node.type,
             name = electric_pole.name,
             amount = 1
         })
     end
+    
     dependency_graph[prg.get_key(electricity_distribution_node)] = electricity_distribution_node
+    
     table.insert(electricity_node.prereqs, {
-        type = "electricity_distribution_node",
-        name = "electricity_distribution",
+        type = electricity_distribution_node.type,
+        name = electricity_distribution_node.name,
         amount = 1
     })
 
@@ -413,41 +442,117 @@ function build_graph.add_electricity_node(dependency_graph)
         name = "burner_generator_electricity_production",
         prereqs = {}
     }
+
     for _, burner_generator in pairs(data.raw["burner-generator"]) do
-        local prototype_node = {
+        local prototype_node = { -- OR
             type = "burner_generator_node",
             name = burner_generator.name,
             prereqs = {}
         }
 
-        add_building_prereqs(prototype_node)
+        build_graph.add_building_prereqs(prototype_node, burner_generator)
 
         dependency_graph[prg.get_key(prototype_node)] = prototype_node
 
         table.insert(burner_generator_node.prereqs, {
-            type = "burner_generator_node",
-            name = burner_generator.name,
+            type = prototype_node.type,
+            name = prototype_node.name,
             amount = 1
         })
     end
-    dependency_graph[prg.get_key(burner_generator_electricity_production_node)] = burner_generator_electricity_production_node
+
+    dependency_graph[prg.get_key(burner_generator_node)] = burner_generator_node
+    
     table.insert(electricity_production_node.prereqs, {
-        type = "burner_generator_electricity_production_node",
-        name = "burner_generator_electricity_production",
-        prereqs = {}
+        type = burner_generator_node.type,
+        name = burner_generator_node.name,
+        amount = 1
     })
 
-    local fluid_generator_electricity_node = { -- AND
+    local fluid_generator_electricity_node = { -- OR
         type = "fluid_generator_electricity_node",
         name = "fluid_generator_electricity",
         prereqs = {}
     }
 
-    -- TODO
-    local fluid_generator_node = { -- OR
-    }
+    for _, generator in pairs(data.raw.generator) do
+        local fluid_generator_node = { -- AND
+            type = "fluid_generator_node",
+            name = generator.name,
+            prereqs = {}
+        }
+
+        local fluid_generator_building_node = { -- OR
+            type = "fluid_generator_building_node",
+            name = generator.name,
+            prereqs = {}
+        }
+
+        build_graph.add_building_prereqs(fluid_generator_building_node, generator)
+
+        dependency_graph[prg.get_key(fluid_generator_building_node)] = fluid_generator_building_node
+
+        table.insert(fluid_generator_node.prereqs, {
+            type = fluid_generator_building_node.type,
+            name = fluid_generator_building_node.name,
+            amount = 1
+        })
+
+        local fluid_generator_steam_node = { -- OR
+            type = "fluid_generator_steam_node",
+            name = generator.name,
+            prereqs = {}
+        }
+        if generator.fluid_box.filter ~= nil then
+            table.insert(fluid_generator_steam_node.prereqs, {
+                type = "fluid_node",
+                name = generator.fluid_box.filter,
+                amount = 1
+            })
+        else
+            table.insert(fluid_generator_steam_node.prereqs, {
+                type = "fluid_fuel_node",
+                name = "fluid_fuel",
+                amount = 1
+            })
+        end
+
+        dependency_graph[prg.get_key(fluid_generator_steam_node)] = fluid_generator_steam_node
+
+        table.insert(fluid_generator_node.prereqs, {
+            type = fluid_generator_steam_node.type,
+            name = fluid_generator_steam_node.name,
+            amount = 1
+        })
+
+        dependency_graph[prg.get_key(fluid_generator_node)] = fluid_generator_node
+
+        table.insert(fluid_generator_electricity_node.prereqs, {
+            type = fluid_generator_node.type,
+            name = fluid_generator_node.name,
+            amount = 1
+        })
+    end
+
+    dependency_graph[prg.get_key(fluid_generator_electricity_node)] = fluid_generator_electricity_node
+
+    table.insert(electricity_production_node.prereqs, {
+        type = fluid_generator_electricity_node.type,
+        name = fluid_generator_electricity_node.name,
+        amount = 1
+    })
+
+    dependency_graph[prg.get_key(electricity_production_node)] = electricity_production_node
+
+    table.insert(electricity_node.prereqs, {
+        type = electricity_production_node.type,
+        name = electricity_production_node.name,
+        amount = 1
+    })
+
+    dependency_graph[prg.get_key(electricity_node)] = electricity_node
 end
--- TODO: Check boilers and offshore pumps with fluids
+-- TODO: Check boilers with fluids
 
 function build_graph.add_crafting_entities(dependency_graph)
     for _, crafting_entity_class in pairs(prototype_tables.crafting_machine_classes) do
@@ -566,7 +671,7 @@ function build_graph.add_recipe_categories(dependency_graph)
             prereqs = {}
         }
 
-        for _, crafting_class in pairs(prototype_tables.crafting_classes) do
+        for _, crafting_class in pairs(prototype_tables.crafting_machine_classes) do
             for _, crafting_machine in pairs(data.raw[crafting_class]) do
                 for _, machine_category in pairs(crafting_machine.crafting_categories) do
                     if machine_category == category.name then
@@ -618,7 +723,7 @@ function build_graph.add_resources(dependency_graph)
 
         -- TODO: Do this in reformatting!
         if resource.category == nil then
-            resource.category == "basic-solid"
+            resource.category = "basic-solid"
         end
         table.insert(node.prereqs, {
             type = "resource_category_node",
@@ -634,7 +739,7 @@ function build_graph.add_resource_categories(dependency_graph)
     for _, category in pairs(data.raw["resource-category"]) do
         local node = {
             type = "resource_category_node",
-            name = category.name
+            name = category.name,
             prereqs = {}
         }
 
@@ -653,7 +758,7 @@ function build_graph.add_resource_categories(dependency_graph)
         end
 
         for _, mining_machine in pairs(data.raw["mining-drill"]) do
-            for _, mining_category in pairs(mining_machine.mining_categories) do
+            for _, mining_category in pairs(mining_machine.resource_categories) do
                 if mining_category == category.name then
                     table.insert(node.prereqs, {
                         type = "mining_machine_node",
@@ -702,7 +807,7 @@ function build_graph.add_mining_entities(dependency_graph)
             prereqs = {}
         }
 
-        build_graph.add_building_prereqs(node, mining_entity)
+        build_graph.add_building_prereqs(node, mining_machine)
 
         dependency_graph[prg.get_key(node)] = node
     end
@@ -718,6 +823,7 @@ function build_graph.construct()
     build_graph.add_characters(dependency_graph)
     build_graph.add_crafting_entities(dependency_graph)
     build_graph.add_electricity_node(dependency_graph)
+    build_graph.add_fluid_fuel(dependency_graph)
     build_graph.add_fuel_categories(dependency_graph)
     build_graph.add_items_and_fluids(dependency_graph)
     build_graph.add_labs(dependency_graph)

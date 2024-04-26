@@ -7,3 +7,5 @@ require("randomize/item")
 require("randomize/misc")
 require("randomize/recipe")
 require("randomize/tech")
+
+require("randomize/special/collision-mask")

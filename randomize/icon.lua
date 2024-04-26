@@ -5,6 +5,7 @@ local property_info = require("randomizer-parameter-data/property-info-tables")
 local prototype_tables = require("randomizer-parameter-data/prototype-tables")
 local walk_params = require("randomizer-parameter-data/walk-params-tables")
 
+-- TODO: Put these into a utilities file
 rand.swap_properties = function(prototype_1, prototype_2, properties)
     local temp_property_info = {}
     for _, property in pairs(properties) do
@@ -31,6 +32,79 @@ rand.permute = function(prototypes, properties, do_attack_parameters)
             rand.swap_properties(prototypes[i].attack_parameters, prototypes[j].attack_parameters, {"sound", "animation", "cyclic_sound"})
         end
     end
+end
+
+rand.biter_images = function()
+    local building_image_properties = { -- Next is entity-with-health
+        "dying_explosion",
+        "dying_trigger_effect",
+        "damaged_trigger_effect",
+        "attack_reaction",
+        "repair_sound",
+        "alert_when_damaged",
+        "hide_resistances",
+        "create_ghost_on_death",
+        "random_corpse_variation",
+        "integration_parch_render_layer",
+        "corpse",
+        "integration_patch", -- Next is entity
+        "icons",
+        "icon",
+        "icon_size",
+        "icon_mipmaps",
+        "collision_box",
+        "collision_mask",
+        "map_generator_bounding_box",
+        "selection_box",
+        "drawing_box",
+        "sticker_box",
+        "hit_visualization_box",
+        "trigger_target_mask",
+        "build_grid_size",
+        "remove_decoratives",
+        "shooting_cursor_size",
+        "created_smoke",
+        "working_sound",
+        "created_effect",
+        "build_sound",
+        "mined_sound",
+        "mining_sound",
+        "rotated_sound",
+        "vehicle_impact_sound",
+        "open_sound",
+        "close_sound",
+        "radius_visualization_specification",
+        "alert_icon_shift",
+        "alert_icon_scale",
+        "fast_replaceable_group",
+        "next_upgrade",
+        "protected_from_tile_building",
+        "remains_when_mined",
+        "additional_pastable_entities",
+        "tile_width",
+        "tile_height",
+        "water_reflection"
+    }
+
+    local unit_image_properties = {
+        "run_animation",
+        "alternative_attacking_frame_sequence",
+        "dying_sound",
+        "light",
+        "render_layer",
+        "running_sound_animation_positions",
+        "walking_sound"
+    }
+    for _, property in pairs(building_image_properties) do
+        table.insert(unit_image_properties, property)
+    end
+    
+    number_to_prototype = {}
+    for _, prototype in pairs(data.raw.unit) do
+        table.insert(number_to_prototype, prototype)
+    end
+    
+    rand.permute(number_to_prototype, unit_image_properties, true)
 end
 
 rand.icons = function()

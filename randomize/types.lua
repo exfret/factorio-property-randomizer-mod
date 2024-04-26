@@ -60,7 +60,9 @@ rand.trigger_item = function(prototype, tbl, target)
         if delivery.type ~= nil then
             rand.trigger_delivery(prototype, delivery, target)
         else
-            rand.trigger_delivery(prototype, delivery, target)
+            for _, val in pairs(delivery) do
+                rand.trigger_delivery(prototype, val, target)
+            end
         end
     end
 end

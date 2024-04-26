@@ -14,6 +14,7 @@ reformat.prototype = {}
 reformat.common = {}
 reformat.test = {}
 
+-- TODO: Fix spelling mistake
 function reformat.type.ingredient_prototyte(ingredient)
     if ingredient.name == nil or ingredient.amount == nil then
         ingredient.name = ingredient[1]
@@ -26,6 +27,7 @@ function reformat.type.ingredient_prototyte(ingredient)
     end
 end
 
+-- TODO: Fix spelling mistake
 function reformat.type.product_prototyte(product)
     if product[1] then
         product.name = product[1]

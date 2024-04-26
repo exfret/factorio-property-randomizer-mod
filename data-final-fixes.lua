@@ -20,7 +20,7 @@ prg.seed(seed_setting)
 
 randomize()
 
---local dependency_utils = require("dependency-graph/dependency-utils")
+--require("dependency-graph/dependency-utils-new")
 
 if false then
 
