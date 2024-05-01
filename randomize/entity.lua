@@ -4,6 +4,8 @@ require("randomize/types")
 require("globals")
 require("linking-utils")
 
+local reformat = require("utilities/reformat")
+
 local inertia_function = require("randomizer-parameter-data/inertia-function-tables")
 local property_info = require("randomizer-parameter-data/property-info-tables")
 local prototype_tables = require("randomizer-parameter-data/prototype-tables")
