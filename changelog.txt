@@ -1,6 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.11
+Date: ?
+---------------------------------------------------------------------------------------------------
 Version: 0.2.10
-Date: 2024.04.22
+Date: 2024.04.30
   Features:
     - Added upgrade line preservation option (on by default)
     - Added a couple informatron entries for how you rolled on select things
