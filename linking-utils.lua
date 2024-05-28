@@ -61,6 +61,7 @@ end
 function find_upgrade_groups(class_name)
   -- Find loops
   local is_in_loop = {}
+  local is_not_in_loop = {}
   for _, prototype in pairs(data.raw[class_name]) do
     local is_cyclic
     curr_prototype = prototype.name
@@ -68,21 +69,32 @@ function find_upgrade_groups(class_name)
       curr_prototype = true
     }
     while true do
+      -- If we've already evaluated this prototype, break
+      if is_in_loop[curr_prototype] then
+        is_cyclic = true
+        break
+      elseif is_not_in_loop[curr_prototype] then
+        is_cyclic = false
+        break
+      end
+
+      -- Find this entity from its name
       for other_class_name, _ in pairs(defines.prototypes.entity) do
         if data.raw[other_class_name][curr_prototype] ~= nil then
           local old_prototype = curr_prototype
           curr_prototype = data.raw[other_class_name][curr_prototype].next_upgrade
-          if curr_prototype == nil then
+          if curr_prototype == nil or curr_prototype == "" then
             is_cyclic = false
           elseif curr_prototype == old_prototype then
             data.raw[other_class_name][old_prototype].next_upgrade = nil
             is_cyclic = false
-          elseif prototypes_seen[data.raw[other_class_name][curr_prototype].next_upgrade] then
+          elseif prototypes_seen[curr_prototype] then
             is_cyclic = true
           end
-          if curr_prototype ~= nil then
+          if curr_prototype ~= nil and curr_prototype ~= "" then
             prototypes_seen[curr_prototype] = true
           end
+          -- Entity found, break from the search
           break
         end
       end
@@ -106,7 +118,7 @@ function find_upgrade_groups(class_name)
 
       table.insert(entity_downgrades[prototype.name], prototype)
 
-      if prototype.next_upgrade ~= nil then
+      if prototype.next_upgrade ~= nil and prototype.next_upgrade ~= "" then
         for other_class_name, _ in pairs(defines.prototypes["entity"]) do
           for entity_name, entity in pairs(data.raw[other_class_name]) do
             if entity_name == prototype.next_upgrade then

@@ -53,17 +53,17 @@ function prg.value(key, XTable)
 end
 
 -- Get an integer value between [1, max]
-function prg.int(key, max)
-  return math.floor(prg.value(key) * max) + 1
+function prg.int(key, max, XTable)
+  return math.floor(prg.value(key, XTable) * max) + 1
 end
 
 -- Get an integer value between [min, max]
-function prg.range(key, min, max)
-  return min + prg.int(key, max - min + 1) - 1
+function prg.range(key, min, max, XTable)
+  return min + prg.int(key, max - min + 1, XTable) - 1
 end
 
-function prg.float_range(key, min, max)
-  return min + prg.value(key) * (max - min)
+function prg.float_range(key, min, max, XTable)
+  return min + prg.value(key, XTable) * (max - min)
 end
 
 --Sshuffle a table

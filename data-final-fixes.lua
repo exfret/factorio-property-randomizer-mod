@@ -3,6 +3,35 @@ info.warnings = {}
 
 require("gather-randomizations")
 require("analysis/karma")
+require("docs")
+
+
+--[[log(data.raw.recipe["iron-gear-wheel"].energy_required)
+
+local prototype_class_to_doc_entry = {}
+for _, doc_entry in pairs(docs.prototypes) do
+    if doc_entry.typename ~= nil then
+        prototype_class_to_doc_entry[doc_entry.typename] = doc_entry
+    end
+end
+
+for class_name, class in pairs(data.raw) do
+    local doc_entry = prototype_class_to_doc_entry[class_name]
+
+    for _, prototype in pairs(class) do
+        for _, property_entry in pairs(doc_entry.properties) do
+            if property_entry.default ~= nil and property_entry.default.complex_type == "literal" then
+              -- TODO: Table defaults
+                if prototype[property_entry.name] == nil and type(property_entry.default.value) ~= "table" and prototype.type ~= "optimized-decorative" then
+                    prototype[property_entry.name] = property_entry.default.value
+                end
+            end
+        end
+    end
+end
+
+log(data.raw.recipe["iron-gear-wheel"].energy_required)]]
+--require("dependency-graph/dependency-utils")
 
 local old_data_raw = {}
 for _, class in pairs(data.raw) do

@@ -447,12 +447,14 @@ rand.turret_energy_usage = function(prototype)
         if prototype.attack_parameters.ammo_type ~= nil then
             local ammo_type = prototype.attack_parameters.ammo_type
 
-            rand.energy({
-                prototype = prototype,
-                tbl = ammo_type,
-                property = "energy_consumption",
-                property_info = property_info.limited_range
-            })
+            if ammo_type.energy_consumption ~= nil then
+                rand.energy({
+                    prototype = prototype,
+                    tbl = ammo_type,
+                    property = "energy_consumption",
+                    property_info = property_info.limited_range
+                })
+            end
         end
     end
 end

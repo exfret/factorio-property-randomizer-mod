@@ -4,12 +4,30 @@ require("simplex")
 
 local prototype_tables = require("randomizer-parameter-data/prototype-tables")
 local reformat = require("utilities/reformat")
-local build_graph = require("dependency-graph/build-graph.lua")
+local build_graph = require("dependency-graph/build-graph")
 
 local VOID_COST = 1
 local do_recipe_unlock_nodes = false
 local do_tech_node_randomization = true
 local do_recipe_category_randomization = false
+local do_recipe_randomization = true
+
+local old_data_raw_data = table.deepcopy(data.raw)
+
+--[[for _, technology in pairs(data.raw.technology) do
+  if technology.effects ~= nil then
+    local effects = {}
+    for _, effect in pairs(technology.effects) do
+      if effect.type == "unlock-recipe" then
+        table.insert(effects, table.deepcopy(effect))
+      end
+    end
+
+    for _, effect in pairs(effects) do
+      table.insert(technology.effects, effect)
+    end
+  end
+end]]
 
 if do_recipe_category_randomization then
     -- Form recipes for each item
@@ -18,8 +36,6 @@ if do_recipe_category_randomization then
     for _, category in pairs(data.raw["recipe-category"]) do
       category_to_old_recipes[category.name] = {}
     end
-
-
 
     -- Temporarily remove other categories so they don't get randomized
 
@@ -284,6 +300,7 @@ for _, recipe in pairs(recipes_not_added) do
     end
 
     if unlocks_recipe then
+      -- Pretend like there are two unlocks for the recipes for recipe unlock rando
       table.insert(recipe_tech_unlock_node.prereqs, {
         type = "technology_node",
         name = technology.name,
@@ -787,7 +804,7 @@ end
   end
 end]]
 
-log("Adding resource recipes...")
+--[[log("Adding resource recipes...")
 
 for _, node in pairs(dependency_graph) do
   -- Quick and hacky!
@@ -830,7 +847,7 @@ for _, node in pairs(dependency_graph) do
       })
     end
   end
-end
+end]]
 
 -- DEPENDENCY GRAPH BUILDING DONE
 --dependency_graph = build_graph.construct()
@@ -983,6 +1000,8 @@ function add_to_source(node, top_sort, source_nodes, source_nodes_went_through_t
 end
 
 if do_recipe_unlock_nodes then
+
+  function recipe_unlocks_randomization()
 
 -- Start with recipe_tech_unlock_node
 -- Categorize recipes as a specific building prototype, or intermediate, or science? Basically just classify by class
@@ -1354,7 +1373,11 @@ end
 
 end
 
+end
+
 if do_tech_node_randomization then
+
+  function randomize_technologies()
 
 local function find_reachable_tech_unlock_nodes_top(added_techs)
   local top_sort = {}
@@ -1419,7 +1442,7 @@ end
 local top_sort = find_reachable_tech_unlock_nodes_top(all_techs).top_sort
 
 for _, thing in pairs(top_sort) do
-  log(thing.name)
+  --log(thing.name)
 end
 
 local tech_sort = {}
@@ -1435,8 +1458,61 @@ end
 
 end]]
 
+local color_tech_to_tech_inds = {}
+color_tech_to_tech_inds["space"] = {}
+color_tech_to_tech_inds["yp"] = {}
+color_tech_to_tech_inds["y"] = {}
+color_tech_to_tech_inds["p"] = {}
+color_tech_to_tech_inds["b"] = {}
+color_tech_to_tech_inds["g"] = {}
+color_tech_to_tech_inds["r"] = {}
+for ind, tech in pairs(tech_sort) do
+  local technology = data.raw.technology[tech.name]
+
+  local ing = {}
+  for _, thing in pairs(technology.unit.ingredients) do
+    ing[thing[1] or thing.name] = true
+  end
+
+  if ing["space-science-pack"] then
+    table.insert(color_tech_to_tech_inds["space"], ind)
+  elseif ing["utility-science-pack"] and ing["production-science-pack"] then
+    table.insert(color_tech_to_tech_inds["yp"], ind)
+  elseif ing["utility-science-pack"] then
+    table.insert(color_tech_to_tech_inds["y"], ind)
+  elseif ing["production-science-pack"] then
+    table.insert(color_tech_to_tech_inds["p"], ind)
+  elseif ing["chemical-science-pack"] then
+    table.insert(color_tech_to_tech_inds["b"], ind)
+  elseif ing["logistic-science-pack"] then
+    table.insert(color_tech_to_tech_inds["g"], ind)
+  elseif ing["automation-science-pack"] then
+    table.insert(color_tech_to_tech_inds["r"], ind)
+  else
+    error()
+  end
+end
+
+
 local tech_shuffle = table.deepcopy(tech_sort)
-prg.shuffle("pls_shuffle", tech_shuffle)
+
+local tech_table = {}
+for color, tech_inds in pairs(color_tech_to_tech_inds) do
+  tech_table[color] = {}
+
+  for _, ind in pairs(tech_inds) do
+    table.insert(tech_table[color], tech_sort[ind])
+  end
+
+  prg.shuffle("pls_shuffle", tech_table[color])
+
+  for i, ind in pairs(tech_inds) do
+    tech_shuffle[ind] = tech_table[color][i]
+  end
+end
+
+--prg.shuffle("pls_shuffle", tech_shuffle)
+
 
 local new_new_dependency_graph = table.deepcopy(dependency_graph)
 local added_techs = {}
@@ -1471,6 +1547,8 @@ for _, node in pairs(new_new_dependency_graph) do
       end
     end
   end
+end
+
 end
 
 end
@@ -2052,7 +2130,7 @@ log(serpent.block(costs))
 
 end -- End of recipe cost evaluation
 
-if false then
+if do_recipe_randomization then
 
 local vanilla_costs = {
   accumulator = 48,
@@ -2062,7 +2140,7 @@ local vanilla_costs = {
   ["artillery-targeting-remote"] = 284.40000000000003,
   ["artillery-turret"] = 1455,
   ["artillery-wagon"] = 2931,
-  ["artillery-wagon-cannon"] = 0,
+  ["artillery-wagon-cannon"] = 100000000000,
   ["assembling-machine-1"] = 66.5,
   ["assembling-machine-2"] = 137,
   ["assembling-machine-3"] = 1349,
@@ -2074,10 +2152,10 @@ local vanilla_costs = {
   beacon = 1196,
   ["belt-immunity-equipment"] = 341,
   ["big-electric-pole"] = 78,
-  blueprint = 0,
-  ["blueprint-book"] = 0,
+  blueprint = 100000000000,
+  ["blueprint-book"] = 100000000000,
   boiler = 19,
-  ["burner-generator"] = 0,
+  ["burner-generator"] = 100000000000,
   ["burner-inserter"] = 8,
   ["burner-mining-drill"] = 28,
   ["cannon-shell"] = 26.5,
@@ -2089,7 +2167,7 @@ local vanilla_costs = {
   ["cliff-explosives"] = 35.5,
   ["cluster-grenade"] = 210.5,
   coal = 1,
-  coin = 0,
+  coin = 100000000000,
   ["combat-shotgun"] = 1,
   concrete = 1.9000000000000002,
   ["constant-combinator"] = 23.5,
@@ -2097,17 +2175,16 @@ local vanilla_costs = {
   ["copper-cable"] = 1.5,
   ["copper-ore"] = 1,
   ["copper-plate"] = 2,
-  ["copy-paste-tool"] = 0,
-  ["crude-oil-barrel"] = 2,
-  ["cut-paste-tool"] = 0,
+  ["copy-paste-tool"] = 100000000000,
+  ["cut-paste-tool"] = 100000000000,
   ["decider-combinator"] = 46,
-  ["deconstruction-planner"] = 0,
+  ["deconstruction-planner"] = 100000000000,
   ["defender-capsule"] = 131.5,
   ["destroyer-capsule"] = 2929.5,
   ["discharge-defense-equipment"] = 5962.5,
   ["discharge-defense-remote"] = 8.5,
   ["distractor-capsule"] = 665,
-  ["dummy-steel-axe"] = 0,
+  ["dummy-steel-axe"] = 100000000000,
   ["effectivity-module"] = 268.5,
   ["effectivity-module-2"] = 1754.5,
   ["effectivity-module-3"] = 9893,
@@ -2116,7 +2193,7 @@ local vanilla_costs = {
   ["electric-furnace"] = 371,
   ["electric-mining-drill"] = 68.5,
   ["electronic-circuit"] = 7.5,
-  ["empty-barrel"] = 1,
+  ["empty-barrel"] = 100000000000,
   ["energy-shield-equipment"] = 341,
   ["energy-shield-mk2-equipment"] = 3650.5,
   ["engine-unit"] = 23,
@@ -2124,7 +2201,7 @@ local vanilla_costs = {
   ["explosive-cannon-shell"] = 28,
   ["explosive-rocket"] = 18,
   ["explosive-uranium-cannon-shell"] = 29.507049345417926,
-  explosives = 1.5,
+  explosives = 5,
   ["express-loader"] = 746,
   ["express-splitter"] = 495.90000000000003,
   ["express-transport-belt"] = 84.600000000000009,
@@ -2148,31 +2225,29 @@ local vanilla_costs = {
   ["gun-turret"] = 111,
   ["hazard-concrete"] = 2,
   ["heat-exchanger"] = 341,
-  ["heat-interface"] = 0,
+  ["heat-interface"] = 100000000000,
   ["heat-pipe"] = 151,
   ["heavy-armor"] = 751,
-  ["heavy-oil-barrel"] = 2,
-  ["infinity-chest"] = 0,
-  ["infinity-pipe"] = 0,
+  ["infinity-chest"] = 100000000000,
+  ["infinity-pipe"] = 100000000000,
   inserter = 15.5,
   ["iron-chest"] = 17,
   ["iron-gear-wheel"] = 5,
   ["iron-ore"] = 1,
   ["iron-plate"] = 2,
   ["iron-stick"] = 1.5,
-  ["item-unknown"] = 0,
-  ["item-with-inventory"] = 0,
-  ["item-with-label"] = 0,
-  ["item-with-tags"] = 0,
+  ["item-unknown"] = 100000000000,
+  ["item-with-inventory"] = 100000000000,
+  ["item-with-label"] = 100000000000,
+  ["item-with-tags"] = 100000000000,
   lab = 142,
   ["land-mine"] = 3.75,
   landfill = 21,
   ["laser-turret"] = 474.20000000000005,
   ["light-armor"] = 81,
-  ["light-oil-barrel"] = 2,
-  ["linked-belt"] = 0,
-  ["linked-chest"] = 0,
-  loader = 171,
+  ["linked-belt"] = 100000000000,
+  ["linked-chest"] = 100000000000,
+  loader = 100000000000,
   locomotive = 866,
   ["logistic-chest-active-provider"] = 158.5,
   ["logistic-chest-buffer"] = 158.5,
@@ -2183,7 +2258,6 @@ local vanilla_costs = {
   ["logistic-science-pack"] = 20.5,
   ["long-handed-inserter"] = 23.5,
   ["low-density-structure"] = 123,
-  ["lubricant-barrel"] = 7,
   ["medium-electric-pole"] = 33,
   ["military-science-pack"] = 42.5,
   ["modular-armor"] = 1931,
@@ -2195,14 +2269,13 @@ local vanilla_costs = {
   ["personal-laser-defense-equipment"] = 6710,
   ["personal-roboport-equipment"] = 1048,
   ["personal-roboport-mk2-equipment"] = 26591,
-  ["petroleum-gas-barrel"] = 2,
   ["piercing-rounds-magazine"] = 31,
   ["piercing-shotgun-shell"] = 51,
   pipe = 3,
   ["pipe-to-ground"] = 20.5,
   pistol = 21,
   ["plastic-bar"] = 12,
-  ["player-port"] = 0,
+  ["player-port"] = 100000000000,
   ["poison-capsule"] = 66.5,
   ["power-armor"] = 9247,
   ["power-armor-mk2"] = 103380,
@@ -2219,7 +2292,7 @@ local vanilla_costs = {
   rail = 7.25,
   ["rail-chain-signal"] = 18.5,
   ["rail-signal"] = 18.5,
-  ["raw-fish"] = 0,
+  ["raw-fish"] = 100000000000,
   ["red-wire"] = 10,
   ["refined-concrete"] = 6.4000000000000004,
   ["refined-hazard-concrete"] = 6.5,
@@ -2232,27 +2305,27 @@ local vanilla_costs = {
   ["rocket-part"] = 4385,
   ["rocket-silo"] = 61101,
   satellite = 50408.5,
-  ["selection-tool"] = 0,
+  ["selection-tool"] = 100000000000,
   shotgun = 1,
   ["shotgun-shell"] = 9,
-  ["simple-entity-with-force"] = 0,
-  ["simple-entity-with-owner"] = 0,
+  ["simple-entity-with-force"] = 100000000000,
+  ["simple-entity-with-owner"] = 100000000000,
   ["slowdown-capsule"] = 43,
-  ["small-electric-pole"] = 0.5,
+  ["small-electric-pole"] = 100000000000,
   ["small-lamp"] = 15,
   ["solar-panel"] = 178.5,
   ["solar-panel-equipment"] = 326.5,
-  ["solid-fuel"] = 2.5999999999999996,
-  ["space-science-pack"] = 0,
+  ["solid-fuel"] = 15,
+  ["space-science-pack"] = 300,
   ["speed-module"] = 268.5,
   ["speed-module-2"] = 1754.5,
   ["speed-module-3"] = 9893,
-  spidertron = 1,
+  spidertron = 10000,
   ["spidertron-remote"] = 443.90000000000003,
-  ["spidertron-rocket-launcher-1"] = 0,
-  ["spidertron-rocket-launcher-2"] = 0,
-  ["spidertron-rocket-launcher-3"] = 0,
-  ["spidertron-rocket-launcher-4"] = 0,
+  ["spidertron-rocket-launcher-1"] = 100000000000,
+  ["spidertron-rocket-launcher-2"] = 100000000000,
+  ["spidertron-rocket-launcher-3"] = 100000000000,
+  ["spidertron-rocket-launcher-4"] = 100000000000,
   splitter = 64.5,
   ["stack-filter-inserter"] = 308.5,
   ["stack-inserter"] = 270,
@@ -2261,38 +2334,50 @@ local vanilla_costs = {
   ["steel-chest"] = 89,
   ["steel-furnace"] = 97,
   ["steel-plate"] = 11,
-  stone = 1,
+  stone = 1.3,
   ["stone-brick"] = 3,
   ["stone-furnace"] = 6,
   ["stone-wall"] = 16,
   ["storage-tank"] = 96,
   ["submachine-gun"] = 81,
   substation = 351,
-  sulfur = 0.8,
-  ["sulfuric-acid-barrel"] = 2,
+  sulfur = 10,
   tank = 1822,
-  ["tank-cannon"] = 0,
-  ["tank-flamethrower"] = 0,
-  ["tank-machine-gun"] = 0,
+  ["tank-cannon"] = 100000000000,
+  ["tank-flamethrower"] = 100000000000,
+  ["tank-machine-gun"] = 100000000000,
   ["train-stop"] = 92.5,
   ["transport-belt"] = 4,
   ["underground-belt"] = 20.5,
-  ["upgrade-planner"] = 0,
+  ["upgrade-planner"] = 100000000000,
   ["uranium-235"] = 142.85714285714286,
   ["uranium-238"] = 1.0070493454179255,
   ["uranium-cannon-shell"] = 28.257049345417926,
   ["uranium-fuel-cell"] = 16.385714285714286,
-  ["uranium-ore"] = 0,
+  ["uranium-ore"] = 100000000000,
   ["uranium-rounds-magazine"] = 33.007049345417926,
-  ["used-up-uranium-fuel-cell"] = 0,
+  ["used-up-uranium-fuel-cell"] = 100000000000,
   ["utility-science-pack"] = 232.33333333333337,
-  ["vehicle-machine-gun"] = 0,
-  ["water-barrel"] = 2,
-  wood = 0,
-  ["wooden-chest"] = 1
+  ["vehicle-machine-gun"] = 100000000000,
+  ["wood"] = 100000000000,
+  ["wooden-chest"] = 100000000000,
+  ["crude-oil-barrel"] = 100000000000,
+  ["petroleum-gas-barrel"] = 100000000000,
+  ["sulfuric-acid-barrel"] = 100000000000,
+  ["light-oil-barrel"] = 100000000000,
+  ["heavy-oil-barrel"] = 100000000000,
+  ["lubricant-barrel"] = 100000000000,
+  ["water-barrel"] = 100000000000,
+  ["crude-oil"] = 0.1,
+  ["petroleum-gas"] = 0.1,
+  ["light-oil"] = 0.5,
+  ["heavy-oil"] = 1.5,
+  ["lubricant"] = 1.5,
+  ["sulfuric-acid"] = 10,
+  ["water"] = 0.02
 }
 
-local recipe_data = {}
+--[[local recipe_data = {}
 
 for _, recipe in pairs(data.raw.recipe) do
     if recipe.normal ~= nil then
@@ -2342,15 +2427,1084 @@ for _, recipe in pairs(data.raw.recipe) do
         ["results"] = recipe.results,
         ["time"] = recipe.energy_required
     }
-end
+end]]
 
 -- Preserve how many recipes an item is used it, and how many to produce it
 -- Preserve number inputs/outputs of a recipe
 
+-- resume
+
+function randomize_recipes()
+
+  local function find_reachable_recipe_nodes(added_recipes)
+    local top_sort = {}
+    local source_nodes = {}
+    local source_nodes_went_through_table = {1}
+    local nodes_left = table.deepcopy(dependency_graph)
+  
+    -- Remove tech unlock nodes except for ones in list
+    for _, node in pairs(nodes_left) do
+      if node.type == "recipe_node" and (not added_recipes[prg.get_key(node)]) then
+        nodes_left[prg.get_key(node)] = nil
+      end
+    end
+  
+    for _, node in pairs(dependency_graph) do
+      if node_type_operation[node.type] == "AND" and #node.prereqs == 0 then
+        add_to_source(node, top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+      end
+    end
+    
+    local num_nodes = 0
+    for _, _ in pairs(dependency_graph) do
+      num_nodes = num_nodes + 1
+    end
+    
+    for i=1,num_nodes do
+      if #top_sort >= i then
+        local next_node = top_sort[i]
+    
+        for _, dependent in pairs(next_node.dependents) do
+          -- Check that this isn't a blocking recipe
+          if dependent.type ~= "recipe_node" or added_recipes[prg.get_key(dependent)] then
+            if node_type_operation[dependent.type] == "OR" then
+              add_to_source(table.deepcopy(dependency_graph[prg.get_key(dependent)]), top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+            else
+              local satisfied = true
+              for _, prereq in pairs(dependency_graph[prg.get_key(dependent)].prereqs) do
+                if not source_nodes[prg.get_key(prereq)] or (prereq.type == "recipe_node" and (not added_recipes[prg.get_key(prereq)])) then
+                  satisfied = false
+                end
+              end
+              if satisfied then
+                add_to_source(table.deepcopy(dependency_graph[prg.get_key(dependent)]), top_sort, source_nodes, source_nodes_went_through_table, nodes_left)
+              end
+            end
+          end
+        end
+      end
+    end
+  
+    local reachable_category_nodes = {}
+    for _, node in pairs(top_sort) do
+      if node.type == "recipe_node" then
+        reachable_category_nodes[prg.get_key(node)] = true
+      end
+    end
+
+    local reachable_itemorfluids = {}
+    for _, node in pairs(top_sort) do
+      if node.type == "itemorfluid_node" then
+        reachable_itemorfluids[prg.get_key(node)] = true
+      end
+    end
+  
+    return {top_sort = top_sort, reachable = reachable_category_nodes, reachable_2 = reachable_itemorfluids}
+  end
+
+  local all_categories = {}
+for _, recipe in pairs(data.raw["recipe"]) do
+  all_categories[prg.get_key({type = "recipe_node", name = recipe.name})] = true
+end
+local top_sort = find_reachable_recipe_nodes(all_categories).top_sort
+
+local recipe_list_with_conn_number = {}
+local item_or_fluid_list = {}
+local blacklisted_recipes = {}
+for _, node in pairs(top_sort) do
+  if node.type == "recipe_node" then
+    local blacklisted = false
+
+    local num_in_conns = 0
+    local fluid_tags = {}
+    local amounts_in = {}
+    local costs_in = {}
+    for _, prereq in pairs(node.prereqs) do
+      if prereq.type == "itemorfluid_node" then
+        if vanilla_costs[prereq.name] ~= 100000000000 then
+          table.insert(item_or_fluid_list, dependency_graph[prg.get_key(prereq)])
+          num_in_conns = num_in_conns + 1
+
+          if data.raw.fluid[prereq.name] then
+            table.insert(fluid_tags, true)
+          else
+            table.insert(fluid_tags, false)
+          end
+
+          table.insert(amounts_in, prereq.amount)
+          table.insert(costs_in, vanilla_costs[prereq.name])
+        else
+          blacklisted = true
+          blacklisted_recipes[node.name] = true
+        end
+      end
+    end
+
+    if not blacklisted then
+      table.insert(recipe_list_with_conn_number, {recipe = node, num_ingredients = num_in_conns, fluid_tags = fluid_tags, new_ins = {}, amounts_in = amounts_in, costs_in = costs_in})
+    end
+  end
+end
+
+for _, node in pairs(top_sort) do
+  if node.type == "itemorfluid_node" then
+    -- Random extras
+    table.insert(item_or_fluid_list, node)
+    table.insert(item_or_fluid_list, node)
+  end
+end
+
+--[[for _, recipe_info in pairs(recipe_list_with_conn_number) do
+  log(recipe_info.recipe.name)
+end]]
+
+-- TODO: Add some random other items for funsies
+
+prg.shuffle("recipe-randomization", item_or_fluid_list)
+
+local ind_to_num_uses = {}
+for ind, itemorfluid in pairs(item_or_fluid_list) do
+  ind_to_num_uses[ind] = 0
+end
+local added_recipes = {}
+for _, recipe_info in pairs(recipe_list_with_conn_number) do
+  log("fixing " .. recipe_info.recipe.name)
+
+  local product_cost = 0
+  for _, dependent in pairs(recipe_info.recipe.dependents) do
+    if dependent.type == "itemorfluid_node" then
+      product_cost = product_cost + dependent.amount * vanilla_costs[dependent.name]
+    end
+  end
+
+  local reachable = find_reachable_recipe_nodes(added_recipes).reachable
+  local reachable_2 = find_reachable_recipe_nodes(added_recipes).reachable_2
+
+  local added_ingredients = {}
+  for i = 1, recipe_info.num_ingredients do
+    local this_ingredient_cost = recipe_info.amounts_in[i] * recipe_info.costs_in[i]
+
+    is_fluid = recipe_info.fluid_tags[i]
+
+    local pass_num = 0
+    local found_conn = false
+    while true do
+      for j = 1, #item_or_fluid_list do
+        --log("checking " .. item_or_fluid_list[j].name)
+        -- Check that is/is not fluid
+        local passes_fluid_check = false
+        if is_fluid and data.raw.fluid[item_or_fluid_list[j].name] then
+          passes_fluid_check = true
+        elseif (not is_fluid) and (not data.raw.fluid[item_or_fluid_list[j].name]) then
+          passes_fluid_check = true
+        end
+
+        if passes_fluid_check then
+          --log("passed fluid check")
+          -- Check that cost is good
+          -- This is a hacky metric for now
+          --log(item_or_fluid_list[j].name)
+
+          local cost_single = recipe_info.amounts_in[i] * vanilla_costs[item_or_fluid_list[j].name]
+          local target_cost = this_ingredient_cost
+          local target_cost_factor = 0.2
+          local_target_cost_additive = 0.3
+
+          local max_multiplier = 10
+          local multiplier
+          for i = 1, max_multiplier do
+            if math.abs(cost_single * i - target_cost) <= target_cost * target_cost_factor + local_target_cost_additive then
+              multiplier = i
+            end
+          end
+
+          if multiplier ~= nil then
+            --log("passed cost check")
+            -- Check that it hasn't been used yet
+            if ind_to_num_uses[j] <= pass_num then
+              -- Make sure no duplicate ingredients
+              if not added_ingredients[item_or_fluid_list[j].name] then
+                --log("passed usage check")
+                -- Check reachability
+                local to_be_added = false
+                if reachable_2[prg.get_key(item_or_fluid_list[j])] then
+                  to_be_added = true
+                end
+
+                if to_be_added then
+                  --log("passed reachability check")
+                  -- Add this item
+                  recipe_info.amounts_in[i] = multiplier * recipe_info.amounts_in[i]
+                  table.insert(recipe_info.new_ins, item_or_fluid_list[j].name)
+                  product_cost = product_cost - recipe_info.amounts_in[i] * vanilla_costs[item_or_fluid_list[j].name]
+                  ind_to_num_uses[j] = ind_to_num_uses[j] + 1
+                  added_ingredients[item_or_fluid_list[j].name] = true
+
+                  found_conn = true
+                  break
+                end
+              end
+            end
+          end
+        end
+      end
+
+      if found_conn then
+        break
+      end
+
+      pass_num = pass_num + 1
+    end
+  end
+
+  added_recipes[prg.get_key(recipe_info.recipe)] = true
+end
+
+-- Fix data.raw
+
+for _, recipe_info in pairs(recipe_list_with_conn_number) do
+  local recipe = data.raw.recipe[recipe_info.recipe.name]
+
+  if not blacklisted_recipes[recipe.name] then
+    local new_ingredients = {}
+
+    for ind, new_ing in pairs(recipe_info.new_ins) do
+      local type_of_thing = "item"
+      if recipe_info.fluid_tags[ind] then
+        type_of_thing = "fluid"
+      end
+      table.insert(new_ingredients, {
+        type = type_of_thing,
+        name = new_ing,
+        amount = recipe_info.amounts_in[ind]
+      })
+    end
+
+    recipe.ingredients = new_ingredients
+  end
+end
+
+end
+
+end
+
+
+randomize_recipes()
+--randomize_technologies()
+--recipe_unlocks_randomization()
+
+-- delete_after_this
+
+
+if false then
+
+-- More recipe unlocks!
+for _, technology in pairs(data.raw.technology) do
+  if old_data_raw_data.technology[technology.name].effects ~= nil then
+    for _, effect in pairs(old_data_raw_data.technology[technology.name].effects) do
+      if effect.type == "unlock-recipe" then
+        table.insert(technology.effects, table.deepcopy(effect))
+      end
+    end
+  end
 end
 
 
 
+
+
+
+
+
+
+
+-- Super dumb... wanted to do this again so here we go with a huge copy paste
+
+
+
+-- HOTFIX - Add certain tech unlocks twice just to make sure
+-- NOT WORKING!
+--[[table.insert(data.raw.technology["logistics"].effects, {
+  type = "unlock-recipe",
+  recipe = "assembling-machine-1"
+})
+table.insert(data.raw.technology["optics"].effects, {
+  type = "unlock-recipe",
+  recipe = "assembling-machine-1"
+})
+table.insert(data.raw.technology["automation"].effects, {
+  type = "unlock-recipe",
+  recipe = "underground-belt"
+})
+table.insert(data.raw.technology["optics"].effects, {
+  type = "unlock-recipe",
+  recipe = "splitter"
+})
+table.insert(data.raw.technology["optics"].effects, {
+  type = "unlock-recipe",
+  recipe = "gun-turret"
+})]]
+
+-- Unlock everything in general an extra time as well
+--[[local techs = table.deepcopy(data.raw.technology)
+for _, prototype in pairs(techs) do
+  if prototype.effects ~= nil then
+    for _, unlock in pairs(prototype.effects) do
+      if unlock.type == "unlock-recipe" then
+        table.insert(data.raw.technology[prototype.name].effects, {
+          type = "unlock-recipe",
+          recipe = unlock.recipe
+        })
+      end
+    end
+  end
+end]]
+
+-- TODO: Add support for starting items
+-- TODO: Add support for trees and rocks (they are special cases since they're not "automatable")
+-- TODO: Add support for custom autoplace in general (like, for example, in the ruins mod)
+-- TODO: Add support for fuels (there's also burnt products and such...)
+-- TODO: Support min_temperatures and max_temperatures on fluids in recipes
+-- TODO: Support for recipes with no ingredients (gives another way to get infinite resources)
+-- TODO: Test if lab is craftable
+-- TODO: Account for crafting as a special recipe category
+-- TODO: Amount in prereq for machines/buildings set correctly
+-- TODO: Offshore pump giving water
+-- TODO: Fluid/item limits on assembling machines
+-- TODO: Deal with infinite techs
+-- TODO: Actual recipe editing still messes up with normal versus expensive ugh
+-- TODO: Special attention needs to be paid to crafting categories and fluids, since regular crafting category can't have them
+-- TODO: Take special care with recipes that involve smelting/furnaces (no repeat ingredients, only one ingredient, etc.)
+-- TODO: Rocket launch products
+-- TODO: Reachable character classes
+-- TODO: Required fluid boxes
+-- TODO: Minable properties of buildings
+
+local dependency_utils = {}
+
+-- Entries will be tables with id = {type = type of node (source, recipe, abstract, etc.), prereqs = node prereqs ids}
+-- source-manual indicates it can be made, but not very well (mining trees being the primary example), currently not implemented
+local dependency_graph = {}
+local recipes_not_added = {}
+--[[local blacklisted_recipes = {
+  ["empty-crude-oil-barrel"] = true,
+  ["empty-heavy-oil-barrel"] = true,
+  ["empty-light-oil-barrel"] = true,
+  ["empty-lubricant-barrel"] = true,
+  ["empty-petroleum-gas-barrel"] = true,
+  ["empty-sulfuric-acid-barrel"] = true,
+  ["empty-water-barrel"] = true,
+  ["fill-crude-oil-barrel"] = true,
+  ["fill-heavy-oil-barrel"] = true,
+  ["fill-light-oil-barrel"] = true,
+  ["fill-lubricant-barrel"] = true,
+  ["fill-petroleum-gas-barrel"] = true,
+  ["fill-sulfuric-acid-barrel"] = true,
+  ["fill-water-barrel"] = true,
+  ["coal-liquefaction"] = true,
+  ["advanced-oil-processing"] = true
+}]]
+for _, recipe in pairs(data.raw.recipe) do
+  --if not blacklisted_recipes[recipe.name] then
+    table.insert(recipes_not_added, recipe)
+  --end
+end
+local crafting_entities_not_added = {}
+for _, crafting_machine_class in pairs(prototype_tables.crafting_machine_classes) do
+  for _, crafting_machine in pairs(data.raw[crafting_machine_class]) do
+    table.insert(crafting_entities_not_added, crafting_machine)
+  end
+end
+local items_and_fluids_not_added = {}
+for item_class, _ in pairs(defines.prototypes["item"]) do
+  for _, item in pairs(data.raw[item_class]) do
+    table.insert(items_and_fluids_not_added, item)
+  end
+end
+for _, fluid in pairs(data.raw.fluid) do
+  table.insert(items_and_fluids_not_added, fluid)
+end
+local technologies_not_added = {}
+for _, technology in pairs(data.raw.technology) do
+  table.insert(technologies_not_added, technology)
+end
+local recipe_categories_not_added = {}
+for _, recipe_category in pairs(data.raw["recipe-category"]) do
+  table.insert(recipe_categories_not_added, recipe_category)
+end
+local resources_not_added = {}
+for _, resource in pairs(data.raw.resource) do
+  table.insert(resources_not_added, resource)
+end
+local resource_categories_not_added = {}
+for _, resource_category in pairs(data.raw["resource-category"]) do
+  table.insert(resource_categories_not_added, resource_category)
+end
+local mining_machines_not_added = {}
+for _, mining_machine in pairs(data.raw["mining-drill"]) do
+  table.insert(mining_machines_not_added, mining_machine)
+end
+
+for _, recipe in pairs(recipes_not_added) do
+  local node = {
+    type = "recipe_node",
+    name = recipe.name,
+    prereqs = {}
+  }
+  
+  -- Recipe category prereq
+  if recipe.category == nil then
+    table.insert(node.prereqs, {
+      type = "recipe_category_node",
+      name = "crafting",
+      amount = 1})
+  else
+    table.insert(node.prereqs, {
+      type = "recipe_category_node",
+      name = recipe.category,
+      amount = 1})
+  end
+
+  -- Recipe ingredient prereq
+  local function get_recipe_ingredients (recipe)
+    local recipe_ingredients = {}
+
+    for _, ingredient in pairs(recipe.ingredients) do
+      if ingredient[1] and ingredient[2] then
+        table.insert(recipe_ingredients, {name = ingredient[1], amount = ingredient[2]})
+      else
+        table.insert(recipe_ingredients, {name = ingredient.name, amount = ingredient.amount}) -- TODO: probabilities and such
+      end
+    end
+
+    return recipe_ingredients
+  end
+
+  -- Now add recipe ingredients
+  local recipe_ingredients = {}
+  if recipe.normal then
+    recipe_ingredients = get_recipe_ingredients(recipe.normal)
+  else
+    recipe_ingredients = get_recipe_ingredients(recipe)
+  end
+  for _, ingredient in pairs(recipe_ingredients) do
+    --- Note, the node may represent an item or fluid
+    table.insert(node.prereqs, {
+      type = "itemorfluid_node",
+      name = ingredient.name,
+      amount = ingredient.amount
+    })
+  end
+
+  -- Now add tech prerequisites
+  local recipe_tech_unlock_node = {
+    type = "recipe_tech_unlock_node",
+    name = recipe.name,
+    prereqs = {}
+  }
+
+  for _, technology in pairs(data.raw.technology) do
+    local unlocks_recipe = false
+
+    if technology.effects ~= nil then
+      for _, unlock_effect in pairs(technology.effects) do
+        if unlock_effect.type == "unlock-recipe" and unlock_effect.recipe == recipe.name then
+          unlocks_recipe = true
+        end
+      end
+    end
+
+    if unlocks_recipe then
+      -- Pretend like there are two unlocks for the recipes for recipe unlock rando
+      table.insert(recipe_tech_unlock_node.prereqs, {
+        type = "technology_node",
+        name = technology.name,
+        amount = 1
+      })
+    end
+  end
+
+  -- Only add the tech prereq if the recipe isn't already unlocked from start of game
+  local requires_technology = false
+  if recipe.enabled ~= nil and not recipe.enabled then
+    requires_technology = true
+  elseif recipe.normal ~= nil and recipe.normal.enabled ~= nil and not recipe.normal.enabled then
+    requires_technology = true
+  end
+
+  if requires_technology then
+    dependency_graph[prg.get_key(recipe_tech_unlock_node)] = recipe_tech_unlock_node
+
+    table.insert(node.prereqs, {
+      type = recipe_tech_unlock_node.type,
+      name = recipe_tech_unlock_node.name,
+      amount = 1
+    })
+  end
+
+  dependency_graph[prg.get_key(node)] = node
+end
+
+local function product_prototype_has_product_amount (product_prototype, itemorfluid)
+  local amount_product = 0
+
+  for _, result in pairs(product_prototype) do
+    if result[1] ~= nil and result[1] == itemorfluid.name then
+      amount_product = amount_product + result[2]
+    elseif result.name ~= nil and result.name == itemorfluid.name then
+      local result_amount = 0
+
+      if result.amount then
+        result_amount = result_amount + result.amount
+      else
+        result_amount = (result.amount_min + result.amount_max) / 2
+      end
+
+      if result.probability then
+        result_amount = result_amount * result.probability
+      end
+
+      amount_product = amount_product + result_amount
+    end
+  end
+
+  return amount_product
+end
+
+-- Assume cheap mode for now
+local function recipe_has_product_amount (recipe, itemorfluid)
+  if recipe.normal then
+    return recipe_has_product_amount(recipe.normal, itemorfluid)
+  end
+
+  if recipe.results ~= nil then
+    return product_prototype_has_product_amount(recipe.results, itemorfluid)
+  end
+
+  if recipe.result then
+    if recipe.result == itemorfluid.name then
+      return recipe.result_count or 1
+    else
+      return 0
+    end
+  end
+end
+
+-- Add special void "item"
+--[[dependency_graph[prg.get_key({type = "itemorfluid_node", name = "void"})] = {
+  type = "itemorfluid_node",
+  name = "void",
+  prereqs = {}
+}
+for _, itemorfluid in pairs(items_and_fluids_not_added) do
+  table.insert(dependency_graph[prg.get_key({type = "itemorfluid_node", name = "void"})].prereqs, {
+    type = "recipe_node",
+    name = "void_" .. itemorfluid.name,
+    amount = 1
+  })
+end]]
+for _, itemorfluid in pairs(items_and_fluids_not_added) do
+  -- Add void recipe
+  --[[dependency_graph[prg.get_key({type = "recipe_node", name = "void_" .. itemorfluid.name})] = {
+    type = "recipe_node",
+    name = "void_" .. itemorfluid.name,
+    prereqs = {
+      {
+        type = "itemorfluid_node",
+        name = itemorfluid.name,
+        amount = 1 / VOID_COST
+      }
+    }
+  }]]
+
+  local node = {
+    type = "itemorfluid_node",
+    name = itemorfluid.name,
+    prereqs = {}
+  }
+
+  -- Add recipe products
+  for _, recipe in pairs(data.raw.recipe) do
+    --if not blacklisted_recipes[recipe.name] then
+      local product_amount = recipe_has_product_amount(recipe, itemorfluid)
+
+      if product_amount > 0 then
+        table.insert(node.prereqs, {
+          type = "recipe_node",
+          name = recipe.name,
+          amount = 1 / product_amount
+        })
+      end
+    --end
+  end
+
+  -- Add minable results
+  for _, resource in pairs(data.raw.resource) do
+    if resource.minable ~= nil then
+      local product_amount
+      
+      if resource.minable.result ~= nil and resource.minable.result == itemorfluid.name then
+        if resource.minable.count == nil then
+          resource.minable.count = 1
+        end
+
+        product_amount = resource.minable.count
+      elseif resource.minable.results ~= nil then
+        product_amount = product_prototype_has_product_amount(resource.minable.results, itemorfluid)
+      end
+
+      if product_amount ~= nil and product_amount > 0 then
+        table.insert(node.prereqs, {type = "resource_node", name = resource.name, amount = 1 / product_amount})
+      end
+    end
+  end
+
+  -- TODO: Deal with fluids better
+  dependency_graph[prg.get_key(node)] = node
+end
+
+for _, crafting_entity in pairs(crafting_entities_not_added) do
+  local node = {
+    type = "crafting_entity_node",
+    name = crafting_entity.name,
+    prereqs = {}
+  }
+
+  for item_class, _ in pairs(defines.prototypes.item) do
+    for _, item in pairs(data.raw[item_class]) do
+      if item.place_result ~= nil and item.place_result == crafting_entity.name then
+        table.insert(node.prereqs, {
+          type = "itemorfluid_node",
+          name = item.name,
+          amount = 1 -- TODO: Sometimes placing down something can use more than one of the item, so account for this
+        })
+      end
+    end
+  end
+
+  dependency_graph[prg.get_key(node)] = node
+end
+
+for _, technology in pairs(technologies_not_added) do
+  local node = {
+    type = "technology_node",
+    name = technology.name,
+    prereqs = {}
+  }
+
+  if technology.prerequisites ~= nil then
+    for _, prereq in pairs(technology.prerequisites) do
+      table.insert(node.prereqs, {
+        type = "technology_node",
+        name = prereq,
+        amount = 1
+      })
+    end
+  end
+
+  for _, science_pack in pairs(technology.unit.ingredients) do
+    if science_pack[1] ~= nil then
+      table.insert(node.prereqs, {
+        type = "itemorfluid_node",
+        name = science_pack[1],
+        amount = 1 -- TODO: Find actual amount instead of assuming this is just one
+      })
+    else
+      table.insert(node.prereqs, {
+        type = "itemorfluid_node",
+        name = science_pack.name,
+        amount = 1
+      })
+    end
+  end
+
+  dependency_graph[prg.get_key(node)] = node
+end
+
+for _, recipe_category in pairs(recipe_categories_not_added) do
+  local node = {
+    type = "recipe_category_node",
+    name = recipe_category.name,
+    prereqs = {}
+  }
+
+  for _, crafting_machine in pairs(crafting_entities_not_added) do
+    for _, crafting_category in pairs(crafting_machine.crafting_categories) do
+      if crafting_category == recipe_category.name then
+        table.insert(node.prereqs, {
+          type = "crafting_entity_node",
+          name = crafting_machine.name,
+          amount = 1
+        })
+      end
+    end
+  end
+
+  for _, character in pairs(data.raw.character) do
+    if character.crafting_categories ~= nil then
+      for _, character_crafting_category in pairs(character.crafting_categories) do
+        if character_crafting_category == recipe_category.name then
+          table.insert(node.prereqs, {
+            type = "character_crafting_node",
+            name = character.name,
+            amount = 1
+          })
+        end
+      end
+    end
+  end
+
+  dependency_graph[prg.get_key(node)] = node
+end
+
+-- Todo: add better support for other resource categories
+for _, resource in pairs(resources_not_added) do
+  local node = {
+    type = "resource_node",
+    name = resource.name,
+    prereqs = {}
+  }
+
+  if resource.minable ~= nil then
+    if resource.minable.fluid_amount ~= nil and resource.minable.fluid_amount > 0 and resource.minable.required_fluid ~= nil then
+      table.insert(node.prereqs, {
+        type = "itemorfluid_node",
+        name = resource.minable.required_fluid,
+        amount = resource.minable.fluid_amount
+      })
+    end
+  end
+
+  if resource.category == nil then
+    resource.category = "basic-solid"
+  end
+  --[[table.insert(node.prereqs, {
+    type = "resource_category_node",
+    name = resource.category,
+    amount = 1
+  })]] -- TODO URGENT: ADD THIS BACK
+
+  dependency_graph[prg.get_key(node)] = node
+end
+
+for _, mining_machine in pairs(mining_machines_not_added) do
+  local node = {
+    type = "mining_machine_node",
+    name = mining_machine.name,
+    prereqs = {}
+  }
+
+  for item_class, _ in pairs(defines.prototypes.item) do
+    for _, item in pairs(data.raw[item_class]) do
+      if item.place_result ~= nil and item.place_result == mining_machine.name then
+        table.insert(node.prereqs, {
+          type = "itemorfluid_node",
+          name = item.name,
+          amount = 1
+        })
+      end
+    end
+  end
+
+  dependency_graph[prg.get_key(node)] = node
+end
+
+for _, resource_category in pairs(resource_categories_not_added) do
+  local node = {
+    type = "resource_category_node",
+    name = resource_category.name,
+    prereqs = {}
+  }
+
+  -- TODO: Not necessarily assuming this character is available from the start
+  -- (This could be messed up by, for example, bob's classes mod)
+  for _, character in pairs(data.raw.character) do
+    if character.mining_categories ~= nil then
+      for _, mining_category in pairs(character.mining_categories) do
+        if mining_category == resource_category.name then
+          table.insert(node.prereqs, {
+            type = "character_mining_node",
+            name = character.name,
+            amount = 1
+          })
+        end
+      end
+    end
+  end
+
+  for _, mining_machine in pairs(mining_machines_not_added) do
+    for _, mining_category in pairs(mining_machine.resource_categories) do
+      if mining_category == resource_category.name then
+        table.insert(node.prereqs, {
+          type = "mining_machine_node",
+          name = mining_machine.name,
+          amount = 1
+        })
+      end
+    end
+  end
+
+  dependency_graph[prg.get_key(node)] = node
+end
+
+for _, character in pairs(data.raw.character) do
+  local node = {
+    type = "character_mining_node",
+    name = character.name,
+    prereqs = {}
+  }
+
+  dependency_graph[prg.get_key(node)] = node
+end
+
+for _, character in pairs(data.raw.character) do
+  local node = {
+    type = "character_crafting_node",
+    name = character.name,
+    prereqs = {}
+  }
+
+  dependency_graph[prg.get_key(node)] = node
+end
+
+-- TODO: get this to work for other offshore pump prototypes in general
+table.insert(dependency_graph[prg.get_key({type = "itemorfluid_node", name = "water"})].prereqs, {
+  type = "itemorfluid_node",
+  name = "offshore-pump",
+  amount = 1 / 1200
+})
+
+--[[
+local new_node_for_ash = {
+  type = "itemorfluid_node",
+  name = "ash",
+  prereqs = {}
+}
+table.insert(new_node_for_ash.prereqs, {
+  type = "itemorfluid_node",
+  name = "water",
+  amount = 1
+})
+dependency_graph[prg.get_key(new_node_for_ash)] = new_node_for_ash
+local new_node_for_log = {
+  type = "itemorfluid_node",
+  name = "log",
+  prereqs = {}
+}
+table.insert(new_node_for_log.prereqs, {
+  type = "itemorfluid_node",
+  name = "water",
+  amount = 1
+})
+dependency_graph[prg.get_key(new_node_for_log)] = new_node_for_log
+local new_node_for_moss = {
+  type = "itemorfluid_node",
+  name = "moss",
+  prereqs = {}
+}
+table.insert(new_node_for_moss.prereqs, {
+  type = "itemorfluid_node",
+  name = "water",
+  amount = 1
+})
+dependency_graph[prg.get_key(new_node_for_moss)] = new_node_for_moss
+local new_node_for_fish = {
+  type = "itemorfluid_node",
+  name = "fish",
+  prereqs = {}
+}
+table.insert(new_node_for_fish.prereqs, {
+  type = "itemorfluid_node",
+  name = "water",
+  amount = 1
+})
+dependency_graph[prg.get_key(new_node_for_fish)] = new_node_for_fish
+local new_node_for_steam = {
+  type = "itemorfluid_node",
+  name = "steam",
+  prereqs = {}
+}
+table.insert(new_node_for_steam.prereqs, {
+  type = "itemorfluid_node",
+  name = "water",
+  amount = 1
+})
+dependency_graph[prg.get_key(new_node_for_steam)] = new_node_for_steam
+local new_node_for_sap = {
+  type = "itemorfluid_node",
+  name = "sap",
+  prereqs = {}
+}
+table.insert(new_node_for_sap.prereqs, {
+  type = "itemorfluid_node",
+  name = "water",
+  amount = 1
+})
+dependency_graph[prg.get_key(new_node_for_sap)] = new_node_for_sap
+local new_node_for_oil = {
+  type = "itemorfluid_node",
+  name = "crude-oil",
+  prereqs = {}
+}
+table.insert(new_node_for_oil.prereqs, {
+  type = "itemorfluid_node",
+  name = "water",
+  amount = 1
+})
+dependency_graph[prg.get_key(new_node_for_oil)] = new_node_for_oil
+local new_node_for_gas = {
+  type = "itemorfluid_node",
+  name = "raw-gas",
+  prereqs = {}
+}
+table.insert(new_node_for_gas.prereqs, {
+  type = "itemorfluid_node",
+  name = "water",
+  amount = 1
+})
+dependency_graph[prg.get_key(new_node_for_gas)] = new_node_for_gas]]
+
+-- TEST
+--[[local new_node_for_wood = {
+  type = "itemorfluid_node",
+  name = "wood",
+  prereqs = {}
+}
+table.insert(new_node_for_wood.prereqs, {
+  type = "itemorfluid_node",
+  name = "water",
+  amount = 1
+})
+local new_node_for_basic_tech_card = {
+  type = "itemorfluid_node",
+  name = "basic-tech-card",
+  prereqs = {
+    {
+      type = "itemorfluid_node",
+      name = "wood",
+      amount = 1
+    }
+  }
+}
+dependency_graph[prg.get_key(new_node_for_wood)] = new_node_for_wood
+dependency_graph[prg.get_key(new_node_for_basic_tech_card)] = new_node_for_basic_tech_card]]
+
+log("Wrapping up forward connections...")
+
+for _, node in pairs(dependency_graph) do
+  node.dependents = {}
+end
+
+for _, node in pairs(dependency_graph) do
+  for _, prereq in pairs(node.prereqs) do
+    if dependency_graph[prg.get_key(prereq)] == nil then
+      --[[log(node.type)
+      log(node.name)
+      log(prereq.type)
+      log(prereq.name)]]
+    else
+      table.insert(dependency_graph[prg.get_key(prereq)].dependents, {
+        type = node.type,
+        name = node.name,
+        amount = prereq.amount
+      })
+    end
+  end
+end
+
+--[[for _, node in pairs(dependency_graph) do
+  node.prereqs_satisfied = {}
+  for _, prereq in pairs(node.prereqs) do
+    node.prereqs_satisfied[prg.get_key(prereq)] = false
+  end
+end]]
+
+--[[log("Adding resource recipes...")
+
+for _, node in pairs(dependency_graph) do
+  -- Quick and hacky!
+  if node.type == "resource_node" then
+    --log(serpent.block(node))
+
+    if (data.raw.resource[node.name].minable.results ~= nil) then
+      for _, result in pairs(data.raw.resource[node.name].minable.results) do
+        dependency_graph[prg.get_key({type = "recipe_node", name = node.name})] = {
+          type = "recipe_node",
+          name = node.name,
+          prereqs = {},
+          dependents = {{
+            type = "itemorfluid_node",
+            name = result[1] or result.name,
+            amount = 1
+          }}
+        }
+        table.insert(dependency_graph[prg.get_key({type = "itemorfluid_node", name = result[1] or result.name})].prereqs, {
+          type = "recipe_node",
+          name = node.name,
+          amount = 1
+        })
+      end
+    elseif data.raw.resource[node.name].minable.result ~= nil and node.name ~= "uranium-ore" and node.name ~= "crude-oil" then
+      dependency_graph[prg.get_key({type = "recipe_node", name = node.name})] = {
+        type = "recipe_node",
+        name = node.name,
+        prereqs = {},
+        dependents = {{
+          type = "itemorfluid_node",
+          name = data.raw.resource[node.name].minable.result,
+          amount = 1
+        }}
+      }
+      table.insert(dependency_graph[prg.get_key({type = "itemorfluid_node", name = data.raw.resource[node.name].minable.result})].prereqs, {
+        type = "recipe_node",
+        name = node.name,
+        amount = 1
+      })
+    end
+  end
+end]]
+
+-- DEPENDENCY GRAPH BUILDING DONE
+--dependency_graph = build_graph.construct()
+
+-- Apply swaps if one doesn't depend on the other idea
+
+local dependency_graph_keys = {}
+for key, _ in pairs(dependency_graph) do
+  table.insert(dependency_graph_keys, key)
+end
+
+local node_type_operation = {
+  recipe_node = "AND",
+  itemorfluid_node = "OR",
+  technology_node = "AND",
+  recipe_tech_unlock_node = "OR",
+  recipe_category_node = "OR",
+  crafting_entity_node = "OR",
+  character_crafting_node = "AND", -- No prereqs, so essentially a source
+  mining_machine_node = "OR",
+  resource_node = "AND",
+  resource_category_list_node = "OR",
+  resource_category_node = "OR",
+  character_mining_node = "AND" -- No prereqs, so essentially a source
+}
+
+randomize_recipes()
+randomize_technologies()
+recipe_unlocks_randomization()
+randomize_recipes()
+randomize_recipes()
+
+-- final fixes
+
+-- Changed from iron plate (copper) since iron ore is used in, like, nothing
+data.raw.recipe["steel-plate"].ingredients = {
+  {name = "iron-ore", amount = 6}
+}
+
+data.raw.recipe["stone-brick"].ingredients = {
+  {name = "iron-ore", amount = 2}
+}
 
 
 
@@ -3955,5 +5109,6 @@ local recipes = data.raw.recipe
 
 return dependency_utils]]
 
+end
 end
 end

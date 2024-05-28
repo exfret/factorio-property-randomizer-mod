@@ -1,0 +1,100 @@
+//////////////////////////////////////////////////////////////////////
+// Notes
+//////////////////////////////////////////////////////////////////////
+
+Lists relevant properties of everything
+
+Doesn't include visual/auditory properites unless otherwise noted
+For the vast majority of cases, randomizing those would just be confusing
+Similarly, bools/strings/unions of those don't usually have justifications
+
+Abbreviations:
+    (!) - NOT randomized, but notable
+    (+) - NOT randomized, but considering adding
+    (*) - Randomized, but has special action to improve randomization etc.
+    (NV) - Wouldn't affect vanilla
+    (^) - Special randomization that goes beyond changine a number
+    (T) - Subtable that's further randomized somewhere else
+
+//////////////////////////////////////////////////////////////////////
+// Prototypes
+//////////////////////////////////////////////////////////////////////
+
+AccumulatorPrototype
+    (!) circuit_wire_max_distance
+    (T) energy_source
+
+AchievementPrototype
+
+ActiveDefenseEquipmentPrototype
+    (T) attack_parameters
+
+AmbientSound
+
+AmmoCategory
+
+AmmoItemPrototype
+    (T) ammo_type
+    magazine_size
+    (+) reload_time
+
+AmmoTurretPrototype
+    (!) automated_ammo_count
+    (*) inventory_size
+        TODO: Only randomize for inventories >1
+        TODO: Need to separate this out from normal inventory size randomization
+
+AnimationPrototype
+
+ArithmeticCombinatorPrototype
+
+ArmorPrototype
+    (!) equipment_grid
+        I haven't figured out a good way to do graph randomization on equipment grids yet
+    (+) resistances
+    (+) inventory_size_bonus
+
+ArrowPrototype
+
+ArtilleryFlarePrototype
+
+ArtilleryProjectilePrototype
+    (T) action
+    (T) final_action
+
+ArtilleryTurretPrototype
+    (!) ammo_stack_limit
+    (!) automated_ammo_count
+    (*) inventory_size
+        TODO: Only randomize for inventories >1
+        TODO: Need to separate this out from normal inventory size randomization
+    (!) manual_range_modifier
+    turret_rotation_speed
+
+ArtilleryWagonPrototype
+    (!) ammo_stack_limit
+    (*) inventory_size
+        TODO: Only randomize for inventories >1
+        TODO: Need to separate this out from normal inventory size randomization
+    (!) manual_range_modifier
+    turret_rotation_speed
+
+AssemblingMachinePrototype
+    (+) (NV) ingredient_count
+
+AutoplaceControl
+
+BatteryEquipmentPrototype
+
+BeaconPrototype
+    (!) (T) allowed_effects
+    distribution_effectivity
+    (T) energy_source
+    energy_usage
+    (T) module_specification
+    supply_area_distance
+
+BeamPrototype
+    (+) width
+    (+) damage_interval
+    (+) (T) action

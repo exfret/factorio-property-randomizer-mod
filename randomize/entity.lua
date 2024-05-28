@@ -11,6 +11,8 @@ local property_info = require("randomizer-parameter-data/property-info-tables")
 local prototype_tables = require("randomizer-parameter-data/prototype-tables")
 local walk_params = require("randomizer-parameter-data/walk-params-tables")
 
+local reformat = require("utilities/reformat")
+
 rand.beacon_supply_area_distance = function(prototype)
     if prototype.type == "beacon" then
         randomize_numerical_property({
@@ -29,6 +31,16 @@ rand.beacon_distribution_effectivity = function(prototype)
             property = "distribution_effectivity",
             inertia_function = inertia_function.beacon_distribution_effectivity,
             property_info = property_info.effectivity_beacon
+        })
+    end
+end
+
+rand.beam_damage_interval = function(prototype)
+    if prototype.type == "beam" then
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "damage_interval",
+            property_info = property_info.limited_range
         })
     end
 end
@@ -330,7 +342,7 @@ rand.fuel_inventory_slots = function(prototype)
     end
 
     for _, energy_source in pairs(energy_sources) do
-        log(energy_source.fuel_inventory_size)
+        --log(energy_source.fuel_inventory_size)
 
         randomize_numerical_property({
             prototype = prototype,
@@ -341,7 +353,7 @@ rand.fuel_inventory_slots = function(prototype)
             property_info = property_info.small_nonempty_inventory
         })
 
-        log(energy_source.fuel_inventory_size)
+        --log(energy_source.fuel_inventory_size)
     end
 end
 
@@ -458,6 +470,8 @@ rand.inserter_speed = function(prototype)
 end
 
 rand.inventory_sizes = function(prototype)
+    -- TODO: This randomizes some inventories like turrets, but those should probably be separate
+    -- Basically, separate "functional" inventories from "storage" inventories
     if prototype_tables.inventory_names[prototype.type] ~= nil then
         for _, property_name in pairs(prototype_tables.inventory_names[prototype.type]) do
             -- I have to turn these to numbers because some modders are writing inventory sizes as strings somehow
@@ -980,6 +994,15 @@ rand.turret_rotation_speed = function(prototype)
         })
     end
 
+    -- Artillery wagons not included as turrets, so we need to do them manually
+    if prototype.type == "artillery-wagon" then
+        randomize_numerical_property({ -- TODO: Custom inertia function?
+            prototype = prototype,
+            property = "turret_rotation_speed",
+            property_info = property_info.turret_turning_speed
+        })
+    end
+
     -- Car turret rotation speed
     if prototype.type == "car" then
         -- For some reason the default here is 0.01 and the default on "normal" turrets is 1, I've double checked this so this isn't an error
@@ -1142,7 +1165,7 @@ rand.vehicle_crash_damage = function(prototype)
         -- Doesn't apply if vehicle didn't have any impact resistance to start with
         if prototype.resistances then
             for _, resistance in pairs(prototype.resistances) do
-                if resistance.type == "impact" then
+                if resistance.type == "impact" and resistance.decrease ~= nil then
                     -- energy_per_hit_point can't be zero, so we don't need to check for that
                     resistance.decrease = resistance.decrease * prototype.energy_per_hit_point / old_energy_per_hit_point
                 end

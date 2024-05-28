@@ -5,19 +5,13 @@ local reformat = require("utilities/reformat")
 local build_graph = {}
 
 -- TODO: Refactor out some code into build_graph_utils
+-- TODO: Rocket launch products
 
 --------------------------------------------------------------------------------
 -- Utilities
 --------------------------------------------------------------------------------
 
-function build_graph.find_product_amounts(recipe, name, type)
-    if recipe.normal then
-        return build_graph.find_product_amounts(recipe.normal, name, type)
-    end
-    -- Don't support expensive mode
-
-    local product_prototype = recipe.results
-
+function build_graph.find_product_amounts(product_prototype, name, type)
     local amount_product = 0
 
     for _, result in pairs(product_prototype) do
@@ -58,7 +52,14 @@ function build_graph.add_building_prereqs(building_node, building)
     end
 
     -- Ability to power the building if applicable
-    if building.energy_source ~= nil then
+    -- TODO: Check that I have the right energy source keys...
+    -- TODO: If I need to check vehicles can be fueled, I need to modify this as well
+    local energy_source_key = "energy_source"
+    if building.type == "burner-generator" then
+        energy_source_key = "burner"
+    end
+    -- The energy source for generators isn't what runs the machine, so don't check for it
+    if building[energy_source_key] ~= nil and building.type ~= "generator" then
         local building_energy_source_node = {
             type = "energy_source_node",
             name = building.name,
@@ -144,7 +145,7 @@ function build_graph.add_non_resource_autoplace(dependency_graph)
                             local node = {
                                 type = "autoplace_node",
                                 name = entity.name,
-                                prereq = {}
+                                prereqs = {}
                             }
 
                             -- Don't account for fluid prereqs (I think they only apply to resources)
@@ -159,11 +160,11 @@ function build_graph.add_non_resource_autoplace(dependency_graph)
     end
 end
 
-function build_graph.add_recipes()
+function build_graph.add_recipes(dependency_graph)
     for _, recipe in pairs(data.raw.recipe) do
         reformat.prototype.recipe(recipe)
 
-        local node = {
+        local node = { -- AND
             type = "recipe_node",
             name = recipe.name,
             prereqs = {}
@@ -200,7 +201,7 @@ function build_graph.add_recipes()
         end
 
         -- Tech prereq
-        local recipe_tech_unlock_node = {
+        local recipe_tech_unlock_node = { -- OR
             type = "recipe_tech_unlock_node",
             name = recipe.name,
             prereqs = {}
@@ -224,6 +225,8 @@ function build_graph.add_recipes()
                 })
             end
         end
+
+        dependency_graph[prg.get_key(node)] = node
     end
 end
 
@@ -241,7 +244,11 @@ function build_graph.add_items_and_fluids(dependency_graph)
             -- TODO: Add blacklist back later
 
             reformat.prototype.recipe(recipe)
-            local product_amount = build_graph.find_product_amounts(recipe, name, type)
+            results = recipe.results
+            if recipe.normal ~= nil then
+                results = recipe.normal.results
+            end
+            local product_amount = build_graph.find_product_amounts(results, name, type)
 
             if product_amount > 0 then
                 table.insert(node.prereqs, {
@@ -253,7 +260,7 @@ function build_graph.add_items_and_fluids(dependency_graph)
         end
 
         -- Add minable results for resources
-        for _, resource in pairs(data.raw.recipe) do
+        for _, resource in pairs(data.raw.resource) do
             if resource.autoplace ~= nil then
                 -- Resources may have to be minable, but I'm checking just in case
                 -- TODO: This is duplicate code, refactor
@@ -272,6 +279,7 @@ function build_graph.add_items_and_fluids(dependency_graph)
                     local product_amount = build_graph.find_product_amounts(resource.minable, name, type)
 
                     if product_amount > 0 then
+                        -- TODO: Not triggering
                         table.insert(node.prereqs, {
                             type = "resource_node",
                             name = resource.name,
@@ -315,6 +323,27 @@ function build_graph.add_items_and_fluids(dependency_graph)
         end
 
         -- TODO: Space rocket launch... and a few other things
+        for item_class, _ in pairs(defines.prototypes.item) do
+            for _, item in pairs(data.raw[item_class]) do
+                if item.rocket_launch_product ~= nil and item.rocket_launch_products == nil then
+                    item.rocket_launch_products = {item.rocket_launch_product}
+                    item.rocket_launch_product = nil
+                end
+
+                local amount_product = 0
+                if item.rocket_launch_products ~= nil then
+                    amount_product = amount_product + build_graph.find_product_amounts(item.rocket_launch_products, name, type)
+                end
+
+                if amount_product > 0 then
+                    table.insert(node.prereqs, {
+                        type = "item_node",
+                        name = item.name,
+                        amount = amount_product
+                    })
+                end
+            end
+        end
 
         dependency_graph[prg.get_key(node)] = node
     end
@@ -342,8 +371,8 @@ end
 
 function build_graph.add_fuel_categories(dependency_graph)
     for _, fuel_category in pairs(data.raw["fuel-category"]) do
-        local node = {
-            type = "fuel-category-ndoe",
+        local node = { -- OR
+            type = "fuel_category_node",
             name = fuel_category.name,
             prereqs = {}
         }
@@ -584,7 +613,7 @@ function build_graph.add_technologies(dependency_graph)
         if technology.prerequisites ~= nil then
             for _, prereq in pairs(technology.prerequisites) do
                 table.insert(node.prereqs, {
-                    type = technology_node,
+                    type = "technology_node",
                     name = prereq,
                     amount = 1
                 })
@@ -608,14 +637,14 @@ function build_graph.add_technologies(dependency_graph)
                 table.insert(node.prereqs, {
                     type = "item_node",
                     name = science_pack.name,
-                    amount = science_packe.amount
+                    amount = science_pack.amount
                 })
                 table.insert(packs_used, science_pack.name)
             end
         end
 
         -- Lab prereq (we need a lab to research this)
-        local lab_tech_node = {
+        local lab_tech_node = { -- OR
             type = "lab_tech_node",
             name = technology.name,
             prereqs = {}
@@ -642,6 +671,8 @@ function build_graph.add_technologies(dependency_graph)
                 })
             end
         end
+        dependency_graph[prg.get_key(lab_tech_node)] = lab_tech_node
+
         table.insert(node.prereqs, lab_tech_node)
 
         dependency_graph[prg.get_key(node)] = node
@@ -666,7 +697,7 @@ end
 function build_graph.add_recipe_categories(dependency_graph)
     for _, category in pairs(data.raw["recipe-category"]) do
         local node = {
-            type = "crafting_category_node",
+            type = "recipe_category_node",
             name = category.name,
             prereqs = {}
         }
@@ -814,6 +845,26 @@ function build_graph.add_mining_entities(dependency_graph)
 end
 
 --------------------------------------------------------------------------------
+-- Graph enhancements
+--------------------------------------------------------------------------------
+
+build_graph.add_forward_connections = function(dependency_graph)
+    for _, node in pairs(dependency_graph) do
+        node.dependents = {}
+    end
+      
+    for _, node in pairs(dependency_graph) do
+        for _, prereq in pairs(node.prereqs) do
+            table.insert(dependency_graph[prg.get_key(prereq)].dependents, {
+                type = node.type,
+                name = node.name,
+                amount = prereq.amount
+            })
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
 -- Graph collection
 --------------------------------------------------------------------------------
 
@@ -836,7 +887,48 @@ function build_graph.construct()
     build_graph.add_resources(dependency_graph)
     build_graph.add_technologies(dependency_graph)
 
+    build_graph.add_forward_connections(dependency_graph)
+
     return dependency_graph
 end
+
+--------------------------------------------------------------------------------
+-- Metadata
+--------------------------------------------------------------------------------
+
+build_graph.op = {
+    autoplace_node = "AND", -- Source node
+    burner_generator_electricity_production_node = "OR",
+    burner_generator_node = "OR",
+    character_node = "AND", -- TODO: Check for unlockable characters, like in bob's classes mod
+    crafting_entity_node = "OR",
+    electric_pole_node = "OR",
+    electricity_distribution_node = "OR",
+    electricity_node = "AND",
+    electricity_production_node = "OR",
+    energy_source_node = "AND",
+    fluid_generator_electricity_node = "OR",
+    fluid_generator_node = "AND",
+    fluid_generator_building_node = "OR",
+    fluid_generator_steam_node = "OR",
+    fluid_fuel_node = "OR",
+    fluid_node = "OR",
+    fuel_category_node = "OR",
+    item_node = "OR",
+    lab_node = "OR",
+    lab_tech_node = "OR",
+    mining_machine_node = "OR",
+    offshore_pump_node = "OR",
+    recipe_category_node = "OR",
+    recipe_node = "AND",
+    recipe_tech_unlock_node = "OR",
+    resource_category_node = "OR",
+    resource_node = "AND",
+    technology_node = "AND"
+}
+
+--------------------------------------------------------------------------------
+-- Return
+--------------------------------------------------------------------------------
 
 return build_graph

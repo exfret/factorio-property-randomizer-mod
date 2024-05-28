@@ -9,15 +9,16 @@ Future
   - Technology randomization
 
 0.2.11
-  - More informatron info
+  - More informatron info: Write down what I want in informatron at least
+    * Bonuses like daytime length and walkspeed
   - Finish dependency graph building
+      * Note: Still needs testing?
+      * Needs rocket test for rocket results
+  - Update spreadsheet with new settings overhaul settings
 
-0.2.10
-  - Upgrade line preservation
-    * For now, just preserve just predetermined property lines like crafting speed for machines
-        * I think that even if this is actually less random, this is the "expected behavior" and I should just do this
-  - Finish properties missed during refactoring and adding new properties
-  - Add informatron basic info
+WORKING ON:
+  - Chaos/bias dropdown
+  - Rocket node in rocket_results
 
 
 BROKEN:
@@ -28,11 +29,18 @@ BROKEN:
 3. Make randomization algorithm assume property is non-nil soon
 4. Account for control phase randomization and for autoplace/data-updates randomizations
 
-
+ - Player health and reach
+ - Crafting speed randomization off by default until recipes randomized?
+ - Balancing/group balancing for crafting speeds and such for balancing
+ - More interesting things at higher/lower bias/chaos factor values
+ - Tooltip randomization info
+ - Use hash maps to make randomization process faster
+ - Include relative stats changes in tooltips
+ - Possibly negative run speed
+ - Add "resource balancing" to recipe randomization
  - Randomize more parts of the dependency graph (like recipes)
  - Go through and compile TODO's in this note and throughout program
  - Randomize more properties
- - Organize todo
  - Organize todo better
  - Do things like property_info = "temperature", so not including the initial "property_info." part anymore (or needing to include property info in the files)
  - Make rounding happen again after min/maxing
@@ -41,6 +49,11 @@ BROKEN:
  - Rename rand_energy and the types rando functions to something to suggest they are different from normal rand (like rand_util)
  - Fix in inertia functions for new randomizations
  - Galdoc's manufacturing randomization compatibility? Maybe compatibility with special things from mods?
+ - Check that I don't assign range to artillery ammo (it shows up on the tooltip but actually doesn't work)
+ - "Random map generation" somehow?
+ - Make bias setting more intuitive and a dropdown
+ - Get rid of storage setting, merge with logistics, and make logistics advanced setting
+ - Permute directions
 
 
 Add power level normalizer to keep power levels similar to what they were at start
@@ -95,6 +108,9 @@ Next releases:
   - Randomize reach distance mid-game
   - Randomize ore/basic resource gathering (Loup&Snoop idea)
   - Ores produce "random" sideproducts
+  - Randomized randomizations/configurations, so you won't even know what's randomized
+  - Randomize starting inventory
+  - Randomize starting items/recipes
 
 Ideas
   - Make "overhaul" to demonstrate randomizer better

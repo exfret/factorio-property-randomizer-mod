@@ -33,7 +33,7 @@ Science-Randomizer, by redart
     - https://mods.factorio.com/mod/science-randomizer
     - Randomizes science pack costs. Doesn't have to deal with as much balancing due to implicit assumption that science packs aren't often used as intermediates.
 
-Vill's Recipe Rnadomizer, by Villfuk
+Vill's Recipe Randomizer, by Villfuk
     - https://mods.factorio.com/mod/ZRecipeRandomizer
     - Randomizes recipes only, but does so in a balanced way and feels the most "right" out of all the randomization mods.
 

@@ -1,5 +1,11 @@
+Critical
+
+Other
+1. Running/Crafting speed randomized initially
+
 Compatibility
 1. Add blacklist for wide chests
+2. Py/upgrade line randomization
 
 Future versions
 1. Rounding modes other than the default are currently broken

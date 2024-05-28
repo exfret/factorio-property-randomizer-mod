@@ -133,14 +133,24 @@ rand.item_stack_sizes = function(prototype)
                 property_info_to_use = property_info.stack_size_sensitive
             end
 
-            randomize_numerical_property{
+            randomize_numerical_property({
                 prototype = prototype,
                 property = "stack_size",
                 inertia_function = inertia_function.stack_size,
                 property_info = property_info_to_use,
                 walk_params = walk_params.stack_size
-            }
+            })
         end
+    end
+end
+
+rand.armor_inventory_bonus = function(prototype)
+    if prototype.type == "armor" then
+        randomize_numerical_property({
+            prototype = prototype,
+            property = "inventory_size_bonus",
+            property_info = property_info.limited_range
+        })
     end
 end
 

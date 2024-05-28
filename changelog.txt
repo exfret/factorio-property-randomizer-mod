@@ -1,6 +1,19 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.11
-Date: ?
+Date: 2024.05.28
+  Features:
+    - Added more information to the luck breakdown (just a little bit)
+    - Randomized armor inventory size bonus (if randomize storage is checked)
+    - Randomized some other misc. small properties
+  Changes:
+    - Some randomization settings are now dropdowns
+    - Upgrade line randomization is off by default now due to incompatibility issues that I have yet to fix
+  Bugfixes:
+    - Possibly fixed bug with crash when a resistance's decrease is nil
+    - Possibly fixed bug causing negative crafting speeds with QOL research installed
+    - Fixed compatibility bug with Shield Projectors
+    - Fixed a missing case for upgrade line randomization causing startup errors with some mods
+    - Fixed informatron entries disappearing on save and load (also should fix a desync)
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.10
 Date: 2024.04.30
@@ -11,9 +24,10 @@ Date: 2024.04.30
     - Randomized some miscellaneous things
     - Randomized ammo damage again
   Changes:
-    - Reorganized settings
+    - Reorganized and removed some settings
   Bugfixes:
     - Types randomization was missing a "for" loop and therefore didn't randomize some things
+    - Lots of misc. cleanup to overseen edge cases in randomizations
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.9
 Date: 2024.04.22

@@ -454,13 +454,17 @@ prototype_tables.vehicle_speed_keys = {
 }
 
 -- More complex tables
-prototype_tables.intermediate_item_names = {}
+-- These are only needed in data phase and need access to data so can't be constructed in control phase yet
+-- TODO: Construct these in control phase
+if not is_control_phase then
+  prototype_tables.intermediate_item_names = {}
 
-for _, recipe in pairs(data.raw.recipe) do
-  reformat.prototype.recipe(recipe)
+  for _, recipe in pairs(data.raw.recipe) do
+    reformat.prototype.recipe(recipe)
 
-  for _, ingredient in pairs(recipe.ingredients) do
-    prototype_tables.intermediate_item_names[ingredient.name] = true
+    for _, ingredient in pairs(recipe.ingredients) do
+      prototype_tables.intermediate_item_names[ingredient.name] = true
+    end
   end
 end
 

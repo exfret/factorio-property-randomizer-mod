@@ -19,6 +19,9 @@ We assume that we can evaluate the derivative of goodness but not goodness itsel
 Whether things are fluids/items?
 Projectiles?
 
+Map generation? Maybe look at what's done in... https://mods.factorio.com/mod/ctg
+Lab science packs allowed? Would probably need custom overhaul stuff.
+
 --------------------------------------------------------------------------------
 -- Compatibilities
 --------------------------------------------------------------------------------

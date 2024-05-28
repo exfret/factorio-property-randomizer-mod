@@ -3,16 +3,25 @@ function menu(player_index)
         luck_breakdown = {
             luck_logistics = {
                 luck_inserters = 1,
-                luck_belts = 1
+                luck_belts = 1,
+                luck_bots = 1
+            },
+            luck_military = {
             },
             luck_production = {
-                luck_crafting_machine = 1
+                luck_beacon = 1,
+                luck_crafting_machine = 1,
+                luck_power = 1
             }
         }
         --randomization_list = 1,
         --luckiness = 1
     }
 end
+
+-- More info to show...
+-- TODO: Ammo damage
+-- TODO: Boiler power
 
 function page_content(page_name, player_index, element)
     if page_name == "propertyrandomizer" then
@@ -30,20 +39,24 @@ function page_content(page_name, player_index, element)
                     local old_property_value = old_stats[property_names.prototype_name]
                     local new_property_value = prototype[property_names.control_phase]
 
-                    local stats_change = math.floor(100 * new_property_value / old_property_value - 1)
+                    local stats_change = math.floor(100 * (new_property_value / old_property_value - 1))
                     local color
-                    if stats_change >= 200 then
+                    if stats_change >= 100 then
                         color = "green"
-                    elseif stats_change >= 130 then
+                    elseif stats_change >= 30 then
                         color = "blue"
-                    elseif stats_change >= 70 then
+                    elseif stats_change >= -30 then
                         color = "white"
-                    elseif stats_change >= 40 then
+                    elseif stats_change >= -60 then
                         color = "yellow"
                     else
                         color = "red"
                     end
-                    local text_to_print = "        " .. property_names.localised .. ": [color=" .. color .. "]" .. stats_change .. "%[/color]"
+                    local sign_symbol = ""
+                    if stats_change > 0 then
+                        sign_symbol = "+"
+                    end
+                    local text_to_print = "        " .. property_names.localised .. ": [color=" .. color .. "]" .. sign_symbol .. stats_change .. "%[/color]"
                     -- Need to check for -1 in case of rounding errors
                     if stats_change == 0 or stats_change == -1 then
                         text_to_print = "        " .. property_names.localised .. ": [color=" .. color .. "]Normal[/color]"
@@ -101,40 +114,87 @@ function page_content(page_name, player_index, element)
         })
     end
 
-    if page_name == "luck_inserters" then
-        local inserter_properties = {
-            inserter_rotation_speed = "Speed"
+    if page_name == "luck_bots" then
+        local speed_property = {
+            control_phase = "speed",
+            localised = "Speed",
+            prototype_name = "speed"
+        }
+        local bot_properties = {
+            ["construction-robot"] = {
+                table.deepcopy(speed_property)
+            },
+            ["logistic-robot"] = {
+                table.deepcopy(speed_property)
+            }
+        }
+        local bot_prototypes = {
+            ["construction-robot"] = true,
+            ["logistic-robot"] = true
         }
 
-        for _, prototype in pairs(game.entity_prototypes) do
-            if prototype.type == "inserter" then
-                local inserter_name = prototype.name
+        print_properties({
+            element = element,
+            main_type = "entity_prototypes",
+            sub_types = bot_prototypes,
+            localised_type = "entity-name",
+            properties_table = bot_properties
+        })
+    end
 
-                local inserter_stats = global.old_data_raw[prg.get_key({type = "inserter", name = inserter_name})]
+    if page_name == "luck_inserters" then
+        local speed_property = {
+            control_phase = "inserter_rotation_speed",
+            localised = "Speed",
+            prototype_name = "rotation_speed"
+        }
+        local inserter_properties = {
+            ["inserter"] = {
+                table.deepcopy(speed_property)
+            }
+        }
 
-                local speed_change = math.floor(100 * (game.entity_prototypes[inserter_name].inserter_rotation_speed / inserter_stats.rotation_speed - 1))
-                local color
-                if speed_change > 50 then
-                    color = "green"
-                elseif speed_change > 20 then
-                    color = "blue"
-                elseif speed_change > -20 then
-                    color = "white"
-                elseif speed_change > -50 then
-                    color = "yellow"
-                elseif speed_change <= -50 then
-                    color = "red"
-                end
-                local text_to_print = "        Speed: [color=" .. color .. "]" .. speed_change .. "%[/color]"
-                if math.abs(speed_change) <= 1 then
-                    text_to_print = "        Speed: [color=" .. color .. "]Normal[/color]"
-                end
-                
-                element.add({type = "label", name = "inserter_intro_" .. inserter_name, caption = {"", "[entity=", inserter_name, "] [font=default-bold]", {"entity-name." .. inserter_name}, "[/font]"}})
-                element.add({type = "label", name = "inserter_speed_" .. inserter_name, caption = text_to_print})
-                --element.add({type = "label", name = "line_break_inserter_" .. inserter_name, caption = "\n"})
-            end
-        end
+        local prototypes_table = {
+            ["inserter"] = true
+        }
+
+        print_properties({
+            element = element,
+            main_type = "entity_prototypes",
+            sub_types = prototypes_table,
+            localised_type = "entity-name",
+            properties_table = inserter_properties
+        })
+    end
+
+    if page_name == "luck_beacon" then
+        local effectivity_property = {
+            control_phase = "distribution_effectivity",
+            localised = "Effectivity",
+            prototype_name = "distribution_effectivity"
+        }
+        local supply_area_property = {
+            control_phase = "supply_area_distance",
+            localised = "Supply Area",
+            prototype_name = "supply_area_distance"
+        }
+        local properties_table = {
+            ["beacon"] = {
+                table.deepcopy(effectivity_property),
+                table.deepcopy(supply_area_property)
+            }
+        }
+        local prototypes_table = {
+            ["beacon"] = true
+        }
+
+        print_properties({
+            element = element,
+            main_type = "entity_prototypes",
+            sub_types = prototypes_table,
+            localised_type = "entity-name",
+            properties_table = properties_table
+        })
     end
 
     -- TODO: energy_usage
@@ -165,6 +225,9 @@ function page_content(page_name, player_index, element)
             localised_type = "entity-name",
             properties_table = properties_table
         })
+    end
+
+    if page_name == "luck_power" then
     end
 
     if page_name == "randomization_list" then

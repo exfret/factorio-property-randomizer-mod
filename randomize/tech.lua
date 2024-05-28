@@ -18,6 +18,9 @@ rand.tech_costs = function(prototype)
                 intertia_function = inertia_function.tech_count,
                 property_info = property_info.tech_count
             })
+
+            log(serpent.block(property_info.tech_count))
+
         elseif prototype.unit.count_formula ~= nil then
             local formula_multiplier = randomize_numerical_property() -- TODO: Don't just do a dummy randomization!
             prototype.unit.count_formula = formula_multiplier .. "*(" .. prototype.unit.count_formula .. ")"

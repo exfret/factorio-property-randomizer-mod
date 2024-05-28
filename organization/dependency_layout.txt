@@ -1,0 +1,5 @@
+EntityPrototype
+    minable --> MinableProperties
+    created_effect --> Trigger
+    remains_when_mined ==> Entity
+    autoplace --> AutoplaceSpecification

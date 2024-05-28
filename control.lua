@@ -1,7 +1,11 @@
+is_control_phase = true
+
 --require("config")
 require("informatron")
 
 require("random-utils/random")
+
+local config = require("config")
 
 --require("randomizer-functions/keybind-randomizer")
 
@@ -81,6 +85,29 @@ script.on_init(function()
     local _, load_value = serpent.load(value)
     log(serpent.block(load_value))
   end]]
+
+  -- For possible movement modification
+  global.dir = {
+    north = "north",
+    northeast = "northeast",
+    east = "east",
+    southeast = "southeast",
+    south = "south",
+    southwest = "southwest",
+    west = "west",
+    northwest = "northwest"
+  }
+end)
+
+script.on_load(function(event)
+  remote.add_interface("propertyrandomizer", {
+    informatron_menu = function(data)
+      return menu(data.player_index)
+    end,
+    informatron_page_content = function(data)
+      return page_content(data.page_name, data.player_index, data.element)
+    end
+  })
 end)
 
 script.on_event(defines.events.on_player_created, function(event)
@@ -173,7 +200,171 @@ script.on_event(defines.events.on_tick, function(event)
     end
   end
 
-  if event.tick % (30 * 60 * 60) == 0 and settings.startup["propertyrandomizer-character-values-midgame"].value then
+  -- Permute directions
+  --[=[ Doesn't work atm
+  if config.properties["movement"] then
+    if event.tick % 4 ~= 0 then
+      for _, player in pairs(game.players) do
+        if player.walking_state.walking then
+          local player_direction = player.walking_state.direction
+          local new_direction
+          local directions = {"north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest"}
+          for _, dir in pairs(directions) do
+            if player_direction == defines.direction[dir] then
+              new_direction = defines.direction[global.dir[dir]]
+            end
+          end
+
+          player.walking_state = {walking = true, direction = new_direction}
+        end
+      end
+    else
+      for _, player in pairs(game.players) do
+        player.walking_state = {walking = false, direction = defines.direction.north}
+      end
+    end
+
+    if event.tick % (60 * 60) == 45 * 60 then
+      local random_value = prg.int(nil, 8, global)
+      if random_value == 1 then
+        -- Id
+        global.dir = {
+          north = "north",
+          northeast = "northeast",
+          east = "east",
+          southeast = "southeast",
+          south = "south",
+          southwest = "southwest",
+          west = "west",
+          northwest = "northwest"
+        }
+      elseif random_value == 2 then
+        -- Rotation 90 degrees
+        global.dir = {
+          north = "west",
+          northeast = "northwest",
+          east = "north",
+          southeast = "northeast",
+          south = "east",
+          southwest = "southeast",
+          west = "south",
+          northwest = "southwest"
+        }
+      elseif random_value == 3 then
+        -- Rotation 180 degrees
+        global.dir = {
+          north = "south",
+          northeast = "southwest",
+          east = "west",
+          southeast = "norhtwest",
+          south = "north",
+          southwest = "northeast",
+          west = "east",
+          northwest = "southeast"
+        }
+      elseif random_value == 4 then
+        -- Rotation 270 degrees
+        global.dir = {
+          north = "east",
+          northeast = "southeast",
+          east = "south",
+          southeast = "southwest",
+          south = "west",
+          southwest = "northwest",
+          west = "north",
+          northwest = "northeast"
+        }
+      elseif random_value == 5 then
+        -- Horizontal flip
+        global.dir = {
+          north = "south",
+          northeast = "southeast",
+          east = "east",
+          southeast = "northeast",
+          south = "north",
+          southwest = "northwest",
+          west = "west",
+          northwest = "southwest"
+        }
+      elseif random_value == 6 then
+        -- Vertical flip
+        global.dir = {
+          north = "north",
+          northeast = "northwest",
+          east = "west",
+          southeast = "southwest",
+          south = "south",
+          southwest = "southeast",
+          west = "east",
+          northwest = "northeast"
+        }
+      elseif random_value == 7 then
+        -- Diagonal flip 1
+        -- South to east, west to north
+        global.dir = {
+          north = "west",
+          northeast = "southwest",
+          east = "south",
+          southeast = "southeast",
+          south = "east",
+          southwest = "northeast",
+          west = "north",
+          northwest = "northwest"
+        }
+      elseif random_value == 8 then
+        -- Diagonal flip 2
+        -- South to west, east to north
+        global.dir = {
+          north = "east",
+          northeast = "northeast",
+          east = "north",
+          southeast = "northwest",
+          south = "west",
+          southwest = "southwest",
+          west = "south",
+          northwest = "southeast"
+        }
+      end
+    end
+  end --]=]
+
+  if event.tick % (2 * 60 * 60 * 60) == 15 * 60 * 60 and config.properties["daytime-cycle"] then
+    for surface_name, surface in pairs(game.surfaces) do
+      -- Minimum daytime is 60 seconds
+      local multiplier = prg.value(nil, global)
+      surface.ticks_per_day = 60 * 60 / (multiplier * multiplier * multiplier)
+
+      local daytime_lengths = {prg.value(nil, global), prg.value(nil, global), prg.value(nil, global), prg.value(nil, global)}
+      table.sort(daytime_lengths)
+
+      -- We can't assign these at once and factorio immediately throws an error if they're in the wrong order, so we need to do this in a hacky way
+      -- TODO: Actually check if there's a way to set these all at once
+      surface.dawn = 1
+      surface.morning = 0.99
+      surface.evening = 0.98
+      surface.dusk = 0.97
+
+      surface.dusk = math.min(0.97, daytime_lengths[1])
+      surface.evening = math.min(0.98, daytime_lengths[2])
+      surface.morning = math.min(0.99, daytime_lengths[3])
+      surface.dawn = daytime_lengths[4]
+
+      local dusk_length = math.floor(100 * (surface.evening - surface.dusk))
+      local evening_length = math.floor(100 * (surface.morning - surface.evening))
+      local morning_length = math.floor(100 * (surface.dawn - surface.morning))
+      local dawn_length = 100 - dusk_length - evening_length - morning_length
+
+      if surface_name == "nauvis" then
+        game.print("Nauvis day length is now " .. math.floor(surface.ticks_per_day / (60 * 60)) .. " minutes and " .. math.floor(((surface.ticks_per_day / 60) % 60)) .. " seconds. Reroll will be in 2 hours.")
+        game.print("Morning/Daytime/Evening/Night breakdowns are " .. morning_length .. "% / " .. dawn_length .. "% / " .. dusk_length .. "% / " .. evening_length .. "%")
+      end
+    end
+  end
+
+  if event.tick % (30 * 60 * 60) == 0 and config.properties["character-values"] then
+    -- TODO: Limit from below by like 30% so that it doesn't interact badly with other mods
+    -- OR... even just make this a multiplier
+
     --[[local old_force_modifications = util.table.deepcopy(global.force_modifications)
 
     local new_force_modifications = global.force_modifications
@@ -189,12 +380,12 @@ script.on_event(defines.events.on_tick, function(event)
 
     local old_force_modifications = util.table.deepcopy(global.force_modifications)
     local new_force_modifications = global.force_modifications
-    new_force_modifications.running_speed = 3 / 2 * (prg.value(nil, global) - 1 / 4)
+    new_force_modifications.running_speed = 3 / 2 * (prg.value(nil, global) - 1 / 3)
     new_force_modifications.manual_crafting_speed = -1 + math.pow(prg.value(nil, global) + 2 / 3, 3)
 
     player_force = game.forces.player -- TODO: Different forces compatibility
-    player_force.character_running_speed_modifier = player_force.character_running_speed_modifier - old_force_modifications.running_speed + new_force_modifications.running_speed
-    player_force.manual_crafting_speed_modifier = player_force.manual_crafting_speed_modifier - old_force_modifications.manual_crafting_speed + new_force_modifications.manual_crafting_speed
+    player_force.character_running_speed_modifier = -1 + (1 + player_force.character_running_speed_modifier) / (1 + old_force_modifications.running_speed) * (1 + new_force_modifications.running_speed)
+    player_force.manual_crafting_speed_modifier = -1 + (1 + player_force.manual_crafting_speed_modifier) / (1 + old_force_modifications.manual_crafting_speed) * (1 + new_force_modifications.manual_crafting_speed)
 
     game.print("[exfret's Randomizer] [color=blue]Info:[/color] Running speed is now " .. math.ceil(100 * (1 + player_force.character_running_speed_modifier)) .. "%")
     game.print("[exfret's Randomizer] [color=blue]Info:[/color] Crafting speed is now " .. math.ceil(100 * (1 + player_force.manual_crafting_speed_modifier)) .. "%")

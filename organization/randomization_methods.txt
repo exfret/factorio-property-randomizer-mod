@@ -6,8 +6,16 @@ The process is to look at what can be reached in the old dependency graph using 
 
 2. The Card Method
 
-Each thing is given a "card". The first element of a random card type is brought over at each step, with the same dependencies as what would have been in that position.
+Each thing is given a "card". The first element of a random card type is brought over at each step, with the same dependencies as what would have been in that position. This keeps the relative positions of things within cards, like the assembling machine upgrades.
 
 3. The Cut and Paste Method
 
 The sets of in-edges of nodes are cut and pasted onto new nodes in a similar way as to the card method.
+
+4. The Swap Method
+
+Swap edges in a "criss-cross" way if possible while preserving doability.
+
+5. The Reverse Card Method
+
+Rather than bringing over the first element of a random card, bring over a random element of the same card that would have been in that spot. This keeps the "type" of things in order, while randomizing 

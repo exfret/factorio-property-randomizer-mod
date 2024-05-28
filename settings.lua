@@ -27,6 +27,23 @@ data:extend({
     default_value = 0.5,
     minimum_value = 0.45,
     maximum_value = 0.55,
+    order = "ab-bias",
+    hidden = true
+  },
+  {
+    setting_type = "startup",
+    type = "string-setting",
+    name = "propertyrandomizer-bias-dropdown",
+    localised_name = "Bias",
+    localised_description = "How much the randomization process should try to make things in your favor.",
+    allowed_values = {
+      "worst",
+      "worse",
+      "default",
+      "better",
+      "best"
+    },
+    default_value = "default",
     order = "ab-bias"
   },
   {
@@ -38,6 +55,23 @@ data:extend({
     default_value = 1,
     minimum_value = 0.1,
     maximum_value = 4,
+    order = "ab-chaos",
+    hidden = true
+  },
+  { -- TODO: WORKING ON
+    setting_type = "startup",
+    type = "string-setting",
+    name = "propertyrandomizer-chaos-dropdown",
+    localised_name = "Chaos",
+    localised_description = "How random to make things. Play higher values at your own risk.",
+    allowed_values = {
+      "light",
+      "less",
+      "default",
+      "more",
+      "ultimate"
+    },
+    default_value = "default",
     order = "ab-chaos"
   },
   {
@@ -70,7 +104,7 @@ data:extend({
     name = "propertyrandomizer-upgrade-line-preservation",
     localised_name = "Preserve upgrade lines",
     localised_description = "Generally attempt to make better things actually better. For example, assembling machine 2's will be guaranteed higher crafting speeds than assembling machine 1's.",
-    default_value = "true",
+    default_value = false,
     order = "ae-upgrade-line-preservation"
   },
   {
@@ -102,20 +136,32 @@ data:extend({
   },]] -- TODO: Decide whether I want this
   {
     setting_type = "startup",
-    type = "bool-setting",
-    name = "propertyrandomizer-logistic",
+    type = "string-setting",
+    name = "propertyrandomizer-logistic-dropdown",
+    allowed_values = {
+      "none",
+      "less",
+      "default",
+      "more"
+    },
     localised_name = "Randomize logistics",
     localised_description = "Randomize speeds of belts/inserters, lengths of underground belts, supply area of electric poles, and other logistical things.",
-    default_value = true,
+    default_value = "default",
     order = "b-basic-logistic"
   },
   {
     setting_type = "startup",
-    type = "bool-setting",
-    name = "propertyrandomizer-military",
-    localised_name = "Randomize military",
-    localised_description = "Randomize gun shooting speeds, bonus damage, etc. Turn this off if you're having troubles with biter difficulty.",
-    default_value = true,
+    type = "string-setting",
+    name = "propertyrandomizer-military-dropdown",
+    allowed_values = {
+      "none",
+      "less",
+      "default",
+      "more"
+    },
+    localised_name = "Military randomization",
+    localised_description = "Randomize gun shooting speeds, bonus damage, etc. Turn this down or off if you're having troubles with biter difficulty.",
+    default_value = "default",
     order = "b-basic-military"
   },
   {
@@ -125,6 +171,22 @@ data:extend({
     localised_name = "Randomize production",
     localised_description = "Randomize production capabilities of machines, like speed and module slots.",
     default_value = true,
+    order = "b-basic-production",
+    hidden = true
+  },
+  {
+    setting_type = "startup",
+    type = "string-setting",
+    name = "propertyrandomizer-production-dropdown",
+    allowed_values = {
+      "none",
+      "less",
+      "default",
+      "more"
+    },
+    localised_name = "Production randomization",
+    localised_description = "Randomize production capabilities of machines, like speed and module slots.",
+    default_value = "default",
     order = "b-basic-production"
   },
   {
@@ -134,7 +196,7 @@ data:extend({
     localised_name = "Randomize storage",
     localised_description = "Randomize properties that have to do with storage/inventories, such as inventory slots and stack sizes.",
     default_value = true,
-    order = "b-basic-storage"
+    order = "ba-basic-storage"
   },
   {
     setting_type = "startup",
@@ -142,33 +204,8 @@ data:extend({
     name = "propertyrandomizer-tech-costs",
     localised_name = "Randomize technology costs",
     default_value = true,
-    order = "b-basic-tech"
-  },
-  --[[{
-    setting_type = "startup",
-    type = "bool-setting",
-    name = "propertyrandomizer-cliff-sizes",
-    localised_name = "Advanced: Randomize cliff sizes",
-    localised_description = "Different cliffs will have different sizes.",
-    default_value = false,
-    order = "c-advanced-cliff-sizes"
-  },]] -- Going to be override only
-  --[[{
-    setting_type = "startup",
-    type = "bool-setting",
-    name = "propertyrandomizer-icons",
-    localised_name = "Advanced: Randomize icons",
-    default_value = false,
-    order = "c-advanced-icons"
-  },]] -- Icons is going to be override only from now on
-  {
-    setting_type = "startup",
-    type = "bool-setting",
-    name = "propertyrandomizer-inserter-position",
-    localised_name = "Advanced: Randomize inserter positions",
-    localised_description = "Any given inserter has a chance to become a long inserter, side inserter, or a variety of other cursed options.",
-    default_value = false,
-    order = "c-advanced-inserter-offsets"
+    order = "ba-basic-tech",
+    hidden = true
   },
   {
     setting_type = "startup",
@@ -177,7 +214,8 @@ data:extend({
     localised_name = "Advanced: Randomize military more",
     localised_description = "Makes some more questionable randomizations to the military side of the game, like biter speed and more.",
     default_value = false,
-    order = "c-advanced-military"
+    order = "c-advanced-military",
+    hidden = true
   },
   {
     setting_type = "startup",
@@ -186,7 +224,8 @@ data:extend({
     localised_name = "Advanced: Randomize production more",
     localised_description = "Randomize more production-based features. Especially impacts power generation/consumption.",
     default_value = false,
-    order = "c-advanced-production"
+    order = "c-advanced-production",
+    hidden = true
   },
   --[[{
     setting_type = "startup",
@@ -198,15 +237,24 @@ data:extend({
     order = "c-advanced-mining-drill-productivity",
     hidden = true -- TODO: Make just an override
   },]]
-  --[[{
+  {
+    setting_type = "startup",
+    type = "bool-setting",
+    name = "propertyrandomizer-inserter-position",
+    localised_name = "Randomize inserter positions",
+    localised_description = "Any given inserter has a chance to become a long inserter, side inserter, or a variety of other cursed options.",
+    default_value = false,
+    order = "c-advanced-inserter-offsets"
+  },
+  {
     setting_type = "startup",
     type = "bool-setting",
     name = "propertyrandomizer-mining-offsets",
-    localised_name = "Advanced: Randomize mining offsets",
+    localised_name = "Randomize mining offsets",
     localised_description = "Randomize where the mining drills drop off their ore.",
     default_value = false,
     order = "c-advanced-mining-offsets"
-  },]]
+  },
   --[[{
     setting_type = "startup",
     type = "bool-setting",
@@ -217,11 +265,16 @@ data:extend({
   },]] -- Override only
   {
     setting_type = "startup",
-    type = "bool-setting",
-    name = "propertyrandomizer-misc-properties",
-    localised_name = "(Almost) everything else",
-    localised_description = "I see you got some extra properties to randomize there. Wanna fix that?",
-    default_value = false,
+    type = "string-setting",
+    name = "propertyrandomizer-misc-properties-dropdown",
+    allowed_values = {
+      "none",
+      "more",
+      "most"
+    },
+    localised_name = "Extra Randomizations",
+    localised_description = "Randomizes most other things that don't fit in another category. 'Most' randomizes basically every other property in the game except for those touched by other settings.",
+    default_value = "none",
     order = "y-the-rest"
   },
   {

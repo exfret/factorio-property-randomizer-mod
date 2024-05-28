@@ -1,6 +1,14 @@
 Notes:
-    1. Doesn't include justification for visual properties
+    1. Doesn't include justification for visual properties (those are just confusing to randomize usually)
     2. Justification is not required for properties that would obviously be very silly and unnoticeable anyways
+
+CircuitNetworkConnectable
+    circuit_wire_max_distance
+
+Accumulator
+    default_output_signal
+
+Achievement
 
 AmmoCategory - All
     I don't see a sensible way of randomizing ammo categories, they're mostly just names of things anyways.
